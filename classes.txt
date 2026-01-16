@@ -1,0 +1,11 @@
+VG;MT = Vortex Generating (VG) panel – Missing Teeth (MT) (Zähne am VG-Panel fehlen)
+
+LE;ER = Leading Edge (LE) – Erosion (ER) (Vorderkante erodiert)
+
+LR;DA = Lightning Receptor (LR) – Damage (DA) (Blitzableiter beschädigt)
+
+LE;CR = Leading Edge (LE) – Crack (CR) (Riss an der Vorderkante)
+
+SF;PO = Surface (SF) – Paint-Off (PO) (Farbe/Coating ab, „paint-off“)
+
+Nix
