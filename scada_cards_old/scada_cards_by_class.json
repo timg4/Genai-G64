@@ -1,0 +1,25 @@
+{
+  "VG;MT": [
+    "SCADA-A-25-52331-VG_MT",
+    "SCADA-A-38-52987-VG_MT"
+  ],
+  "LE;ER": [
+    "SCADA-A-73-53634-LE_ER",
+    "SCADA-A-45-52887-LE_ER"
+  ],
+  "LR;DA": [
+    "SCADA-A-68-54041-LR_DA",
+    "SCADA-A-51-53697-LR_DA"
+  ],
+  "LE;CR": [
+    "SCADA-A-0-53487-LE_CR",
+    "SCADA-A-72-53244-LE_CR"
+  ],
+  "SF;PO": [
+    "SCADA-A-3-54985-SF_PO",
+    "SCADA-A-13-53742-SF_PO"
+  ],
+  "Nix": [
+    "SCADA-A-13-52057-Nix"
+  ]
+}
