@@ -1,0 +1,20 @@
+{
+  "model_name": "all-MiniLM-L6-v2",
+  "chunk_size": 450,
+  "chunk_overlap": 70,
+  "seed": 42,
+  "add_section_chunks": false,
+  "max_section_tokens": 800,
+  "manual_paths": [
+    "manuals\\manual-01.pdf",
+    "manuals\\manual-02.pdf",
+    "manuals\\manual-03.pdf",
+    "manuals\\manual-04.pdf",
+    "manuals\\manual-05.pdf",
+    "manuals\\manual-06.pdf",
+    "manuals\\manual-07.pdf",
+    "manuals\\manual-08.pdf",
+    "manuals\\manual-09.pdf"
+  ],
+  "num_chunks": 316
+}

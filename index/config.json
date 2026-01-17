@@ -1,0 +1,11 @@
+{
+  "model_name": "all-MiniLM-L6-v2",
+  "chunk_size": 600,
+  "chunk_overlap": 80,
+  "seed": 42,
+  "manual_paths": [
+    "manuals\\Excel-15S-Owners-Manual_August-2018_Rev-0.pdf",
+    "manuals\\Maintenance-manual-v3.2.1-web.pdf"
+  ],
+  "num_chunks": 37
+}
