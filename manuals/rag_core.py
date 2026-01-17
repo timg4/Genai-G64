@@ -79,6 +79,31 @@ def load_pdf(path):
     return pages
 
 
+def load_pdf_with_outline(path):
+    pages = []
+    outline_entries = []
+    try:
+        reader = PdfReader(path)
+    except Exception as exc:
+        LOGGER.error("Failed to open PDF %s: %s", path, exc)
+        return pages, outline_entries
+
+    desc = f"Reading {os.path.basename(path)}"
+    for i, page in enumerate(tqdm(reader.pages, desc=desc, unit="page")):
+        try:
+            text = page.extract_text()
+        except Exception as exc:
+            LOGGER.warning("Failed to extract page %d from %s: %s", i + 1, path, exc)
+            continue
+        text = normalize_text(text)
+        if not text:
+            continue
+        pages.append({"page_index": i + 1, "text": text})
+
+    outline_entries = extract_outline_entries(reader)
+    return pages, outline_entries
+
+
 def load_text_file(path):
     try:
         with open(path, "r", encoding="utf-8", errors="ignore") as handle:
@@ -121,6 +146,64 @@ def is_heading_line(line):
     return False
 
 
+def extract_outline_entries(reader):
+    entries = []
+    try:
+        outline = reader.outline
+    except Exception:
+        outline = None
+    if not outline:
+        return entries
+
+    def walk(items):
+        for item in items:
+            if isinstance(item, list):
+                walk(item)
+            else:
+                try:
+                    title = getattr(item, "title", None) or str(item)
+                    page_number = reader.get_destination_page_number(item) + 1
+                except Exception:
+                    continue
+                entries.append({"title": title.strip(), "page_index": page_number})
+
+    walk(outline)
+    return entries
+
+
+def build_outline_blocks(pages, outline_entries):
+    if not outline_entries:
+        return []
+    page_map = {page["page_index"]: page.get("text", "") for page in pages}
+    max_page = max(page_map.keys()) if page_map else 0
+    ordered = sorted(
+        {entry["page_index"]: entry for entry in outline_entries}.values(),
+        key=lambda item: item["page_index"],
+    )
+    blocks = []
+    for idx, entry in enumerate(ordered):
+        start = entry["page_index"]
+        end = ordered[idx + 1]["page_index"] - 1 if idx + 1 < len(ordered) else max_page
+        if start <= 0 or end <= 0 or end < start:
+            continue
+        texts = []
+        for page_number in range(start, end + 1):
+            text = page_map.get(page_number)
+            if text:
+                texts.append(text)
+        if not texts:
+            continue
+        blocks.append(
+            {
+                "page_index": start,
+                "page_end": end,
+                "heading": entry.get("title"),
+                "text": " ".join(texts),
+            }
+        )
+    return blocks
+
+
 def split_into_blocks(pages):
     blocks = []
     current_lines = []
@@ -139,6 +222,7 @@ def split_into_blocks(pages):
                             "page_index": current_page,
                             "text": " ".join(current_lines),
                             "heading": current_heading,
+                            "page_end": current_page,
                         }
                     )
                 current_lines = [line]
@@ -154,6 +238,7 @@ def split_into_blocks(pages):
                 "page_index": current_page,
                 "text": " ".join(current_lines),
                 "heading": current_heading,
+                "page_end": current_page,
             }
         )
     return blocks
@@ -172,11 +257,14 @@ def merge_small_blocks(blocks, min_tokens):
                 "page_index": block.get("page_index"),
                 "text": text,
                 "heading": block.get("heading"),
+                "page_end": block.get("page_end"),
             }
         else:
             carry["text"] = f"{carry['text']} {text}".strip()
             if not carry.get("heading") and block.get("heading"):
                 carry["heading"] = block.get("heading")
+            if block.get("page_end"):
+                carry["page_end"] = block.get("page_end")
         if len(tokenize(carry["text"])) >= min_tokens:
             merged.append(carry)
             carry = None
@@ -209,12 +297,27 @@ def chunk_blocks(
             and len(block_tokens) <= max_section_tokens
             and len(block_tokens) >= min_section_tokens
         ):
+            if len(block_tokens) <= chunk_size:
+                chunk_id = f"manuals::{source_id}::chunk_{chunk_idx:06d}"
+                chunks.append(
+                    {
+                        "chunk_id": chunk_id,
+                        "source": source_name,
+                        "page": block.get("page_index"),
+                        "page_end": block.get("page_end", block.get("page_index")),
+                        "section": block.get("heading"),
+                        "text": " ".join(block_tokens),
+                    }
+                )
+                chunk_idx += 1
+                continue
             chunk_id = f"manuals::{source_id}::chunk_{chunk_idx:06d}"
             chunks.append(
                 {
                     "chunk_id": chunk_id,
                     "source": source_name,
                     "page": block.get("page_index"),
+                    "page_end": block.get("page_end", block.get("page_index")),
                     "section": block.get("heading"),
                     "text": " ".join(block_tokens),
                 }
@@ -232,6 +335,7 @@ def chunk_blocks(
                     "chunk_id": chunk_id,
                     "source": source_name,
                     "page": block.get("page_index"),
+                    "page_end": block.get("page_end", block.get("page_index")),
                     "section": block.get("heading"),
                     "text": " ".join(chunk_tokens),
                 }
@@ -337,6 +441,9 @@ def build_index(
     seed,
     add_section_chunks,
     max_section_tokens,
+    section_manuals,
+    skip_first_pages,
+    skip_page_manuals,
 ):
     setup_logging()
     set_deterministic(seed)
@@ -351,11 +458,30 @@ def build_index(
     for path in manual_paths:
         source_name = os.path.basename(path)
         source_id = source_id_from_path(path)
-        pages = load_manual(path)
+        pages = None
+        outline_entries = []
+        use_sections = False
+        if section_manuals:
+            use_sections = "*" in section_manuals or source_name in section_manuals
+        if os.path.splitext(path)[1].lower() == ".pdf" and use_sections:
+            pages, outline_entries = load_pdf_with_outline(path)
+        else:
+            pages = load_manual(path)
         if not pages:
             LOGGER.warning("No text extracted from %s", path)
             continue
-        blocks = merge_small_blocks(split_into_blocks(pages), min_tokens=120)
+        if source_name in skip_page_manuals and skip_first_pages > 0:
+            pages = [page for page in pages if page.get("page_index", 0) > skip_first_pages]
+            if not pages:
+                LOGGER.warning("All pages skipped for %s", path)
+                continue
+        if outline_entries:
+            blocks = build_outline_blocks(pages, outline_entries)
+            if not blocks:
+                blocks = split_into_blocks(pages)
+        else:
+            blocks = split_into_blocks(pages)
+        blocks = merge_small_blocks(blocks, min_tokens=120)
         if not blocks:
             LOGGER.warning("No text blocks produced for %s", path)
             continue
@@ -394,6 +520,9 @@ def build_index(
         "seed": seed,
         "add_section_chunks": add_section_chunks,
         "max_section_tokens": max_section_tokens,
+        "section_manuals": section_manuals,
+        "skip_first_pages": skip_first_pages,
+        "skip_page_manuals": skip_page_manuals,
         "manual_paths": manual_paths,
         "num_chunks": len(all_chunks),
     }
@@ -402,7 +531,14 @@ def build_index(
 
 
 class Retriever:
-    def __init__(self, index_dir, model_name=None, alpha=0.7, candidate_multiplier=5):
+    def __init__(
+        self,
+        index_dir,
+        model_name=None,
+        alpha=0.7,
+        candidate_multiplier=5,
+        synthetic_weight=0.6,
+    ):
         self.index, self.metadata, self.config = load_index(index_dir)
         self.model_name = model_name or self.config.get("model_name")
         if not self.model_name:
@@ -410,7 +546,15 @@ class Retriever:
         self.model = SentenceTransformer(self.model_name)
         self.alpha = alpha
         self.candidate_multiplier = candidate_multiplier
+        self.synthetic_weight = synthetic_weight
         self.bm25 = BM25Index([item.get("text", "") for item in self.metadata])
+
+    def source_weight(self, source_name):
+        if not source_name:
+            return 1.0
+        if "synthetic" in source_name.lower():
+            return self.synthetic_weight
+        return 1.0
 
     def search(self, query_text, top_k):
         if not self.metadata:
@@ -450,7 +594,9 @@ class Retriever:
             bm25_norm = (
                 float(bm25_scores[idx]) / max_bm25 if max_bm25 > 0 else 0.0
             )
-            score = (self.alpha * emb_norm) + ((1.0 - self.alpha) * bm25_norm)
+            base_score = (self.alpha * emb_norm) + ((1.0 - self.alpha) * bm25_norm)
+            source = self.metadata[idx].get("source")
+            score = base_score * self.source_weight(source)
             combined.append((score, idx))
 
         combined.sort(key=lambda item: item[0], reverse=True)
@@ -464,6 +610,7 @@ class Retriever:
                     "source": meta.get("source"),
                     "text": meta.get("text"),
                     "page": meta.get("page"),
+                    "page_end": meta.get("page_end"),
                     "section": meta.get("section"),
                 }
             )

@@ -21,8 +21,13 @@ def parse_args():
     build_parser.add_argument(
         "--manuals",
         nargs="+",
-        required=True,
+        required=False,
         help="Paths to manuals (PDF or text).",
+    )
+    build_parser.add_argument(
+        "--manuals-dir",
+        default=None,
+        help="Directory containing manuals to index.",
     )
     build_parser.add_argument(
         "--index-dir",
@@ -56,6 +61,24 @@ def parse_args():
         type=int,
         default=800,
         help="Max tokens for a section chunk when --section-chunks is set.",
+    )
+    build_parser.add_argument(
+        "--section-manuals",
+        nargs="*",
+        default=["*"],
+        help="Manual base filenames to use outline/heading sectioning; use \"*\" for all.",
+    )
+    build_parser.add_argument(
+        "--skip-first-pages",
+        type=int,
+        default=2,
+        help="Number of leading pages to skip for manuals in --skip-page-manuals.",
+    )
+    build_parser.add_argument(
+        "--skip-page-manuals",
+        nargs="*",
+        default=["manual-02.pdf"],
+        help="Manual base filenames to skip leading pages for.",
     )
     build_parser.add_argument(
         "--batch-size",
@@ -137,8 +160,21 @@ def main():
     setup_logging()
 
     if args.command == "build":
+        manual_paths = []
+        if args.manuals:
+            manual_paths.extend(args.manuals)
+        if args.manuals_dir:
+            if not os.path.isdir(args.manuals_dir):
+                raise ValueError(f"Manuals directory not found: {args.manuals_dir}")
+            entries = sorted(os.listdir(args.manuals_dir))
+            for name in entries:
+                ext = os.path.splitext(name)[1].lower()
+                if ext in {".pdf", ".txt"}:
+                    manual_paths.append(os.path.join(args.manuals_dir, name))
+        if not manual_paths:
+            raise ValueError("No manuals provided. Use --manuals or --manuals-dir.")
         build_index(
-            manual_paths=args.manuals,
+            manual_paths=manual_paths,
             index_dir=args.index_dir,
             model_name=args.model,
             chunk_size=args.chunk_size,
@@ -147,6 +183,9 @@ def main():
             seed=args.seed,
             add_section_chunks=args.section_chunks,
             max_section_tokens=args.max_section_tokens,
+            section_manuals=args.section_manuals,
+            skip_first_pages=args.skip_first_pages,
+            skip_page_manuals=args.skip_page_manuals,
         )
         return
 

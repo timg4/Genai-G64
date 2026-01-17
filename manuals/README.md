@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ## Build an index
 
 ```bash
-python rag_cli.py build --manuals "manuals_files/manual-01.pdf" "manuals_files/manual-02.pdf" "manuals_files/manual-03.pdf" "manuals_files/manual-04.pdf" "manuals_files/manual-05.pdf" --index-dir "./manuals/manuals_index"
+python rag_cli.py build --manuals-dir "manuals_files" --index-dir "./manuals_index"
 ```
 
 Optional knobs:
@@ -23,8 +23,11 @@ Optional knobs:
 - `--chunk-size` target chunk size in whitespace tokens (default: 450)
 - `--chunk-overlap` overlap in tokens (default: 70)
 - `--section-chunks` add full-section chunks between headings
+- `--section-manuals` base filenames that use outline/heading sectioning; use `"*"` for all (default: `"*"`)
+- `--skip-first-pages` leading pages to skip for manuals in `--skip-page-manuals` (default: 2)
+- `--skip-page-manuals` base filenames that skip leading pages (default: `manual-02.pdf`)
 
-Artifacts written to `./index`:
+Artifacts written to `./manuals_index`:
 - `index.faiss`
 - `metadata.json`
 - `config.json`
@@ -32,13 +35,13 @@ Artifacts written to `./index`:
 ## Query the index
 
 ```bash
-python rag_cli.py query --index-dir "./manuals/manuals_index" --query "Gearbox vibration spike after shutdown" --top-k 5
+python rag_cli.py query --index-dir "./manuals_index" --query "Gearbox vibration spike after shutdown" --top-k 5
 ```
 
 With grounded JSON report (requires `OPENAI_API_KEY`):
 
 ```bash
-python rag_cli.py query --index-dir "./manuals/manuals_index" --query "Gearbox vibration spike after shutdown" --top-k 5 --generate
+python rag_cli.py query --index-dir "./manuals_index" --query "Gearbox vibration spike after shutdown" --top-k 5 --generate
 ```
 
 Hybrid retrieval blends embeddings and BM25 by default:
@@ -54,7 +57,7 @@ Set `--alpha` (0-1) to tune the mix.
 `gold_example.jsonl` is a dummy template. Replace `relevant_chunk_ids` with actual chunk ids from `metadata.json`.
 
 ```bash
-python rag_cli.py eval --index-dir "./manuals/manuals_index" --gold "gold_example.jsonl" --top-k 5
+python rag_cli.py eval --index-dir "./manuals_index" --gold "gold_example.jsonl" --top-k 5
 ```
 
 ## Notes
@@ -63,4 +66,4 @@ python rag_cli.py eval --index-dir "./manuals/manuals_index" --gold "gold_exampl
 - Text files are treated as a single document with no page index.
 - Chunk ids are deterministic per manual path and chunk index.
 - Chunking hard-splits at headings like "ELEMENT", "Lesson", "Tab.", "Figure", or numbered section lines.
-- Retrieved results include `page` and `section` when available to help locate content in the manuals.
+- Retrieved results include `page`, `page_end`, and `section` when available to help locate content in the manuals.
