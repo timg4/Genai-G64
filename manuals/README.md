@@ -54,6 +54,16 @@ score = alpha * cosine_similarity + (1 - alpha) * bm25
 
 Set `--alpha` (0-1) to tune the mix.
 
+You can filter or boost chunk kinds at query time:
+
+```bash
+python rag_cli.py query --index-dir "./manuals_index" --query "leading edge erosion inspection and repair" --top-k 5 --allowed-kinds procedure checklist troubleshooting safety
+```
+
+```bash
+python rag_cli.py query --index-dir "./manuals_index" --query "leading edge erosion inspection and repair" --top-k 5 --kind-boost procedure=1.2 checklist=1.1 safety=1.1
+```
+
 ## Evaluate retrieval
 
 `gold_example.jsonl` is a dummy template. Replace `relevant_chunk_ids` with actual chunk ids from `metadata.json`.

@@ -130,13 +130,25 @@ def parse_args():
         help="Hybrid weight for embeddings vs. BM25 (0-1).",
     )
     query_parser.add_argument(
+        "--allowed-kinds",
+        nargs="*",
+        default=None,
+        help="Only return chunks with these kinds (e.g. procedure checklist safety).",
+    )
+    query_parser.add_argument(
+        "--kind-boost",
+        nargs="*",
+        default=None,
+        help="Boost kinds like procedure=1.2 checklist=1.1 safety=1.1",
+    )
+    query_parser.add_argument(
         "--generate",
         action="store_true",
         help="Generate grounded JSON report if OPENAI_API_KEY is set.",
     )
     query_parser.add_argument(
         "--openai-model",
-        default="gpt-4o-mini",
+        default="gpt-5.2",
         help="OpenAI model name for report generation.",
     )
     query_parser.add_argument(
@@ -204,7 +216,23 @@ def main():
         return
 
     if args.command == "query":
-        retriever = Retriever(args.index_dir, model_name=args.model, alpha=args.alpha)
+        kind_boost = {}
+        if args.kind_boost:
+            for item in args.kind_boost:
+                if "=" not in item:
+                    continue
+                key, value = item.split("=", 1)
+                try:
+                    kind_boost[key] = float(value)
+                except ValueError:
+                    continue
+        retriever = Retriever(
+            args.index_dir,
+            model_name=args.model,
+            alpha=args.alpha,
+            kind_boost=kind_boost,
+            allowed_kinds=args.allowed_kinds,
+        )
         results = retriever.search(args.query, top_k=args.top_k)
         output = {"query": args.query, "results": results}
 

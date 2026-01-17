@@ -169,6 +169,27 @@ def filter_pages(pages, min_page_tokens):
     return filtered
 
 
+def classify_chunk_kind(section, text):
+    section = (section or "").lower()
+    text = (text or "").lower()
+    combined = f"{section} {text}"
+    if re.search(r"\b(terms|definitions|abbreviations|glossary)\b", combined):
+        return "definition"
+    if re.search(r"\b(change log|revision history|document control|version history)\b", combined):
+        return "changelog"
+    if re.search(r"\b(training|course|overview|introduction)\b", combined):
+        return "training_admin"
+    if re.search(r"\b(safety|warning|caution|hazard|ppe)\b", combined):
+        return "safety"
+    if re.search(r"\b(checklist|check list|inspection checklist|qa checklist)\b", combined):
+        return "checklist"
+    if re.search(r"\b(troubleshooting|diagnostic|fault|failure mode)\b", combined):
+        return "troubleshooting"
+    if re.search(r"\b(procedure|work instruction|steps|step-by-step|step by step)\b", combined):
+        return "procedure"
+    return "other"
+
+
 def extract_outline_entries(reader):
     entries = []
     try:
@@ -318,6 +339,7 @@ def chunk_blocks(
         block_tokens = tokenize(block.get("text", ""))
         if not block_tokens:
             continue
+        chunk_kind = classify_chunk_kind(block.get("heading"), block.get("text", ""))
         if (
             add_section_chunks
             and len(block_tokens) <= max_section_tokens
@@ -332,6 +354,7 @@ def chunk_blocks(
                         "page": block.get("page_index"),
                         "page_end": block.get("page_end", block.get("page_index")),
                         "section": block.get("heading"),
+                        "chunk_kind": chunk_kind,
                         "text": " ".join(block_tokens),
                     }
                 )
@@ -345,6 +368,7 @@ def chunk_blocks(
                     "page": block.get("page_index"),
                     "page_end": block.get("page_end", block.get("page_index")),
                     "section": block.get("heading"),
+                    "chunk_kind": chunk_kind,
                     "text": " ".join(block_tokens),
                 }
             )
@@ -363,6 +387,7 @@ def chunk_blocks(
                     "page": block.get("page_index"),
                     "page_end": block.get("page_end", block.get("page_index")),
                     "section": block.get("heading"),
+                    "chunk_kind": chunk_kind,
                     "text": " ".join(chunk_tokens),
                 }
             )
@@ -572,6 +597,8 @@ class Retriever:
         alpha=0.7,
         candidate_multiplier=5,
         synthetic_weight=0.6,
+        kind_boost=None,
+        allowed_kinds=None,
     ):
         self.index, self.metadata, self.config = load_index(index_dir)
         self.model_name = model_name or self.config.get("model_name")
@@ -581,6 +608,8 @@ class Retriever:
         self.alpha = alpha
         self.candidate_multiplier = candidate_multiplier
         self.synthetic_weight = synthetic_weight
+        self.kind_boost = kind_boost or {}
+        self.allowed_kinds = set(allowed_kinds) if allowed_kinds else None
         self.bm25 = BM25Index([item.get("text", "") for item in self.metadata])
 
     def source_weight(self, source_name):
@@ -628,9 +657,13 @@ class Retriever:
             bm25_norm = (
                 float(bm25_scores[idx]) / max_bm25 if max_bm25 > 0 else 0.0
             )
+            kind = self.metadata[idx].get("chunk_kind")
+            if self.allowed_kinds and kind not in self.allowed_kinds:
+                continue
             base_score = (self.alpha * emb_norm) + ((1.0 - self.alpha) * bm25_norm)
             source = self.metadata[idx].get("source")
             score = base_score * self.source_weight(source)
+            score *= self.kind_boost.get(kind, 1.0)
             combined.append((score, idx))
 
         combined.sort(key=lambda item: item[0], reverse=True)
@@ -646,6 +679,7 @@ class Retriever:
                     "page": meta.get("page"),
                     "page_end": meta.get("page_end"),
                     "section": meta.get("section"),
+                    "chunk_kind": meta.get("chunk_kind"),
                 }
             )
         return results
@@ -731,9 +765,22 @@ def generate_grounded_report(query_text, retrieved_chunks, model_name, api_key, 
         return None
 
     system_prompt = (
-        "You are a maintenance assistant. Use only the provided chunks. "
-        "Return strict JSON with keys summary, recommended_action, evidence. "
-        "Every claim must be supported by evidence with chunk_id."
+        "You are a wind-turbine blade maintenance assistant. "
+        "You will receive retrieved manual excerpts (\"chunks\"). These excerpts may be "
+        "generic, training-oriented, or partially synthetic and are NOT guaranteed to be "
+        "OEM-authoritative. Treat them as guidance, not unquestionable truth. "
+        "Rules: Use ONLY the provided chunks. Do not use outside knowledge. "
+        "Do not overclaim. If the chunks do not clearly support a procedure or threshold, "
+        "say so and recommend safer next steps (inspection, measurements, documentation, "
+        "consult OEM documentation). "
+        "Every concrete claim or recommendation must cite at least one chunk id in square "
+        "brackets, e.g. [manuals::...::chunk_000123]. If you cannot cite it, do not say it. "
+        "If chunks conflict, mention the conflict and choose the safer action. "
+        "Prefer actionable guidance from chunks tagged \"procedure\", \"checklist\", or "
+        "\"troubleshooting\", but do not ignore safety or inspection content. "
+        "If any safety or stop-criteria appear, include them. "
+        "Do not quote more than 1-2 sentences from any chunk. "
+        "Return strict JSON with keys summary, recommended_action, evidence."
     )
     user_payload = {
         "query": query_text,
