@@ -1,4 +1,6 @@
-# Text RAG Baseline (Manuals)
+﻿# Text RAG Baseline (Manuals)
+
+![Project visual](../Gemini_Generated_Image_bi9r96bi9r96bi9r.png)
 
 Minimal text-first retrieval pipeline over manuals with optional grounded report generation.
 
