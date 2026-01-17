@@ -1,0 +1,48 @@
+{
+  "window_id": "WF-A-69-53771",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 69,
+    "asset_id": 11,
+    "event_id": 69,
+    "event_label": "normal",
+    "event_description": "nan",
+    "window_end": "2023-09-13 19:20:00"
+  },
+  "window": {
+    "end_time": "2023-09-13 19:20:00",
+    "start_time": "2023-09-13 13:20:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 12.6514,
+    "wind_speed_std": 0.644,
+    "wind_speed_max": 30.2,
+    "power_mean": 0.9529,
+    "power_std": 0.0218,
+    "rotor_rpm_mean": 14.9,
+    "rotor_rpm_std": 0.0,
+    "generator_rpm_mean": 1681.7784,
+    "generator_rpm_std": 0.6399,
+    "pitch_mean": 3.5432,
+    "pitch_std": 1.6912,
+    "yaw_misalignment_mean": 2.4838,
+    "yaw_misalignment_std": 1.2558,
+    "temp_mean": 73.973
+  },
+  "derived": {
+    "power_residual_mean": 0.1249,
+    "power_residual_std": 0.0385,
+    "status_non_normal_ratio": 0.0,
+    "status_counts": {
+      "0": 37
+    }
+  },
+  "tags": [
+    "high_wind",
+    "elevated_temps"
+  ],
+  "summary": "Over the six-hour window winds averaged about 12.7 m/s with low variability but included a high gust to 30.2 m/s, while power output was very steady around 0.95 p.u. with only minor fluctuations. A small persistent positive power residual (~0.125 p.u.) was present, and one rotational-speed signal showed no variability while another showed modest variation, which is inconsistent with the otherwise stable trends. Temperatures were elevated (\u224874) and average yaw misalignment (~2.5\u00b0) with pitch near 3.5\u00b0 were observed, and no non-normal operating statuses were recorded."
+}

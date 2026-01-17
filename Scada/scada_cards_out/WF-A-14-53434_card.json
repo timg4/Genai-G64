@@ -1,0 +1,47 @@
+{
+  "window_id": "WF-A-14-53434",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 14,
+    "asset_id": 13,
+    "event_id": 14,
+    "event_label": "normal",
+    "event_description": "nan",
+    "window_end": "2023-03-11 11:40:00"
+  },
+  "window": {
+    "end_time": "2023-03-11 11:40:00",
+    "start_time": "2023-03-11 05:40:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 1.6378,
+    "wind_speed_std": 0.5737,
+    "wind_speed_max": 17.2,
+    "power_mean": -0.0024,
+    "power_std": 0.0009,
+    "rotor_rpm_mean": 0.4027,
+    "rotor_rpm_std": 0.6362,
+    "generator_rpm_mean": 74.5162,
+    "generator_rpm_std": 83.3295,
+    "pitch_mean": 24.0,
+    "pitch_std": 0.0,
+    "yaw_misalignment_mean": 67.6054,
+    "yaw_misalignment_std": 54.7647,
+    "temp_mean": 34.9662
+  },
+  "derived": {
+    "power_residual_mean": 0.1147,
+    "power_residual_std": 0.0516,
+    "status_non_normal_ratio": 0.0,
+    "status_counts": {
+      "0": 37
+    }
+  },
+  "tags": [
+    "yaw_misalignment"
+  ],
+  "summary": "Over the 6\u2011hour window ambient wind was very low on average (~1.64 m/s) with a sharp peak to 17.2 m/s; mean power was essentially zero with very low variability while blade pitch stayed high (~24\u00b0) and temperature averaged ~35\u00b0C. Operationally, generator speed showed large variability despite minimal rotor speed fluctuation, there was a substantial alignment offset averaging ~67.6\u00b0, and power residuals averaged modestly positive (~0.115), with no abnormal status events recorded."
+}

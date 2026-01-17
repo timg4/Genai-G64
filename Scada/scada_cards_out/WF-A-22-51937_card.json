@@ -1,0 +1,48 @@
+{
+  "window_id": "WF-A-22-51937",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 22,
+    "asset_id": 21,
+    "event_id": 22,
+    "event_label": "anomaly",
+    "event_description": "Hydraulic group",
+    "window_end": "2023-08-12 18:00:00"
+  },
+  "window": {
+    "end_time": "2023-08-12 18:00:00",
+    "start_time": "2023-08-12 12:00:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 15.9,
+    "wind_speed_std": 1.1614,
+    "wind_speed_max": 44.3,
+    "power_mean": 0.9741,
+    "power_std": 0.0044,
+    "rotor_rpm_mean": 14.9,
+    "rotor_rpm_std": 0.0,
+    "generator_rpm_mean": 1680.9297,
+    "generator_rpm_std": 0.6666,
+    "pitch_mean": 10.5297,
+    "pitch_std": 2.1402,
+    "yaw_misalignment_mean": 9.5838,
+    "yaw_misalignment_std": 9.1624,
+    "temp_mean": 68.6081
+  },
+  "derived": {
+    "power_residual_mean": -0.1226,
+    "power_residual_std": 0.0752,
+    "status_non_normal_ratio": 1.0,
+    "status_counts": {
+      "4": 37
+    }
+  },
+  "tags": [
+    "high_wind",
+    "power_deficit"
+  ],
+  "summary": "Over the six-hour window winds were consistently high (~16 m/s, SD ~1.2) with a brief extreme gust to 44.3 m/s; despite that, power stayed very tightly clustered around 0.974 (SD ~0.0044) and exhibited a persistent negative residual of about -0.12, indicating a steady shortfall relative to expected output. Rotational speed was effectively constant while generator speed showed only minor variability, blade pitch averaged ~10.5\u00b0, yaw was persistently misaligned by ~9.6\u00b0, system status was continuously flagged as non-normal, and temperature held near 68.6."
+}

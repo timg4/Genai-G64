@@ -1,0 +1,47 @@
+{
+  "window_id": "WF-A-84-53478",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 84,
+    "asset_id": 13,
+    "event_id": 84,
+    "event_label": "anomaly",
+    "event_description": "Hydraulic group",
+    "window_end": "2023-09-11 14:20:00"
+  },
+  "window": {
+    "end_time": "2023-09-11 14:20:00",
+    "start_time": "2023-09-11 08:20:00",
+    "row_count": 35,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 2.7657,
+    "wind_speed_std": 0.8758,
+    "wind_speed_max": 12.4,
+    "power_mean": -0.0018,
+    "power_std": 0.001,
+    "rotor_rpm_mean": 0.0,
+    "rotor_rpm_std": 0.0,
+    "generator_rpm_mean": 1.04,
+    "generator_rpm_std": 3.9123,
+    "pitch_mean": 85.2886,
+    "pitch_std": 6.6947,
+    "yaw_misalignment_mean": 65.5086,
+    "yaw_misalignment_std": 43.9071,
+    "temp_mean": 34.3
+  },
+  "derived": {
+    "power_residual_mean": 0.0243,
+    "power_residual_std": 0.0679,
+    "status_non_normal_ratio": 1.0,
+    "status_counts": {
+      "4": 35
+    }
+  },
+  "tags": [
+    "yaw_misalignment"
+  ],
+  "summary": "Over the six-hour window winds were generally low (mean ~2.8 m/s) with modest variability and a single spike to 12.4 m/s; electrical output remained essentially zero with very little fluctuation and a small positive residual. The primary rotor speed was steady while the generator-side speed varied, blade pitch stayed near a high setpoint, a large, sustained alignment offset was present, the system reported non-normal status for the entire period, and average temperature was about 34\u00b0C."
+}

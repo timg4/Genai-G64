@@ -1,0 +1,47 @@
+{
+  "window_id": "WF-A-71-52941",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 71,
+    "asset_id": 0,
+    "event_id": 71,
+    "event_label": "normal",
+    "event_description": "nan",
+    "window_end": "2023-01-05 11:40:00"
+  },
+  "window": {
+    "end_time": "2023-01-05 11:40:00",
+    "start_time": "2023-01-05 05:40:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 1.2108,
+    "wind_speed_std": 0.3871,
+    "wind_speed_max": 5.2,
+    "power_mean": -0.0015,
+    "power_std": 0.0003,
+    "rotor_rpm_mean": 0.0,
+    "rotor_rpm_std": 0.0,
+    "generator_rpm_mean": 5.973,
+    "generator_rpm_std": 13.1906,
+    "pitch_mean": 24.0,
+    "pitch_std": 0.0,
+    "yaw_misalignment_mean": 76.6081,
+    "yaw_misalignment_std": 47.4456,
+    "temp_mean": 24.4392
+  },
+  "derived": {
+    "power_residual_mean": 0.1677,
+    "power_residual_std": 0.038,
+    "status_non_normal_ratio": 0.0,
+    "status_counts": {
+      "0": 37
+    }
+  },
+  "tags": [
+    "yaw_misalignment"
+  ],
+  "summary": "Over the 6\u2011hour window wind conditions were very light (mean ~1.21 m/s, max 5.2 m/s) and power production remained essentially zero with very low variability (power mean ~-0.0015, std ~0.0003), though the power residual showed a consistent positive bias (~0.168). Pitch was steady (~24\u00b0) and ambient temperature around 24.4\u00b0C with no non\u2011normal status flags. Rotational signals were unusual in that rotor speed showed no variability (std=0) while generator speed varied substantially (std ~13.2 rpm), and yaw angle exhibited a large, persistent misalignment (~76.6\u00b0)."
+}

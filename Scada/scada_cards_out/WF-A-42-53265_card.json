@@ -1,0 +1,45 @@
+{
+  "window_id": "WF-A-42-53265",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 42,
+    "asset_id": 10,
+    "event_id": 42,
+    "event_label": "anomaly",
+    "event_description": "Hydraulic group",
+    "window_end": "2023-09-16 08:30:00"
+  },
+  "window": {
+    "end_time": "2023-09-16 08:30:00",
+    "start_time": "2023-09-16 02:30:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 2.6757,
+    "wind_speed_std": 1.0377,
+    "wind_speed_max": 10.0,
+    "power_mean": -0.0042,
+    "power_std": 0.0002,
+    "rotor_rpm_mean": 0.0351,
+    "rotor_rpm_std": 0.2137,
+    "generator_rpm_mean": 7.1568,
+    "generator_rpm_std": 27.8152,
+    "pitch_mean": 88.1108,
+    "pitch_std": 8.0889,
+    "yaw_misalignment_mean": 29.1946,
+    "yaw_misalignment_std": 37.4673,
+    "temp_mean": 29.9595
+  },
+  "derived": {
+    "power_residual_mean": 0.0038,
+    "power_residual_std": 0.0665,
+    "status_non_normal_ratio": 1.0,
+    "status_counts": {
+      "4": 37
+    }
+  },
+  "tags": [],
+  "summary": "Over the 6\u2011hour window winds were low on average (\u22482.7 m/s, std \u22481.04) with a brief peak to 10 m/s, while electrical output stayed essentially at zero (mean \u2248\u22120.004, very low variability). Control surfaces were held near 88\u00b0, yaw misalignment averaged about 29\u00b0, and the operational state was marked non\u2011normal for the entire period; rotor speed was very stable (std \u22480.21) whereas generator speed showed much higher variability (std \u224827.8), temperatures were ~30\u00b0C, and power residuals remained small (~0.0038)."
+}

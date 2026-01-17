@@ -1,0 +1,49 @@
+{
+  "window_id": "WF-A-24-53477",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 24,
+    "asset_id": 0,
+    "event_id": 24,
+    "event_label": "normal",
+    "event_description": "nan",
+    "window_end": "2023-05-02 21:10:00"
+  },
+  "window": {
+    "end_time": "2023-05-02 21:10:00",
+    "start_time": "2023-05-02 15:10:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 14.2459,
+    "wind_speed_std": 0.863,
+    "wind_speed_max": 43.7,
+    "power_mean": 0.9749,
+    "power_std": 0.0013,
+    "rotor_rpm_mean": 14.9,
+    "rotor_rpm_std": 0.0,
+    "generator_rpm_mean": 1680.8027,
+    "generator_rpm_std": 0.4133,
+    "pitch_mean": 9.0135,
+    "pitch_std": 1.8145,
+    "yaw_misalignment_mean": 9.5432,
+    "yaw_misalignment_std": 6.4051,
+    "temp_mean": 66.7162
+  },
+  "derived": {
+    "power_residual_mean": -0.0956,
+    "power_residual_std": 0.0693,
+    "status_non_normal_ratio": 0.0,
+    "status_counts": {
+      "0": 37
+    }
+  },
+  "tags": [
+    "high_wind",
+    "power_deficit",
+    "elevated_temps"
+  ],
+  "summary": "Over the 6\u2011hour window winds were relatively strong (mean ~14.25, peak 43.7) with modest variability; control blade angle averaged \u22489\u00b0 and alignment averaged \u22489.5\u00b0. Power stayed unusually flat (mean \u22480.975, std \u22480.0013) with a consistent negative residual (~\u22120.096) despite the wind levels; one rotational-speed channel was essentially constant while another showed small variability, and temperatures were elevated (mean \u224866.7)."
+}

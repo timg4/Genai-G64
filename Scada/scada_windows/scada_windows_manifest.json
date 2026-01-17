@@ -1,0 +1,394 @@
+{
+  "windows": [
+    {
+      "window_id": "WF-A-25-52366",
+      "file": "WF-A-25-52366.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 25,
+        "asset_id": 11,
+        "event_id": 25,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-23 19:40:00"
+      }
+    },
+    {
+      "window_id": "WF-A-38-53022",
+      "file": "WF-A-38-53022.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 38,
+        "asset_id": 13,
+        "event_id": 38,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-07-03 17:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-14-53434",
+      "file": "WF-A-14-53434.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 14,
+        "asset_id": 13,
+        "event_id": 14,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-03-11 11:40:00"
+      }
+    },
+    {
+      "window_id": "WF-A-92-52677",
+      "file": "WF-A-92-52677.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 92,
+        "asset_id": 11,
+        "event_id": 92,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-04-06 18:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-69-53771",
+      "file": "WF-A-69-53771.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 69,
+        "asset_id": 11,
+        "event_id": 69,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-09-13 19:20:00"
+      }
+    },
+    {
+      "window_id": "WF-A-73-53669",
+      "file": "WF-A-73-53669.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 73,
+        "asset_id": 0,
+        "event_id": 73,
+        "event_label": "anomaly",
+        "event_description": "Hydraulic group",
+        "window_end": "2023-06-16 21:40:00"
+      }
+    },
+    {
+      "window_id": "WF-A-45-52922",
+      "file": "WF-A-45-52922.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 45,
+        "asset_id": 13,
+        "event_id": 45,
+        "event_label": "anomaly",
+        "event_description": "Hydraulic group",
+        "window_end": "2023-04-21 02:00:00"
+      }
+    },
+    {
+      "window_id": "WF-A-84-53478",
+      "file": "WF-A-84-53478.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 84,
+        "asset_id": 13,
+        "event_id": 84,
+        "event_label": "anomaly",
+        "event_description": "Hydraulic group",
+        "window_end": "2023-09-11 14:20:00"
+      }
+    },
+    {
+      "window_id": "WF-A-40-55180",
+      "file": "WF-A-40-55180.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 40,
+        "asset_id": 10,
+        "event_id": 40,
+        "event_label": "anomaly",
+        "event_description": "Generator bearing failure",
+        "window_end": "2023-01-21 12:50:00"
+      }
+    },
+    {
+      "window_id": "WF-A-42-53265",
+      "file": "WF-A-42-53265.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 42,
+        "asset_id": 10,
+        "event_id": 42,
+        "event_label": "anomaly",
+        "event_description": "Hydraulic group",
+        "window_end": "2023-09-16 08:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-68-54076",
+      "file": "WF-A-68-54076.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 68,
+        "asset_id": 11,
+        "event_id": 68,
+        "event_label": "anomaly",
+        "event_description": "Transformer failure",
+        "window_end": "2023-08-11 13:10:00"
+      }
+    },
+    {
+      "window_id": "WF-A-51-53732",
+      "file": "WF-A-51-53732.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 51,
+        "asset_id": 21,
+        "event_id": 51,
+        "event_label": "anomaly",
+        "event_description": "Gearbox bearings damaged",
+        "window_end": "2023-10-15 19:00:00"
+      }
+    },
+    {
+      "window_id": "WF-A-0-53522",
+      "file": "WF-A-0-53522.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 0,
+        "asset_id": 0,
+        "event_id": 0,
+        "event_label": "anomaly",
+        "event_description": "Generator bearing failure",
+        "window_end": "2023-08-13 19:20:00"
+      }
+    },
+    {
+      "window_id": "WF-A-72-53279",
+      "file": "WF-A-72-53279.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 72,
+        "asset_id": 21,
+        "event_id": 72,
+        "event_label": "anomaly",
+        "event_description": "Gearbox failure",
+        "window_end": "2023-10-15 19:00:00"
+      }
+    },
+    {
+      "window_id": "WF-A-26-52744",
+      "file": "WF-A-26-52744.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 26,
+        "asset_id": 0,
+        "event_id": 26,
+        "event_label": "anomaly",
+        "event_description": "Hydraulic group",
+        "window_end": "2023-10-15 18:50:00"
+      }
+    },
+    {
+      "window_id": "WF-A-10-53218",
+      "file": "WF-A-10-53218.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 10,
+        "asset_id": 10,
+        "event_id": 10,
+        "event_label": "anomaly",
+        "event_description": "Gearbox failure",
+        "window_end": "2023-10-15 18:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-22-51937",
+      "file": "WF-A-22-51937.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 22,
+        "asset_id": 21,
+        "event_id": 22,
+        "event_label": "anomaly",
+        "event_description": "Hydraulic group",
+        "window_end": "2023-08-12 18:00:00"
+      }
+    },
+    {
+      "window_id": "WF-A-13-53777",
+      "file": "WF-A-13-53777.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 13,
+        "asset_id": 21,
+        "event_id": 13,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-23 19:40:00"
+      }
+    },
+    {
+      "window_id": "WF-A-24-53477",
+      "file": "WF-A-24-53477.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 24,
+        "asset_id": 0,
+        "event_id": 24,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-02 21:10:00"
+      }
+    },
+    {
+      "window_id": "WF-A-3-55020",
+      "file": "WF-A-3-55020.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 3,
+        "asset_id": 10,
+        "event_id": 3,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-16 19:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-17-54009",
+      "file": "WF-A-17-54009.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 17,
+        "asset_id": 10,
+        "event_id": 17,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-11-12 12:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-71-52941",
+      "file": "WF-A-71-52941.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 71,
+        "asset_id": 0,
+        "event_id": 71,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-01-05 11:40:00"
+      }
+    },
+    {
+      "window_id": "WF-A-25-52366-1",
+      "file": "WF-A-25-52366-1.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 25,
+        "asset_id": 11,
+        "event_id": 25,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-23 19:40:00"
+      }
+    },
+    {
+      "window_id": "WF-A-38-53022-1",
+      "file": "WF-A-38-53022-1.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 38,
+        "asset_id": 13,
+        "event_id": 38,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-07-03 17:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-3-55020-1",
+      "file": "WF-A-3-55020-1.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 3,
+        "asset_id": 10,
+        "event_id": 3,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-16 19:30:00"
+      }
+    },
+    {
+      "window_id": "WF-A-13-52092",
+      "file": "WF-A-13-52092.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 13,
+        "asset_id": 21,
+        "event_id": 13,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-12 02:50:00"
+      }
+    },
+    {
+      "window_id": "WF-A-25-53089",
+      "file": "WF-A-25-53089.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 25,
+        "asset_id": 11,
+        "event_id": 25,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-05-28 20:10:00"
+      }
+    },
+    {
+      "window_id": "WF-A-71-53139",
+      "file": "WF-A-71-53139.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 71,
+        "asset_id": 0,
+        "event_id": 71,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-01-06 20:40:00"
+      }
+    },
+    {
+      "window_id": "WF-A-69-54346",
+      "file": "WF-A-69-54346.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 69,
+        "asset_id": 11,
+        "event_id": 69,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-09-17 19:10:00"
+      }
+    },
+    {
+      "window_id": "WF-A-38-53594",
+      "file": "WF-A-38-53594.json",
+      "meta": {
+        "source": "Wind Farm A",
+        "dataset_id": 38,
+        "asset_id": 13,
+        "event_id": 38,
+        "event_label": "normal",
+        "event_description": "nan",
+        "window_end": "2023-07-08 17:00:00"
+      }
+    }
+  ]
+}

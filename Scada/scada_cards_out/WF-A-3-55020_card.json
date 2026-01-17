@@ -1,0 +1,48 @@
+{
+  "window_id": "WF-A-3-55020",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 3,
+    "asset_id": 10,
+    "event_id": 3,
+    "event_label": "normal",
+    "event_description": "nan",
+    "window_end": "2023-05-16 19:30:00"
+  },
+  "window": {
+    "end_time": "2023-05-16 19:30:00",
+    "start_time": "2023-05-16 13:30:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 14.9595,
+    "wind_speed_std": 0.8221,
+    "wind_speed_max": 28.1,
+    "power_mean": 0.9726,
+    "power_std": 0.0059,
+    "rotor_rpm_mean": 14.8108,
+    "rotor_rpm_std": 0.0315,
+    "generator_rpm_mean": 1680.8486,
+    "generator_rpm_std": 1.0482,
+    "pitch_mean": 9.5297,
+    "pitch_std": 1.625,
+    "yaw_misalignment_mean": 8.927,
+    "yaw_misalignment_std": 6.8137,
+    "temp_mean": 65.2297
+  },
+  "derived": {
+    "power_residual_mean": -0.0836,
+    "power_residual_std": 0.058,
+    "status_non_normal_ratio": 0.0,
+    "status_counts": {
+      "0": 37
+    }
+  },
+  "tags": [
+    "high_wind",
+    "elevated_temps"
+  ],
+  "summary": "Over the 6\u2011hour window winds were steady (mean 14.96 m/s, sd 0.82) with a short peak to 28.1 m/s; power output was very stable (mean 0.9726, sd 0.0059) and rotor speed showed minimal variability while generator speed was more variable (sd 1.05). Notable operational observations include a persistent yaw misalignment averaging about 8.93\u00b0, a negative mean power residual of \u22120.0836, and elevated component temperatures around 65.23\u00b0C, while status flags remained nominal (no non\u2011normal statuses)."
+}

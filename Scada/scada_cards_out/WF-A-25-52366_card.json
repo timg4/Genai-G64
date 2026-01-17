@@ -1,0 +1,47 @@
+{
+  "window_id": "WF-A-25-52366",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 25,
+    "asset_id": 11,
+    "event_id": 25,
+    "event_label": "normal",
+    "event_description": "nan",
+    "window_end": "2023-05-23 19:40:00"
+  },
+  "window": {
+    "end_time": "2023-05-23 19:40:00",
+    "start_time": "2023-05-23 13:40:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 18.0027,
+    "wind_speed_std": 0.9708,
+    "wind_speed_max": 33.9,
+    "power_mean": 0.9755,
+    "power_std": 0.0002,
+    "rotor_rpm_mean": 14.9,
+    "rotor_rpm_std": 0.0,
+    "generator_rpm_mean": 1680.7595,
+    "generator_rpm_std": 0.6085,
+    "pitch_mean": 14.8432,
+    "pitch_std": 1.5493,
+    "yaw_misalignment_mean": 8.1486,
+    "yaw_misalignment_std": 7.0751,
+    "temp_mean": 67.4257
+  },
+  "derived": {
+    "power_residual_mean": -0.1071,
+    "power_residual_std": 0.0543,
+    "status_non_normal_ratio": 0.0,
+    "status_counts": {
+      "0": 37
+    }
+  },
+  "tags": [
+    "high_wind"
+  ],
+  "summary": "Over the six-hour window the site saw high, fairly steady winds (mean \u224818 m/s with gusts to \u224834 m/s) while electrical output held nearly constant at about 0.976 with negligible variability. Operational patterns include zero measured variance in rotational speed with only small generator speed fluctuation, blade pitch steady near 15\u00b0, a sustained yaw offset around 8\u00b0, a slight negative average power residual, and moderate temperature (~67\u00b0C); no abnormal status flags were recorded."
+}

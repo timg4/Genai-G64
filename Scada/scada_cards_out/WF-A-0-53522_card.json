@@ -1,0 +1,47 @@
+{
+  "window_id": "WF-A-0-53522",
+  "source": {
+    "source": "Wind Farm A",
+    "dataset_id": 0,
+    "asset_id": 0,
+    "event_id": 0,
+    "event_label": "anomaly",
+    "event_description": "Generator bearing failure",
+    "window_end": "2023-08-13 19:20:00"
+  },
+  "window": {
+    "end_time": "2023-08-13 19:20:00",
+    "start_time": "2023-08-13 13:20:00",
+    "row_count": 37,
+    "baseline_hours": 168,
+    "window_hours": 6
+  },
+  "stats": {
+    "wind_speed_mean": 13.7216,
+    "wind_speed_std": 1.4924,
+    "wind_speed_max": 43.7,
+    "power_mean": 0.9257,
+    "power_std": 0.1174,
+    "rotor_rpm_mean": 14.5162,
+    "rotor_rpm_std": 1.6244,
+    "generator_rpm_mean": 1638.5541,
+    "generator_rpm_std": 179.3927,
+    "pitch_mean": 8.2081,
+    "pitch_std": 9.5955,
+    "yaw_misalignment_mean": 8.6189,
+    "yaw_misalignment_std": 8.5811,
+    "temp_mean": 72.5338
+  },
+  "derived": {
+    "power_residual_mean": 0.0103,
+    "power_residual_std": 0.1648,
+    "status_non_normal_ratio": 1.0,
+    "status_counts": {
+      "4": 37
+    }
+  },
+  "tags": [
+    "power_variability"
+  ],
+  "summary": "Over the 6\u2011hour window winds were generally moderate and steady (mean ~13.7, std ~1.5) with an extreme peak to 43.7; power averaged ~0.93 with modest variability (std ~0.12) but showed greater fluctuation than the wind variability alone would predict. Rotor speed was tightly stable (std ~1.6) while generator speed exhibited much larger swings (std ~179), and blade pitch and yaw angles remained near ~8 on average; ambient temperature averaged ~72.5. The unit remained in a non\u2011standard operational state for the entire period, while mean power residuals were small (~0.01), indicating short-lived mismatches between expected and actual output."
+}
