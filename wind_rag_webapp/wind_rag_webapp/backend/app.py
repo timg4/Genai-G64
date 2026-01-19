@@ -121,6 +121,7 @@ Task:
 - When you reference something from a chunk, cite it like: [source pX-Y].
 - If the chunks are irrelevant or only training/admin, say so and ask for the right manual.
 - Prioritize safety: if there are any safety warnings, mentiom them early. First priority is safety for technician.
+- If there is no issue indicated, start by saying everything is ok, then add optional maintenance steps (e.g., "Everything is OK, but for maintenance you can still do: ...").
 """
 
 
