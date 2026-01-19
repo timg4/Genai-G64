@@ -529,13 +529,113 @@
     }
     .scada-section {
       transition: max-height .3s ease, opacity .2s ease;
-      max-height: 800px;
+      max-height: 1200px;
       overflow: hidden;
     }
     .scada-section.collapsed {
       max-height: 0;
       opacity: 0;
       pointer-events: none;
+    }
+
+    /* SCADA card list */
+    .scada-card-list {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,.12);
+    }
+    .scada-card-item {
+      display: grid;
+      grid-template-columns: 24px 60px 70px 120px 1fr;
+      gap: 2px;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .1s;
+      font-size: 12px;
+    }
+    .scada-card-item:last-child {
+      border-bottom: none;
+    }
+    .scada-card-item:hover {
+      background: rgba(255,255,255,.04);
+    }
+    .scada-card-item.selected {
+      background: rgba(34,197,94,.12);
+      border-color: var(--accent);
+    }
+    .scada-card-item input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+    .scada-card-id {
+      font-family: var(--mono);
+      color: var(--text);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .scada-card-class {
+      font-family: var(--mono);
+      color: var(--accent-2);
+      font-size: 11px;
+    }
+    .scada-card-status {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+    }
+    .scada-card-status.anomaly {
+      color: var(--danger);
+    }
+    .scada-card-tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      min-width: 100px;
+    }
+    .scada-card-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(56,189,248,.15);
+      color: var(--accent-2);
+      white-space: nowrap;
+    }
+    .scada-card-empty {
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .scada-list-header {
+      display: grid;
+      grid-template-columns: 24px 60px 70px 120px 1fr;
+      gap: 2px;
+      padding: 6px 12px;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.15);
+      position: sticky;
+      top: 0;
+    }
+    .scada-list-header span:last-child {
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
     }
   </style>
 </head>
@@ -622,7 +722,17 @@
           </div>
 
           <label>Available SCADA cards (<span id="cardCount">0</span> matching)</label>
-          <select id="scadaSelect"></select>
+          <div class="scada-card-list" id="scadaCardList">
+            <div class="scada-list-header">
+              <span></span>
+              <span>ID</span>
+              <span>Class</span>
+              <span>Tags</span>
+              <span>Status</span>
+            </div>
+            <!-- Cards populated by JS -->
+          </div>
+          <input type="hidden" id="scadaSelect" />
           <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
 
           <!-- Class abbreviations legend -->
@@ -1065,49 +1175,89 @@
   }
 
   function renderScadaDropdown() {
-    const sel = el('scadaSelect');
-    sel.innerHTML = '';
+    const list = el('scadaCardList');
+    const hiddenInput = el('scadaSelect');
+    
+    // Keep the header, remove other children
+    const header = list.querySelector('.scada-list-header');
+    list.innerHTML = '';
+    if (header) list.appendChild(header);
     
     if (state.filteredScadaCards.length === 0) {
-      const opt = document.createElement('option');
-      opt.value = '';
-      opt.textContent = 'No matching cards';
-      opt.disabled = true;
-      sel.appendChild(opt);
+      const empty = document.createElement('div');
+      empty.className = 'scada-card-empty';
+      empty.textContent = 'No matching cards';
+      list.appendChild(empty);
+      hiddenInput.value = '';
       el('scadaPreview').textContent = '';
       return;
     }
     
-    state.filteredScadaCards.forEach(card => {
-      const opt = document.createElement('option');
-      opt.value = card.id;
+    state.filteredScadaCards.forEach((card, idx) => {
+      const item = document.createElement('div');
+      item.className = 'scada-card-item' + (idx === 0 ? ' selected' : '');
+      item.dataset.cardId = card.id;
       
-      // Build descriptive label
-      const parts = [card.id];
+      // Radio button
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'scadaCard';
+      radio.value = card.id;
+      radio.checked = idx === 0;
       
-      // Add class (using Normalzustand for Nix)
-      if (card.class_code) {
-        const classDisplay = card.class_code === 'Nix' ? 'Normalzustand' : card.class_code;
-        parts.push(classDisplay);
-      }
+      // ID - show only number after third dash
+      const idSpan = document.createElement('span');
+      idSpan.className = 'scada-card-id';
+      const idParts = card.id.split('-');
+      const shortId = idParts.length >= 4 ? idParts.slice(3).join('-') : card.id;
+      idSpan.textContent = shortId;
+      idSpan.title = card.id;
       
-      // Add anomaly info
+      // Class
+      const classSpan = document.createElement('span');
+      classSpan.className = 'scada-card-class';
+      classSpan.textContent = card.class_code === 'Nix' ? 'Normal' : (card.class_code || '-');
+      
+      // Status
+      const statusSpan = document.createElement('span');
+      statusSpan.className = 'scada-card-status' + (card.event_label === 'anomaly' ? ' anomaly' : '');
       if (card.event_label === 'anomaly' && card.event_description) {
-        parts.push(`anomaly: ${card.event_description}`);
+        statusSpan.textContent = card.event_description;
+        statusSpan.title = card.event_description;
       } else {
-        parts.push(card.event_label_display);
+        statusSpan.textContent = card.event_label_display;
       }
       
-      // Add tags
-      if (card.tags && card.tags.length > 0) {
-        parts.push(`tags: [${card.tags.join(', ')}]`);
-      }
+      // Tags
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'scada-card-tags';
+      (card.tags || []).forEach(tag => {
+        const tagSpan = document.createElement('span');
+        tagSpan.className = 'scada-card-tag';
+        tagSpan.textContent = tag;
+        tagsDiv.appendChild(tagSpan);
+      });
       
-      opt.textContent = `${parts[0]} (${parts.slice(1).join(', ')})`;
-      sel.appendChild(opt);
+      item.appendChild(radio);
+      item.appendChild(idSpan);
+      item.appendChild(classSpan);
+      item.appendChild(tagsDiv);
+      item.appendChild(statusSpan);
+      
+      // Click handler
+      item.onclick = () => {
+        list.querySelectorAll('.scada-card-item').forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        radio.checked = true;
+        hiddenInput.value = card.id;
+        renderScadaPreview();
+      };
+      
+      list.appendChild(item);
     });
     
-    sel.onchange = () => renderScadaPreview();
+    // Set initial value
+    hiddenInput.value = state.filteredScadaCards[0]?.id || '';
     renderScadaPreview();
   }
 
