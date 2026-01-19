@@ -1037,6 +1037,75 @@
       .replaceAll("'", '&#039;');
   }
 
+  function renderMarkdownSimple(text){
+    const lines = (text || "").split(/\r?\n/);
+    let html = "";
+    let inOl = false;
+    let inUl = false;
+
+    const closeLists = () => {
+      if (inOl) {
+        html += "</ol>";
+        inOl = false;
+      }
+      if (inUl) {
+        html += "</ul>";
+        inUl = false;
+      }
+    };
+
+    lines.forEach((rawLine) => {
+      const line = rawLine.trim();
+      if (!line) {
+        closeLists();
+        html += "<br>";
+        return;
+      }
+
+      if (line.startsWith("### ")) {
+        closeLists();
+        html += `<h3>${escapeHtml(line.slice(4))}</h3>`;
+        return;
+      }
+      if (line.startsWith("#### ")) {
+        closeLists();
+        html += `<h4>${escapeHtml(line.slice(5))}</h4>`;
+        return;
+      }
+
+      const olMatch = line.match(/^(\d+)\.\s+(.*)$/);
+      if (olMatch) {
+        if (!inOl) {
+          closeLists();
+          html += "<ol>";
+          inOl = true;
+        }
+        const itemText = escapeHtml(olMatch[2]).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html += `<li>${itemText}</li>`;
+        return;
+      }
+
+      const ulMatch = line.match(/^-+\s+(.*)$/);
+      if (ulMatch) {
+        if (!inUl) {
+          closeLists();
+          html += "<ul>";
+          inUl = true;
+        }
+        const itemText = escapeHtml(ulMatch[1]).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html += `<li>${itemText}</li>`;
+        return;
+      }
+
+      closeLists();
+      const withBold = escapeHtml(line).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      html += `<p>${withBold}</p>`;
+    });
+
+    closeLists();
+    return html;
+  }
+
   function normalizeDescription(text){
     const raw = (text || "").trim();
     if (!raw) {
@@ -1277,7 +1346,7 @@
       }
 
       const rec = data.recommendation_markdown || '(no recommendation)';
-      placeholder.querySelector('.m-b').textContent = rec;
+      placeholder.querySelector('.m-b').innerHTML = renderMarkdownSimple(rec);
 
       if(data.query_pack && data.query_pack.query){
         el('modelPill').textContent = `query ready`;
