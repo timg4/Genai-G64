@@ -860,11 +860,33 @@ class Retriever:
             return self.synthetic_weight
         return 1.0
 
-    def search(self, query_text, top_k):
+    def search(
+        self,
+        query_text,
+        top_k,
+        alpha=None,
+        synthetic_weight=None,
+        kind_boost=None,
+        allowed_kinds=None,
+        candidate_multiplier=None,
+    ):
         if not self.metadata:
             return []
         top_k = min(top_k, len(self.metadata))
-        candidate_k = min(len(self.metadata), max(top_k * self.candidate_multiplier, top_k))
+        effective_alpha = self.alpha if alpha is None else alpha
+        effective_synthetic_weight = (
+            self.synthetic_weight if synthetic_weight is None else synthetic_weight
+        )
+        effective_kind_boost = self.kind_boost if kind_boost is None else kind_boost
+        effective_allowed_kinds = (
+            self.allowed_kinds if allowed_kinds is None else set(allowed_kinds)
+        )
+        effective_multiplier = (
+            self.candidate_multiplier
+            if candidate_multiplier is None
+            else candidate_multiplier
+        )
+        candidate_k = min(len(self.metadata), max(top_k * effective_multiplier, top_k))
         query_emb = self.model.encode(
             [query_text],
             show_progress_bar=False,
@@ -899,12 +921,18 @@ class Retriever:
                 float(bm25_scores[idx]) / max_bm25 if max_bm25 > 0 else 0.0
             )
             kind = self.metadata[idx].get("chunk_kind")
-            if self.allowed_kinds and kind not in self.allowed_kinds:
+            if effective_allowed_kinds and kind not in effective_allowed_kinds:
                 continue
-            base_score = (self.alpha * emb_norm) + ((1.0 - self.alpha) * bm25_norm)
+            base_score = (effective_alpha * emb_norm) + (
+                (1.0 - effective_alpha) * bm25_norm
+            )
             source = self.metadata[idx].get("source")
-            score = base_score * self.source_weight(source)
-            score *= self.kind_boost.get(kind, 1.0)
+            score = base_score * (
+                effective_synthetic_weight
+                if source and "synthetic" in source.lower()
+                else 1.0
+            )
+            score *= effective_kind_boost.get(kind, 1.0)
             combined.append((score, idx))
 
         combined.sort(key=lambda item: item[0], reverse=True)

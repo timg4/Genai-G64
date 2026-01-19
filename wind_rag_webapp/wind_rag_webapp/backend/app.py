@@ -4,6 +4,7 @@ import json
 import math
 import os
 import re
+import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -20,8 +21,19 @@ except Exception:  # pragma: no cover
 
 APP_DIR = Path(__file__).resolve().parent
 DATA_DIR = APP_DIR / "data"
-CHUNKS_PATH = DATA_DIR / "chunks.json"
 SCADA_SAMPLES_PATH = DATA_DIR / "scada_samples.json"
+def _find_repo_root(start: Path) -> Path:
+    for parent in [start] + list(start.parents):
+        if (parent / "manuals").is_dir():
+            return parent
+    return start.parents[3]
+
+
+REPO_ROOT = _find_repo_root(APP_DIR)
+MANUALS_DIR = REPO_ROOT / "manuals"
+RAG_INDEX_DIR = Path(
+    os.environ.get("RAG_INDEX_DIR", str(MANUALS_DIR / "manuals_index"))
+)
 
 TOKEN_RE = re.compile(r"[A-Za-z0-9_]+")
 
@@ -50,7 +62,7 @@ class RunResponse(BaseModel):
 
 
 # -----------------------------
-# Lightweight BM25 retriever
+# Optional lightweight BM25 (kept for fallback/dev)
 # -----------------------------
 
 def _tokenize(text: str) -> List[str]:
@@ -274,6 +286,43 @@ def recommend_actions(context: Dict[str, Any], retrieved: List[Dict[str, Any]]) 
 
 
 # -----------------------------
+# RAG integration
+# -----------------------------
+
+RAG_INIT_ERROR: Optional[str] = None
+RETRIEVER = None
+FIXED_KIND_BOOST = {
+    "procedure": 1.3,
+    "checklist": 1.3,
+    "troubleshooting": 1.3,
+    "safety": 1.2,
+    "inspection": 1.1,
+    "training_admin": 0.7,
+    "definition": 0.5,
+    "changelog": 0.5,
+}
+if MANUALS_DIR.exists():
+    sys.path.insert(0, str(REPO_ROOT))
+    try:
+        from manuals.rag_core import Retriever  # type: ignore
+    except Exception as exc:
+        RAG_INIT_ERROR = f"Failed to import manuals.rag_core: {exc}"
+    else:
+        try:
+            RETRIEVER = Retriever(
+                str(RAG_INDEX_DIR),
+                model_name=os.environ.get("RAG_MODEL"),
+                alpha=float(os.environ.get("RAG_ALPHA", "0.7")),
+                synthetic_weight=1.0,
+                kind_boost=FIXED_KIND_BOOST,
+            )
+        except Exception as exc:
+            RAG_INIT_ERROR = f"Failed to initialize Retriever: {exc}"
+else:
+    RAG_INIT_ERROR = "manuals/ directory not found; cannot load RAG index."
+
+
+# -----------------------------
 # App setup
 # -----------------------------
 
@@ -303,46 +352,38 @@ def get_scada(scada_id: str) -> Dict[str, Any]:
     raise HTTPException(status_code=404, detail="Unknown scada_id")
 
 
-# Global caches (loaded once)
-CHUNKS: List[Dict[str, Any]] = _load_json(CHUNKS_PATH)
-BM25 = BM25Index(CHUNKS)
+def retrieve(
+    qp: Dict[str, Any],
+    top_k: int = 10,
+) -> List[Dict[str, Any]]:
+    if RAG_INIT_ERROR or RETRIEVER is None:
+        raise HTTPException(status_code=500, detail=RAG_INIT_ERROR or "RAG unavailable")
 
-
-def retrieve(qp: Dict[str, Any], top_k: int = 10) -> List[Tuple[float, Dict[str, Any]]]:
     q = str(qp.get("query") or "")
     must = [m for m in (qp.get("must_terms") or []) if isinstance(m, str) and m.strip()]
     should = [s for s in (qp.get("should_terms") or []) if isinstance(s, str) and s.strip()]
-    exclude = [e.lower().strip() for e in (qp.get("exclude_terms") or []) if isinstance(e, str) and e.strip()]
+    exclude = [
+        e.lower().strip()
+        for e in (qp.get("exclude_terms") or [])
+        if isinstance(e, str) and e.strip()
+    ]
 
-    query_tokens = _tokenize(q + " " + " ".join(must + should))
-    if exclude:
-        query_tokens = [t for t in query_tokens if t not in exclude]
+    query_text = " ".join([q] + must + should).strip()
+    results = RETRIEVER.search(query_text, top_k=top_k)
 
-    scores = BM25.score(query_tokens)
+    if not (must or exclude):
+        return results
 
-    results: List[Tuple[float, Dict[str, Any]]] = []
-    for i, s in enumerate(scores):
-        d = CHUNKS[i]
-        text_l = ((d.get("section") or "") + " " + (d.get("text") or "")).lower()
-
-        # hard filter: exclude terms present in doc
-        if exclude and any(e in text_l for e in exclude):
+    filtered = []
+    for item in results:
+        text_l = ((item.get("section") or "") + " " + (item.get("text") or "")).lower()
+        if exclude and any(term in text_l for term in exclude):
             continue
-
-        # must terms must appear somewhere (string match)
-        ok = True
-        for m in must:
-            if m.lower() not in text_l:
-                ok = False
-                break
-        if not ok:
+        if must and any(term.lower() not in text_l for term in must):
             continue
+        filtered.append(item)
 
-        if s > 0:
-            results.append((float(s), d))
-
-    results.sort(key=lambda x: x[0], reverse=True)
-    return results[: max(1, min(int(top_k), 50))]
+    return filtered[:top_k]
 
 
 @app.post("/api/run", response_model=RunResponse)
@@ -366,10 +407,11 @@ def run(req: RunRequest) -> RunResponse:
     qp = compose_query_pack(context)
 
     # 3) Retrieve top-k chunks
-    retrieved_raw = retrieve(qp, top_k=req.top_k)
+    top_k = max(3, min(30, int(req.top_k or 10)))
+    retrieved_raw = retrieve(qp, top_k=top_k)
 
     retrieved = []
-    for score, d in retrieved_raw:
+    for d in retrieved_raw:
         snippet = (d.get("text") or "").strip().replace("\n", " ")
         snippet = snippet[:240] + ("..." if len(snippet) > 240 else "")
         retrieved.append(
@@ -379,14 +421,13 @@ def run(req: RunRequest) -> RunResponse:
                 page=int(d.get("page", 0) or 0),
                 page_end=int(d.get("page_end", d.get("page", 0)) or 0),
                 section=d.get("section"),
-                score=float(score),
+                score=float(d.get("score", 0.0) or 0.0),
                 snippet=snippet,
             )
         )
 
     # 4) Recommendation (LLM or offline)
-    top_docs = [d for _, d in retrieved_raw]
-    recommendation = recommend_actions(context=context, retrieved=top_docs)
+    recommendation = recommend_actions(context=context, retrieved=retrieved_raw)
 
     return RunResponse(
         query_pack=qp,
