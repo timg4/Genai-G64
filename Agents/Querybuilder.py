@@ -4,8 +4,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 from openai import OpenAI
 import json
-
-client = OpenAI()
+import os
 
 SYSTEM_PROMPT = """You are QueryComposer for a wind-turbine manuals RAG system.
 
@@ -29,6 +28,64 @@ Output requirements:
 5) Do NOT hallucinate components or alarms not present.
 6) Return JSON strictly matching the schema.
 """
+
+# -------------------------
+# FALLBACK QUERY PACK
+# -------------------------
+
+def _fallback_query_pack(payload: Dict[str, Any]) -> Dict[str, Any]:
+    scada = payload.get("scada_case") or {}
+    tags = scada.get("tags") or []
+    stats = scada.get("stats") or {}
+    derived = scada.get("derived") or {}
+
+    parts = []
+    if scada.get("case_id"):
+        parts.append(str(scada.get("case_id")))
+    if scada.get("class_label"):
+        parts.append(f"class_label {scada.get('class_label')}")
+    if tags:
+        parts.append("tags " + ",".join(tags))
+    if "summary" in scada:
+        parts.append(str(scada.get("summary")))
+    if payload.get("mechanic_notes"):
+        parts.append(str(payload.get("mechanic_notes")))
+    if payload.get("fault_images_description"):
+        parts.append(str(payload.get("fault_images_description")))
+
+    parts.append("power deficit underperformance power residual")
+    parts.append("yaw misalignment yaw error")
+    parts.append("temperature elevated temps overheating")
+
+    q = " | ".join([p for p in parts if p])
+
+    return {
+        "query": q,
+        "must_terms": [str(scada.get("class_label"))] if scada.get("class_label") else [],
+        "should_terms": ["power residual", "underperformance", "yaw misalignment", "temperature"],
+        "exclude_terms": [
+            "change log",
+            "abbreviations",
+            "terms and definitions",
+            "course",
+            "timetable",
+            "assessment",
+            "training standard",
+        ],
+        "extracted_facts": {
+            "case_id": scada.get("case_id"),
+            "class_label": scada.get("class_label"),
+            "tags": tags,
+            "key_metrics": {
+                "wind_speed_mean": stats.get("wind_speed_mean"),
+                "wind_speed_max": stats.get("wind_speed_max"),
+                "power_mean": stats.get("power_mean"),
+                "yaw_misalignment_mean": stats.get("yaw_misalignment_mean"),
+                "temp_mean": stats.get("temp_mean"),
+                "power_residual_mean": derived.get("power_residual_mean"),
+            },
+        },
+    }
 
 # -------------------------
 # STRICT FACT EXTRACTION
@@ -64,6 +121,7 @@ def build_query_pack(
     model: str = "gpt-4o-mini",
 ) -> QueryPack:
 
+    client = OpenAI()
     user_payload = {
         "scada_case": scada_case,
         "fault_images_description": fault_images_description,
@@ -81,6 +139,25 @@ def build_query_pack(
     )
 
     return resp.output_parsed
+
+
+def compose_query_pack(payload: Dict[str, Any], model: Optional[str] = None) -> Dict[str, Any]:
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        return _fallback_query_pack(payload)
+
+    try:
+        qp = build_query_pack(
+            scada_case=payload.get("scada_case") or {},
+            fault_images_description=payload.get("fault_images_description"),
+            mechanic_notes=payload.get("mechanic_notes"),
+            model=model or "gpt-4o-mini",
+        )
+        return qp.model_dump()
+    except Exception:
+        qp = _fallback_query_pack(payload)
+        qp["extracted_facts"]["note"] = "Querybuilder failed; used fallback."
+        return qp
 
 if __name__ == "__main__":
     example_scada = {

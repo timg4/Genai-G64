@@ -40,6 +40,15 @@ RAG_INDEX_DIR = Path(
 
 TOKEN_RE = re.compile(r"[A-Za-z0-9_]+")
 
+# Querybuilder integration (optional)
+QUERY_BUILDER_ERROR: Optional[str] = None
+sys.path.insert(0, str(REPO_ROOT))
+try:
+    from Agents.Querybuilder import compose_query_pack  # type: ignore
+except Exception as exc:  # pragma: no cover
+    QUERY_BUILDER_ERROR = str(exc)
+    compose_query_pack = None  # type: ignore
+
 
 class RunRequest(BaseModel):
     free_text: str = ""
@@ -78,75 +87,10 @@ class RunResponse(BaseModel):
     retrieved: List[RetrievedChunk]
 
 
-# -----------------------------
-# Optional lightweight BM25 (kept for fallback/dev)
-# -----------------------------
-
-def _tokenize(text: str) -> List[str]:
-    return [t.lower() for t in TOKEN_RE.findall(text or "")]
-
-
-class BM25Index:
-    def __init__(self, docs: List[Dict[str, Any]], k1: float = 1.5, b: float = 0.75):
-        self.docs = docs
-        self.k1 = k1
-        self.b = b
-        self.N = len(docs)
-
-        self.doc_tokens: List[List[str]] = []
-        self.doc_freqs: List[Dict[str, int]] = []
-        self.doc_lens: List[int] = []
-        df: Dict[str, int] = {}
-
-        for d in docs:
-            tokens = _tokenize((d.get("section") or "") + "\n" + (d.get("text") or ""))
-            freqs: Dict[str, int] = {}
-            for tok in tokens:
-                freqs[tok] = freqs.get(tok, 0) + 1
-            self.doc_tokens.append(tokens)
-            self.doc_freqs.append(freqs)
-            dl = len(tokens)
-            self.doc_lens.append(dl)
-            for tok in freqs.keys():
-                df[tok] = df.get(tok, 0) + 1
-
-        self.avgdl = (sum(self.doc_lens) / self.N) if self.N else 0.0
-        self.idf: Dict[str, float] = {}
-        for tok, n in df.items():
-            # BM25 idf
-            self.idf[tok] = math.log(1.0 + (self.N - n + 0.5) / (n + 0.5))
-
-    def score(self, query_tokens: List[str]) -> List[float]:
-        scores = [0.0] * self.N
-        for i in range(self.N):
-            freqs = self.doc_freqs[i]
-            dl = self.doc_lens[i] or 1
-            for t in query_tokens:
-                if t not in freqs:
-                    continue
-                tf = freqs[t]
-                idf = self.idf.get(t, 0.0)
-                denom = tf + self.k1 * (1.0 - self.b + self.b * (dl / (self.avgdl or 1.0)))
-                scores[i] += idf * (tf * (self.k1 + 1.0)) / denom
-        return scores
-
 
 # -----------------------------
 # Query composer + recommender
 # -----------------------------
-
-SYSTEM_PROMPT_QUERY = """You are QueryComposer for a wind-turbine manuals RAG system.
-
-Goal: Convert the provided incident context into ONE high-quality retrieval query for a vector database of manual chunks.
-
-Output requirements:
-- Return STRICT JSON with keys: query, must_terms, should_terms, exclude_terms, extracted_facts.
-- query must be ONE string (compact but information-dense).
-- Include supported components/symptoms/conditions/codes from the input (do not hallucinate).
-- Add a few domain synonyms for recall.
-- Add negative keywords in exclude_terms for admin/training/metadata (e.g., change log, abbreviations, terms and definitions, course, timetable, assessment, training standard).
-"""
-
 SYSTEM_PROMPT_RECOMMEND = """You are a wind-turbine maintenance assistant.
 
 You will receive:
@@ -164,95 +108,6 @@ Task:
 def _load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
-
-
-def _fallback_query_pack(payload: Dict[str, Any]) -> Dict[str, Any]:
-    scada = payload.get("scada_case") or {}
-    tags = scada.get("tags") or []
-    stats = scada.get("stats") or {}
-    derived = scada.get("derived") or {}
-
-    parts = []
-    if scada.get("case_id"):
-        parts.append(str(scada.get("case_id")))
-    if scada.get("class_label"):
-        parts.append(f"class_label {scada.get('class_label')}")
-    if tags:
-        parts.append("tags " + ",".join(tags))
-    if "summary" in scada:
-        parts.append(str(scada.get("summary")))
-    if payload.get("mechanic_notes"):
-        parts.append(str(payload.get("mechanic_notes")))
-    if payload.get("fault_images_description"):
-        parts.append(str(payload.get("fault_images_description")))
-
-    # add a few synonyms
-    parts.append("power deficit underperformance power residual")
-    parts.append("yaw misalignment yaw error")
-    parts.append("temperature elevated temps overheating")
-
-    q = " | ".join([p for p in parts if p])
-
-    return {
-        "query": q,
-        "must_terms": [str(scada.get("class_label"))] if scada.get("class_label") else [],
-        "should_terms": ["power residual", "underperformance", "yaw misalignment", "temperature"],
-        "exclude_terms": [
-            "change log",
-            "abbreviations",
-            "terms and definitions",
-            "course",
-            "timetable",
-            "assessment",
-            "training standard",
-        ],
-        "extracted_facts": {
-            "case_id": scada.get("case_id"),
-            "class_label": scada.get("class_label"),
-            "tags": tags,
-            "key_metrics": {
-                "wind_speed_mean": stats.get("wind_speed_mean"),
-                "wind_speed_max": stats.get("wind_speed_max"),
-                "power_mean": stats.get("power_mean"),
-                "yaw_misalignment_mean": stats.get("yaw_misalignment_mean"),
-                "temp_mean": stats.get("temp_mean"),
-                "power_residual_mean": derived.get("power_residual_mean"),
-            },
-        },
-    }
-
-
-def compose_query_pack(payload: Dict[str, Any]) -> Dict[str, Any]:
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key or OpenAI is None:
-        return _fallback_query_pack(payload)
-
-    client = OpenAI()
-    resp = client.responses.create(
-        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
-        input=[
-            {"role": "system", "content": SYSTEM_PROMPT_QUERY},
-            {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
-        ],
-        max_output_tokens=500,
-    )
-
-    text = resp.output_text.strip()
-    try:
-        qp = json.loads(text)
-        # minimal sanity
-        if not isinstance(qp, dict) or "query" not in qp:
-            raise ValueError("missing query")
-        for k in ["must_terms", "should_terms", "exclude_terms"]:
-            qp.setdefault(k, [])
-        qp.setdefault("extracted_facts", {})
-        return qp
-    except Exception:
-        # If model returns non-JSON, fallback.
-        qp = _fallback_query_pack(payload)
-        qp["query"] = text[:1500]
-        qp["extracted_facts"]["note"] = "Model did not return JSON; used raw text as query."
-        return qp
 
 
 def recommend_actions(context: Dict[str, Any], retrieved: List[Dict[str, Any]]) -> str:
@@ -492,7 +347,9 @@ def run(req: RunRequest) -> RunResponse:
     }
 
     # 2) QueryComposer (LLM or fallback)
-    qp = compose_query_pack(context)
+    if QUERY_BUILDER_ERROR or compose_query_pack is None:
+        raise HTTPException(status_code=500, detail=f"Querybuilder import failed: {QUERY_BUILDER_ERROR}")
+    qp = compose_query_pack(context, model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"))
 
     # 3) Retrieve top-k chunks
     top_k = max(3, min(30, int(req.top_k or 10)))
