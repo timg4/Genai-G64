@@ -25,6 +25,8 @@ APP_DIR = Path(__file__).resolve().parent
 DATA_DIR = APP_DIR / "data"
 SCADA_SAMPLES_PATH = DATA_DIR / "scada_samples.json"
 UPLOADS_DIR = DATA_DIR / "uploads"
+
+# SCADA cards paths (for new all-cards endpoint)
 def _find_repo_root(start: Path) -> Path:
     for parent in [start] + list(start.parents):
         if (parent / "manuals").is_dir():
@@ -37,6 +39,21 @@ MANUALS_DIR = REPO_ROOT / "manuals"
 RAG_INDEX_DIR = Path(
     os.environ.get("RAG_INDEX_DIR", str(MANUALS_DIR / "manuals_index"))
 )
+
+# SCADA cards directories
+SCADA_CARDS_DIR = REPO_ROOT / "Scada" / "scada_cards_out"
+SCADA_WINDOWS_META_DIR = REPO_ROOT / "Scada" / "scada_windows_meta"
+SCADA_BY_CLASS_PATH = SCADA_WINDOWS_META_DIR / "scada_windows_by_class.json"
+
+# Class code to display name mapping
+CLASS_DISPLAY_NAMES = {
+    "VG;MT": "Vortex Generating Panel – Missing Teeth",
+    "LE;ER": "Leading Edge – Erosion",
+    "LR;DA": "Lightning Receptor – Damage",
+    "LE;CR": "Leading Edge – Crack",
+    "SF;PO": "Surface – Paint-Off",
+    "Nix": "Normalzustand",
+}
 
 TOKEN_RE = re.compile(r"[A-Za-z0-9_]+")
 
@@ -55,6 +72,7 @@ class RunRequest(BaseModel):
     image_descriptions: List[str] = Field(default_factory=list)
     image_files: List[Dict[str, str]] = Field(default_factory=list)
     scada_id: Optional[str] = None
+    scada_case: Optional[Dict[str, Any]] = None  # Direct case data from frontend
     top_k: int = 10
 
 
@@ -280,6 +298,70 @@ def get_scada(scada_id: str) -> Dict[str, Any]:
     raise HTTPException(status_code=404, detail="Unknown scada_id")
 
 
+@app.get("/api/scada-cards/all")
+def get_all_scada_cards() -> Dict[str, Any]:
+    """Load all SCADA cards from scada_cards_out with class mappings."""
+    # Load class mappings
+    class_to_windows: Dict[str, List[str]] = {}
+    if SCADA_BY_CLASS_PATH.exists():
+        class_to_windows = _load_json(SCADA_BY_CLASS_PATH)
+    
+    # Build reverse mapping: window_id -> class_code
+    window_to_class: Dict[str, str] = {}
+    for class_code, window_ids in class_to_windows.items():
+        for wid in window_ids:
+            window_to_class[wid] = class_code
+    
+    # Load all cards
+    cards = []
+    all_tags = set()
+    
+    if SCADA_CARDS_DIR.exists():
+        for card_file in sorted(SCADA_CARDS_DIR.glob("*_card.json")):
+            try:
+                card_data = _load_json(card_file)
+                window_id = card_data.get("window_id", "")
+                source_info = card_data.get("source", {})
+                event_label = source_info.get("event_label", "normal")
+                event_description = source_info.get("event_description", "")
+                tags = card_data.get("tags", [])
+                
+                # Add tags to global set
+                all_tags.update(tags)
+                
+                # Get class code (try exact match first, then base window_id for variants like WF-A-25-52366-1)
+                class_code = window_to_class.get(window_id)
+                if not class_code:
+                    # Try base window_id (strip trailing -1, -2, etc.)
+                    base_id = "-".join(window_id.rsplit("-", 1)[:-1]) if window_id.count("-") > 3 else window_id
+                    class_code = window_to_class.get(base_id, "")
+                
+                # Display label for event
+                event_label_display = "no recorded anomaly" if event_label == "normal" else event_label
+                
+                cards.append({
+                    "id": window_id,
+                    "class_code": class_code,
+                    "class_name": CLASS_DISPLAY_NAMES.get(class_code, class_code),
+                    "tags": tags,
+                    "event_label": event_label,
+                    "event_label_display": event_label_display,
+                    "event_description": event_description if event_description and event_description != "nan" else "",
+                    "case": card_data,  # Full card data for use
+                })
+            except Exception:
+                continue
+    
+    return {
+        "cards": cards,
+        "all_tags": sorted(all_tags),
+        "all_classes": [
+            {"code": code, "name": name}
+            for code, name in CLASS_DISPLAY_NAMES.items()
+        ],
+    }
+
+
 def retrieve(
     qp: Dict[str, Any],
     top_k: int = 10,
@@ -318,12 +400,22 @@ def retrieve(
 def run(req: RunRequest) -> RunResponse:
     # 1) assemble context
     scada_case: Dict[str, Any] = {}
-    if req.scada_id:
-        samples = _load_json(SCADA_SAMPLES_PATH)
-        for s in samples:
-            if s["id"] == req.scada_id:
-                scada_case = s["case"]
-                break
+    
+    # Use direct case data if provided, otherwise fall back to scada_id lookup
+    if req.scada_case:
+        scada_case = req.scada_case
+    elif req.scada_id:
+        # Try loading from scada_cards_out first
+        card_path = SCADA_CARDS_DIR / f"{req.scada_id}_card.json"
+        if card_path.exists():
+            scada_case = _load_json(card_path)
+        else:
+            # Fall back to old samples file
+            samples = _load_json(SCADA_SAMPLES_PATH)
+            for s in samples:
+                if s["id"] == req.scada_id:
+                    scada_case = s["case"]
+                    break
 
     image_descriptions = [x for x in req.image_descriptions if x.strip()] if req.image_descriptions else []
     if req.image_files and not image_descriptions:
