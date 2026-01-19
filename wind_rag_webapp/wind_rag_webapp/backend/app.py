@@ -68,7 +68,7 @@ except Exception as exc:  # pragma: no cover
 
 
 class RunRequest(BaseModel):
-    free_text: str = ""
+    mechanic_notes: str = ""
     image_descriptions: List[str] = Field(default_factory=list)
     image_files: List[Dict[str, str]] = Field(default_factory=list)
     scada_id: Optional[str] = None
@@ -435,7 +435,7 @@ def run(req: RunRequest) -> RunResponse:
     context = {
         "scada_case": scada_case,
         "fault_images_description": "\n".join(image_descriptions) if image_descriptions else "",
-        "mechanic_notes": req.free_text,
+        "mechanic_notes": req.mechanic_notes,
     }
 
     # 2) QueryComposer (LLM or fallback)
