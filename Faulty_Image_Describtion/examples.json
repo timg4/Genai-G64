@@ -229,6 +229,30 @@
           "image_description": "Das Bild zeigt einen Rotorblattabschnitt. Nahe der Vorderkante ist eine локal begrenzte Abrieb- und Schadstelle erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
         }
       ]
+    },
+    {
+      "example_id": "DJI_0033_1_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0033_1_3.JPG",
+      "example_type": "No Damage",
+      "findings": [
+        {
+          "category_id": 5,
+          "category_name": "No Damage",
+          "image_description": "Auf diesem Bild ist kein Windrad zu erkennen. Bitte lade ein Bild von einem Windrad hoch oder überspringe diesen Schritt."
+        }
+      ]
+    },
+        {
+      "example_id": "DJI_0033_1_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0434.JPG",
+      "example_type": "No Damage",
+      "findings": [
+        {
+          "category_id": 5,
+          "category_name": "No Damage",
+          "image_description": "Auf dem Bild ist ein Rotorblatt eines Windrades zu erkenn. Jedoch kann ich darauf keinen Schaden erkennen. Bitte gib mir weiter Hinweise zu dem Schaden oder trage den Schaden manuell ein."
+        }
+      ]
     }
   ]
 }

@@ -9,6 +9,7 @@ CATEGORY_MAP = {
     2: "LR;DA",
     3: "LE;CR",
     4: "SF;PO",
+    5: "No Damage"
 }
 
 
