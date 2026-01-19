@@ -258,7 +258,7 @@ def describe_faulty_image(image_path: Path) -> Optional[str]:
     result = run_faulty_openai(
         prompt,
         attachments,
-        model=os.environ.get("FAULTY_MODEL", os.environ.get("OPENAI_MODEL", "gpt-4o-mini")),
+        model=os.environ.get("FAULTY_MODEL", os.environ.get("OPENAI_MODEL", "gpt-5-mini")),
         api_key=api_key,
     )
     parsed = result.get("parsed_json") or {}

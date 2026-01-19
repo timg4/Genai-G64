@@ -311,6 +311,14 @@
       align-items: center;
       gap: 8px;
     }
+    .inspect-status {
+      font-size: 12px;
+      color: var(--accent);
+      border: 1px solid rgba(34,197,94,.35);
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+    }
     .image-review {
       display: grid;
       gap: 12px;
@@ -707,8 +715,6 @@
     allTags: [],  // All available tags
     allClasses: [],  // All available classes
     lastResults: [],
-    awaitingConfirm: false,
-    imagesApproved: false,
     reviewMessage: null,
   };
 
@@ -753,16 +759,21 @@
       <div class="chat-image">
         <img src="${item.data_url}" alt="${escapeHtml(item.name || "uploaded image")}" />
         <div class="caption">${escapeHtml(item.name || "uploaded image")}</div>
+        <div class="caption image-desc" data-image-id="${escapeHtml(item.id)}" style="margin-top:6px;">
+          ${escapeHtml(item.desc || "")}
+        </div>
         <div class="inspect-inline">
-          <button class="btn-mini inspect-btn">Inspect images</button>
+          <button class="btn-mini inspect-btn" data-image-id="${escapeHtml(item.id)}">Inspect images</button>
+          <span class="inspect-status">Accepted</span>
         </div>
       </div>
     `;
     const wrap = addChatMessage("user", "Uploaded image", body);
     const btn = wrap.querySelector(".inspect-btn");
     if (btn) {
-      btn.onclick = inspectImages;
+      btn.onclick = () => inspectSingleImage(item.id);
     }
+    updateInspectStatus();
   }
 
   function renderFileList(){
@@ -793,9 +804,9 @@
       `;
       item.querySelector('button').onclick = () => {
         state.files.splice(idx, 1);
-        state.imagesApproved = false;
-        state.awaitingConfirm = false;
+        state.reviewTargetId = null;
         renderFileList();
+        updateInspectStatus();
       };
       item.querySelector('input').oninput = (e) => {
         state.files[idx].desc = e.target.value;
@@ -829,6 +840,9 @@
 
     state.files.forEach((f, idx) => {
       if (!f.data_url) {
+        return;
+      }
+      if (state.reviewTargetId && f.id !== state.reviewTargetId) {
         return;
       }
       if (typeof f.use === "undefined") {
@@ -891,31 +905,33 @@
 
     const confirmBtn = document.createElement("button");
     confirmBtn.className = "btn";
-    confirmBtn.textContent = "Accept images";
+    confirmBtn.textContent = "Accept image";
     confirmBtn.onclick = () => {
       if (state.reviewMessage) {
         state.reviewMessage.remove();
         state.reviewMessage = null;
       }
-      state.imagesApproved = true;
-      state.awaitingConfirm = false;
+      const target = state.files.find((f) => f.id === state.reviewTargetId);
+      if (target) {
+        target.approved = true;
+        target.inspected = true;
+      }
       showWarn("");
       setStatus("idle");
-      updateInspectButton();
+      updateInspectStatus();
     };
 
     const rejectBtn = document.createElement("button");
     rejectBtn.className = "btn-mini";
     rejectBtn.textContent = "Reject Images";
     rejectBtn.onclick = () => {
-      state.files.forEach((f) => {
-        if (f.data_url) {
-          f.use = false;
-          f.desc = "";
-        }
-      });
-      state.imagesApproved = true;
-      state.awaitingConfirm = false;
+      const target = state.files.find((f) => f.id === state.reviewTargetId);
+      if (target) {
+        target.use = false;
+        target.desc = "";
+        target.approved = false;
+        target.inspected = true;
+      }
       renderFileList();
       if (state.reviewMessage) {
         state.reviewMessage.remove();
@@ -923,13 +939,14 @@
       }
       showWarn("");
       setStatus("idle");
-      updateInspectButton();
+      updateInspectStatus();
     };
 
     actionRow.appendChild(confirmBtn);
     actionRow.appendChild(rejectBtn);
     review.appendChild(actionRow);
     body.appendChild(review);
+    updateInspectStatus();
   }
 
   function escapeHtml(str){
@@ -1150,8 +1167,9 @@
 
     let placeholder = null;
     try {
-      if (imageFiles.length && !state.imagesApproved) {
-        throw new Error("Please inspect and accept the image descriptions first.");
+      const pending = imageTargets.filter((f) => !f.approved);
+      if (pending.length) {
+        throw new Error("Please inspect and accept each image before running.");
       }
 
       const userSummary = [
@@ -1213,28 +1231,31 @@
     }
   }
 
-  async function inspectImages(){
+  async function inspectSingleImage(imageId){
     showWarn('');
-    const imageTargets = state.files
-      .filter(f => f.use !== false && !!f.data_url);
-    const imageFiles = imageTargets
-      .map(f => ({ name: f.name || 'image', data_url: f.data_url }));
+    const target = state.files.find((f) => f.id === imageId);
+    if (!target || !target.data_url) {
+      showWarn("No images to inspect.");
+      return;
+    }
+    const imageFiles = [{ name: target.name || "image", data_url: target.data_url }];
 
-      if (!imageFiles.length) {
-        showWarn("No images to inspect.");
-        return;
-      }
+    if (!imageFiles.length) {
+      showWarn("No images to inspect.");
+      return;
+    }
 
       setStatus("inspecting");
       setRunning(true);
-      el("runBtn").disabled = true;
-      document.querySelectorAll(".inspect-btn").forEach((btn) => {
-        btn.disabled = true;
-      });
-      const hint = el("processingHint");
-      if (hint) {
-        hint.innerHTML = "<span class=\"spinner\"></span> Inspecting image…";
-      }
+    el("runBtn").disabled = true;
+    const clickedBtn = document.querySelector(`.inspect-btn[data-image-id="${CSS.escape(imageId)}"]`);
+    if (clickedBtn) {
+      clickedBtn.disabled = true;
+    }
+    const hint = el("processingHint");
+    if (hint) {
+      hint.innerHTML = "<span class=\"spinner\"></span> Inspecting image…";
+    }
 
     try {
       const resp = await fetch("/api/faulty-describe", {
@@ -1248,17 +1269,16 @@
       }
 
       const descs = data.descriptions || [];
-      imageTargets.forEach((f, idx) => {
-        const d = descs[idx];
-        if (d && d.description) {
-          f.desc = normalizeDescription(d.description);
-        }
-        if (typeof f.use === "undefined") {
-          f.use = true;
-        }
-      });
-      state.imagesApproved = false;
-      state.awaitingConfirm = true;
+      const d = descs[0];
+      if (d && d.description) {
+        target.desc = normalizeDescription(d.description);
+      }
+      if (typeof target.use === "undefined") {
+        target.use = true;
+      }
+      target.inspected = true;
+      target.approved = false;
+      state.reviewTargetId = imageId;
       renderFileList();
       renderImageReview();
       showWarn("Bitte die Bildbeschreibungen pruefen und bestaetigen.");
@@ -1269,13 +1289,36 @@
     } finally {
       setRunning(false);
       el("runBtn").disabled = false;
-      document.querySelectorAll(".inspect-btn").forEach((btn) => {
-        btn.disabled = false;
-      });
+      if (clickedBtn) {
+        clickedBtn.disabled = false;
+      }
       if (hint) {
         hint.innerHTML = "<span class=\"spinner\"></span> Processing request…";
       }
+      updateInspectStatus();
     }
+  }
+
+  function updateInspectStatus(){
+    document.querySelectorAll(".inspect-btn").forEach((btn) => {
+      const imageId = btn.getAttribute("data-image-id");
+      const item = state.files.find((f) => f.id === imageId);
+      const approved = !!item?.approved;
+      btn.textContent = approved ? "Re-inspect image" : "Inspect images";
+      btn.disabled = false;
+    });
+    document.querySelectorAll(".inspect-status").forEach((badge) => {
+      const wrap = badge.closest(".chat-image");
+      const btn = wrap ? wrap.querySelector(".inspect-btn") : null;
+      const imageId = btn ? btn.getAttribute("data-image-id") : null;
+      const item = state.files.find((f) => f.id === imageId);
+      badge.textContent = item?.approved ? "Accepted" : "Not accepted";
+    });
+    document.querySelectorAll(".image-desc").forEach((el) => {
+      const imageId = el.getAttribute("data-image-id");
+      const item = state.files.find((f) => f.id === imageId);
+      el.textContent = item?.desc ? item.desc : "";
+    });
   }
 
   function setupDropZone(){
@@ -1286,10 +1329,9 @@
 
     function handleFiles(fileList){
       [...fileList].forEach(f => {
-        const item = { name: f.name, desc: '', data_url: '', use: true };
+        const item = { id: `${Date.now()}_${Math.random().toString(16).slice(2)}`, name: f.name, desc: '', data_url: '', use: true, inspected: false, approved: false };
         state.files.push(item);
-        state.imagesApproved = false;
-        state.awaitingConfirm = false;
+        state.reviewTargetId = null;
         const reader = new FileReader();
         reader.onload = () => {
           item.data_url = reader.result || '';
@@ -1299,6 +1341,7 @@
         reader.readAsDataURL(f);
       });
       renderFileList();
+      updateInspectStatus();
     }
 
     drop.addEventListener('dragover', (e) => {
