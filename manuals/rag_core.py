@@ -1049,6 +1049,7 @@ def generate_grounded_report(query_text, retrieved_chunks, model_name, api_key, 
         "\"troubleshooting\", but do not ignore safety or inspection content. "
         "If any safety or stop-criteria appear, include them. "
         "Do not quote more than 1-2 sentences from any chunk. "
+        "If there is possible harm for the technician, emphasize safety first."
         "Return strict JSON with keys summary, recommended_action, evidence."
     )
     user_payload = {

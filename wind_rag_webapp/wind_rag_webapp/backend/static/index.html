@@ -3,28 +3,35 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Wind Manual Assistant</title>
+  <title>Wind Turbine Inspection Assistant</title>
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap");
+
     :root {
-      --bg: #0b0f14;
-      --panel: #0f1720;
-      --panel-2: #111b27;
-      --text: #e6edf3;
-      --muted: #a9b4c0;
-      --border: #233042;
-      --accent: #10a37f;
+      --bg: #0c131c;
+      --panel: #0f1a26;
+      --panel-2: #122031;
+      --text: #e7eef6;
+      --muted: #9fb0c3;
+      --border: #233a4f;
+      --accent: #22c55e;
+      --accent-2: #38bdf8;
       --danger: #ef4444;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --shadow: 0 12px 40px rgba(0,0,0,.35);
       --radius: 16px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --sans: "Source Sans 3", "Segoe UI", sans-serif;
+      --display: "Space Grotesk", "Segoe UI", sans-serif;
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
     body {
       margin: 0;
       font-family: var(--sans);
-      background: radial-gradient(1200px 600px at 50% -10%, #162237 0%, var(--bg) 55%);
+      background:
+        radial-gradient(900px 420px at 10% -10%, rgba(56,189,248,.18) 0%, transparent 60%),
+        radial-gradient(1000px 520px at 90% 0%, rgba(34,197,94,.12) 0%, transparent 65%),
+        linear-gradient(180deg, #0c1420 0%, var(--bg) 55%);
       color: var(--text);
     }
     a { color: inherit; }
@@ -44,13 +51,62 @@
     }
     .title {
       display: flex;
-      align-items: baseline;
-      gap: 10px;
+      align-items: center;
+      gap: 14px;
+    }
+    .logo {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      padding: 3px;
+    }
+    .logo-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-orbit {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border-radius: 999px;
+      border: 1px dashed rgba(34,197,94,.6);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .logo-orbit::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-2);
+      top: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(56,189,248,.6);
+    }
+    body.is-running .logo {
+      animation: spin 2.4s linear infinite;
+    }
+    body.is-running .logo-orbit {
+      opacity: .9;
+      animation: spin 1.2s linear infinite;
     }
     .title h1 {
       margin: 0;
-      font-size: 18px;
+      font-size: 22px;
       letter-spacing: .2px;
+      font-family: var(--display);
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
     }
     .pill {
       font-size: 12px;
@@ -63,7 +119,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: 420px 1fr;
+      grid-template-columns: minmax(320px, 420px) 1fr;
       gap: 16px;
       align-items: start;
     }
@@ -136,7 +192,7 @@
     }
     .drop.drag {
       border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(16,163,127,.15);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.18);
     }
     .drop b { color: var(--text); }
 
@@ -266,10 +322,16 @@
   <div class="app">
     <div class="header">
       <div class="title">
-        <h1>Wind Manual Assistant</h1>
-        <span class="pill">ChatGPT-like UI prototype</span>
+        <span class="logo-wrap">
+          <img class="logo" src="/static/logo.png" alt="Project logo" />
+          <span class="logo-orbit" aria-hidden="true"></span>
+        </span>
+        <div>
+          <h1>Wind Turbine Inspection Assistant</h1>
+          <div class="subtitle">Manual RAG with SCADA context (vision input WIP)</div>
+        </div>
       </div>
-      <div class="small">Backend: FastAPI &nbsp;|&nbsp; Retrieval: local BM25 (swap with your vector DB)</div>
+      <span class="pill">MVP</span>
     </div>
 
     <div class="grid">
@@ -313,7 +375,7 @@
             <button id="runBtn" class="btn">Run</button>
           </div>
           <div class="small" style="margin-top:10px;">
-            Tip: The query composer tries to exclude sections like <span class="mono">change log</span>, <span class="mono">abbreviations</span>, <span class="mono">terms and definitions</span>.
+            Tip: Retrieval is biased toward procedures, checklists, and safety content.
           </div>
           <div class="warn" id="warnBox" style="margin-top:10px; display:none;"></div>
         </div>
@@ -377,6 +439,10 @@
 
   function setStatus(text){
     el('statusPill').textContent = text;
+  }
+
+  function setRunning(isRunning){
+    document.body.classList.toggle('is-running', !!isRunning);
   }
 
   function showWarn(msg){
@@ -507,6 +573,7 @@
   async function run(){
     showWarn('');
     setStatus('running');
+    setRunning(true);
     el('runBtn').disabled = true;
 
     const freeText = el('freeText').value || '';
@@ -562,6 +629,7 @@
       showWarn(e.message);
     } finally {
       setStatus('idle');
+      setRunning(false);
       el('runBtn').disabled = false;
     }
   }
