@@ -548,8 +548,8 @@
     }
     .scada-card-item {
       display: grid;
-      grid-template-columns: 24px 60px 70px 120px 1fr;
-      gap: 2px;
+      grid-template-columns: 24px 140px 1fr;
+      gap: 8px;
       align-items: center;
       padding: 8px 12px;
       border-bottom: 1px solid var(--border);
@@ -621,8 +621,8 @@
     }
     .scada-list-header {
       display: grid;
-      grid-template-columns: 24px 60px 70px 120px 1fr;
-      gap: 2px;
+      grid-template-columns: 24px 140px 1fr;
+      gap: 8px;
       padding: 6px 12px;
       font-size: 10px;
       color: var(--muted);
@@ -697,22 +697,6 @@
           <!-- SCADA Card Selection with Filters -->
           <label>Select SCADA card for testing</label>
           <div class="filter-section">
-            <div class="filter-row">
-              <div class="filter-group">
-                <label>Filter by class</label>
-                <select id="classFilter">
-                  <option value="">All classes</option>
-                </select>
-              </div>
-              <div class="filter-group">
-                <label>Filter by anomaly status</label>
-                <select id="anomalyFilter">
-                  <option value="">All</option>
-                  <option value="anomaly">anomaly</option>
-                  <option value="normal">no recorded anomaly</option>
-                </select>
-              </div>
-            </div>
             <div class="filter-group">
               <label>Filter by tags</label>
               <div class="tag-checkboxes" id="tagCheckboxes">
@@ -726,27 +710,12 @@
             <div class="scada-list-header">
               <span></span>
               <span>ID</span>
-              <span>Class</span>
               <span>Tags</span>
-              <span>Status</span>
             </div>
             <!-- Cards populated by JS -->
           </div>
           <input type="hidden" id="scadaSelect" />
           <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
-
-          <!-- Class abbreviations legend -->
-          <details class="legend">
-            <summary>📖 Class abbreviations legend</summary>
-            <table class="legend-table">
-              <tr><td>VG;MT</td><td>Vortex Generating Panel – Missing Teeth</td></tr>
-              <tr><td>LE;ER</td><td>Leading Edge – Erosion</td></tr>
-              <tr><td>LR;DA</td><td>Lightning Receptor – Damage</td></tr>
-              <tr><td>LE;CR</td><td>Leading Edge – Crack</td></tr>
-              <tr><td>SF;PO</td><td>Surface – Paint-Off</td></tr>
-              <tr><td>Normalzustand</td><td>No damage class assigned</td></tr>
-            </table>
-          </details>
           </div><!-- end scadaSection -->
 
           <div class="row">
@@ -1165,16 +1134,6 @@
     state.allTags = data.all_tags || [];
     state.allClasses = data.all_classes || [];
     
-    // Populate class filter dropdown
-    const classFilter = el('classFilter');
-    classFilter.innerHTML = '<option value="">All classes</option>';
-    state.allClasses.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.code;
-      opt.textContent = c.code === 'Nix' ? 'Normalzustand' : c.code;
-      classFilter.appendChild(opt);
-    });
-    
     // Populate tag checkboxes
     const tagContainer = el('tagCheckboxes');
     tagContainer.innerHTML = '';
@@ -1190,10 +1149,6 @@
       });
     }
     
-    // Set up filter change handlers
-    classFilter.onchange = applyFilters;
-    el('anomalyFilter').onchange = applyFilters;
-    
     // Initial filter application
     applyFilters();
   }
@@ -1204,27 +1159,10 @@
   }
 
   function applyFilters() {
-    const classFilter = el('classFilter').value;
-    const anomalyFilter = el('anomalyFilter').value;
     const selectedTags = getSelectedTags();
     
-    // Apply AND filtering
+    // Apply tags filtering
     state.filteredScadaCards = state.allScadaCards.filter(card => {
-      // Class filter
-      if (classFilter && card.class_code !== classFilter) {
-        return false;
-      }
-      
-      // Anomaly filter
-      if (anomalyFilter) {
-        if (anomalyFilter === 'normal' && card.event_label !== 'normal') {
-          return false;
-        }
-        if (anomalyFilter === 'anomaly' && card.event_label !== 'anomaly') {
-          return false;
-        }
-      }
-      
       // Tags filter (AND: card must have ALL selected tags)
       if (selectedTags.length > 0) {
         const cardTags = card.tags || [];
@@ -1274,28 +1212,11 @@
       radio.value = card.id;
       radio.checked = idx === 0;
       
-      // ID - show only number after third dash
+      // ID - show full ID
       const idSpan = document.createElement('span');
       idSpan.className = 'scada-card-id';
-      const idParts = card.id.split('-');
-      const shortId = idParts.length >= 4 ? idParts.slice(3).join('-') : card.id;
-      idSpan.textContent = shortId;
+      idSpan.textContent = card.id;
       idSpan.title = card.id;
-      
-      // Class
-      const classSpan = document.createElement('span');
-      classSpan.className = 'scada-card-class';
-      classSpan.textContent = card.class_code === 'Nix' ? 'Normal' : (card.class_code || '-');
-      
-      // Status
-      const statusSpan = document.createElement('span');
-      statusSpan.className = 'scada-card-status' + (card.event_label === 'anomaly' ? ' anomaly' : '');
-      if (card.event_label === 'anomaly' && card.event_description) {
-        statusSpan.textContent = card.event_description;
-        statusSpan.title = card.event_description;
-      } else {
-        statusSpan.textContent = card.event_label_display;
-      }
       
       // Tags
       const tagsDiv = document.createElement('div');
@@ -1309,9 +1230,7 @@
       
       item.appendChild(radio);
       item.appendChild(idSpan);
-      item.appendChild(classSpan);
       item.appendChild(tagsDiv);
-      item.appendChild(statusSpan);
       
       // Click handler
       item.onclick = () => {
