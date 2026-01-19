@@ -44,5 +44,5 @@
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window, wind averaged about 13.2 with low variability (~1.5) but included intermittent gusts up to 31, producing fairly steady power around 0.935 with small residuals. Rotor speed was very stable while generator speed showed notably higher variability (~2.8), average blade pitch was ~4.6 and yaw misalignment around 9.3, operating temperature averaged ~67.8, and operational indicators flagged persistent abnormal conditions throughout the period."
+  "summary": "Over the 6-hour window mean wind was about 13.2 m/s with modest variability (std 1.54) and a peak gust to 31 m/s; mean power stayed roughly constant at ~0.935 with low variability (std 0.041) and a small positive power residual (~0.063). Rotor speed was very stable while generator speed showed moderate scatter (std ~2.82), pitch averaged ~4.55\u00b0, yaw misalignment averaged ~9.32\u00b0, and temperatures were elevated (mean ~67.8), so overall operation was steady but featured a pronounced high-wind spike and sustained higher temperatures."
 }

@@ -45,5 +45,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window winds were relatively strong (mean ~14.25, peak 43.7) with modest variability; control blade angle averaged \u22489\u00b0 and alignment averaged \u22489.5\u00b0. Power stayed unusually flat (mean \u22480.975, std \u22480.0013) with a consistent negative residual (~\u22120.096) despite the wind levels; one rotational-speed channel was essentially constant while another showed small variability, and temperatures were elevated (mean \u224866.7)."
+  "summary": "Over the 6\u2011hour window winds were consistently strong (mean \u224814.25 m/s, std \u22480.86) with gusts up to 43.7 m/s, while generated power remained nearly constant at about 0.975 of rated with very low variability and only modest rotor speed fluctuation. Operational anomalies include an average blade pitch near 9\u00b0 and yaw misalignment around 9.5\u00b0, a persistent negative power residual (~\u22120.096) indicating output below expected for the conditions, and elevated temperatures around 66.7\u00b0C, with no non\u2011normal status flags recorded."
 }

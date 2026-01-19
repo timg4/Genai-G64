@@ -41,5 +41,5 @@
     }
   },
   "tags": [],
-  "summary": "Over the six-hour window, wind conditions were generally moderate (mean ~5.6 m/s, low variability) but included a sharp gust up to 36.9 m/s; mean power output was low (~0.13) with modest scatter and a slight negative residual (~-0.09) relative to expectation. Rotational behavior shows a very steady rotor speed (std ~0.5) while the generator speed exhibited substantial variability (std ~55.9). Control and environment metrics were stable on average (pitch around -1.44, yaw misalignment about 11.9, temperature ~48.2) and the system remained in normal operating status throughout."
+  "summary": "Wind conditions were mostly steady around 5.6 m/s (std 0.64) with a brief extreme spike to 36.9 m/s; mean power was low (~0.134) with modest variability (std 0.051) and a negative average residual (~-0.089), indicating output tended to sit below expected. Rotor speed variability was minimal (~0.50), while generator-speed variability was high (~55.9); pitch averaged about -1.44\u00b0, yaw misalignment stayed elevated (~11.9\u00b0), temperature averaged ~48\u00b0C, and no non-normal operational states were recorded."
 }

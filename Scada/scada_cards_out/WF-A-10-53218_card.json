@@ -44,5 +44,5 @@
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the six-hour window wind averaged 14.24 m/s (\u03c3 1.46) with a peak to 27.4 m/s; power stayed high and tightly clustered around 0.9607 (\u03c3 0.046) with a small positive residual bias (~0.10). Rotor speed was very stable (rpm \u03c3 0.0229) while generator speed showed notably higher variability (\u03c3 0.7666); pitch averaged ~8\u00b0 and yaw misalignment ~2.2\u00b0, and mean component temperature was elevated at ~67.6\u00b0C, indicating steady production under strong winds with occasional high gusts and modest generator\u2011side variability."
+  "summary": "Over the 6\u2011hour window winds were strong and steady (mean ~14.24, std ~1.46) with intermittent gusts to 27.4, and temperatures remained elevated (mean ~67.6). Power stayed consistently high (mean ~0.96) with low variability and a persistent positive residual (~0.10); rotor speed was tightly held (very low std) while generator speed showed noticeably more fluctuation. Pitch averaged about 8\u00b0 and average yaw misalignment was ~2.2\u00b0, and the operational status was non\u2011normal for the entire period."
 }

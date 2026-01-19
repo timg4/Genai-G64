@@ -43,5 +43,5 @@
   "tags": [
     "yaw_misalignment"
   ],
-  "summary": "Over the 6\u2011hour window wind conditions were very light (mean ~1.21 m/s, max 5.2 m/s) and power production remained essentially zero with very low variability (power mean ~-0.0015, std ~0.0003), though the power residual showed a consistent positive bias (~0.168). Pitch was steady (~24\u00b0) and ambient temperature around 24.4\u00b0C with no non\u2011normal status flags. Rotational signals were unusual in that rotor speed showed no variability (std=0) while generator speed varied substantially (std ~13.2 rpm), and yaw angle exhibited a large, persistent misalignment (~76.6\u00b0)."
+  "summary": "Over the six-hour window winds were very light (mean ~1.21 m/s, max 5.2 m/s) and the machine produced essentially zero mean power with very low power variability; ambient temperature was stable (~24.4 \u00b0C) and status flags remained normal. Operationally the rotor speed was flat while the generator speed varied substantially (std 0 vs 13.2 rpm), pitch was held steady at 24\u00b0, and a persistent large angular offset (~76.6\u00b0) between machine heading and wind direction was present; power residuals had a positive mean (~0.168), indicating a consistent offset between measured and expected power."
 }

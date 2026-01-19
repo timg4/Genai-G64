@@ -41,5 +41,5 @@
     }
   },
   "tags": [],
-  "summary": "Over the 6\u2011hour window winds were moderate and steady (mean ~5.4 m/s, std ~1.1) with a brief high-speed spike up to 21.3 m/s. Power output remained low but relatively stable (mean ~0.1545, std ~0.0794) with a consistent negative residual (~-0.084), one side of the drivetrain showed little speed variability while the generator-side speed fluctuated substantially (~76.6), pitch averaged slightly negative (~-1.2), yaw misalignment averaged ~9.8\u00b0, temperature was ~46\u00b0C, and no non\u2011normal statuses were reported."
+  "summary": "Over the six-hour window conditions were generally moderate (average wind about 5.4 m/s) but included an isolated strong gust up to 21.3 m/s; average power stayed low and relatively steady with modest short-term variability. Rotor speed was stable while generator-side rotational variability was noticeably higher; pitch was slightly below neutral, yaw misalignment remained consistently around 9.8\u00b0, power residuals were slightly negative on average, no abnormal status events were recorded, and temperatures were moderate (\u224846\u00b0C)."
 }

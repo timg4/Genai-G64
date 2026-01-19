@@ -45,5 +45,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window winds averaged ~15.2 m/s with low variability but included a high gust to 34.7 m/s; power output was very steady (~0.976) with negligible short\u2011term variance, rotor speed was effectively constant, pitch averaged ~10.5\u00b0, and yaw misalignment averaged ~1.6\u00b0.  \n\nAt the same time, the mean power residual was about \u22120.085 indicating a persistent shortfall versus expected output, the system was in a non\u2011normal state for the entire window, and temperatures were elevated (~65\u00b0C)."
+  "summary": "Over the 6\u2011hour window wind conditions were steady around 15 m/s with low variability but included a brief gust to 34.7 m/s; rotor speed was essentially constant while generator speed showed only minor fluctuations. Power output remained nearly constant (~0.98) yet averaged about 0.085 below expected values, operational status indicators were non\u2011normal for the entire period, control settings held moderate pitch (~10.5\u00b0) with small yaw misalignment (~1.6\u00b0), and temperatures averaged around 65\u00b0C."
 }

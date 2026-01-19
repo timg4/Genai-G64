@@ -45,5 +45,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the 6-hour window the machine ran in sustained elevated winds (mean ~14.6 m/s, gusting to 39.1 m/s) with power output relatively steady (mean ~0.955 per-unit, low variability) but averaging about 9.3% below expected. Control settings were stable\u2014small rotor speed and pitch variability\u2014while generator speed showed notably larger fluctuations and yaw misalignment averaged roughly 12 degrees. Temperatures were elevated (~71.3) despite no non-normal operational flags being recorded."
+  "summary": "Over the six-hour window winds were consistently high, averaging ~14.6 m/s with gusts up to 39.1 m/s; rotational speeds were steady (very low variability), blade pitch averaged ~9\u00b0, and yaw misalignment averaged ~12\u00b0. Mean power output was about 0.955 p.u. (roughly 9% below expected based on conditions) with low variability, temperatures were elevated (~71), and no non-normal status events were recorded."
 }

@@ -41,5 +41,5 @@
     }
   },
   "tags": [],
-  "summary": "Over the 6\u2011hour window wind speeds were low on average (~2.8 m/s) with an isolated peak to 11 m/s, yet mean electrical output stayed essentially zero with very little variability. One rotational stage showed no variation while the downstream stage did vary, and control surfaces were held near their high-angle position; there was also a large mean alignment offset (~71.6\u00b0) and the system reported a non-normal status for the entire period. Temperature averaged ~62.4 and the power residuals remained small (~0.0126)."
+  "summary": "Over the 6-hour window winds were mostly light (mean \u2248 2.83 m/s, std \u2248 0.76 m/s) with a brief gust to 11 m/s; power output remained essentially zero (mean \u2248 -0.0012, very low variability) while generator speed showed moderate variability despite a perfectly steady rotor speed. Blade pitch stayed near full feather (~89.4\u00b0) and the nacelle was substantially misaligned from the wind (~71.6\u00b0), with a small positive power residual and average component temperature around 62\u00b0C; all timestamps in this period reported a persistent non-standard operational state."
 }
