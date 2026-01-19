@@ -43,5 +43,5 @@
   "tags": [
     "power_deficit"
   ],
-  "summary": "Over the 6\u2011hour window wind conditions were generally steady (mean ~5.04 m/s, std ~0.50) with a single high gust to 28.1 m/s; ambient/operational temperature averaged ~47\u00b0C and status indicators were nominal. Power output was unusually low (mean ~0.092) with a negative mean residual (~-0.094) versus expectations, rotor speed remained very stable while generator speed showed substantial variability, and mean pitch was slightly negative with an average yaw misalignment near 2\u00b0."
+  "summary": "Over the six-hour window the wind was generally steady (mean ~5.04 m/s, std ~0.50) but punctuated by a brief extreme gust to 28.1 m/s; mean electrical output was low (~0.092, std ~0.031) with a persistent negative residual (~-0.094) indicating output consistently below expected. Mechanical signals show very stable rotor speed (rotor rpm std ~0.18) while generator rpm varied substantially (~22.2), pitch held near -1.11\u00b0 and yaw misalignment averaged ~2.07\u00b0, temperature averaged ~47\u00b0C, and no non-normal status flags were recorded."
 }

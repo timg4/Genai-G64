@@ -45,5 +45,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Winds averaged about 15.7 m/s with low variability (std 0.72 m/s) but included a peak gust to 36.8 m/s. Electrical power remained nearly constant (mean ~0.976, std ~0.0002) yet averaged ~0.11 below expected; rotor speed showed no variability while generator speed varied minimally, with blade pitch around 10.65\u00b0 and yaw misalignment about 1.58\u00b0. Operational status was non-normal for the entire window and temperatures were elevated (mean ~67\u00b0C)."
+  "summary": "Wind was generally steady around 15.7 m/s (SD 0.72) with a pronounced spike to 36.8 m/s. Power and rotational metrics were unusually flat\u2014power ~0.975 with almost no variability, rotor speed stable, and generator speed barely varying\u2014while pitch and yaw held near 10.65\u00b0 and 1.58\u00b0. Key anomalies are a sustained negative power residual (~ -0.11), elevated machine temperature (~67\u00b0C), and the system remaining in a non-standard operational state for the entire window."
 }

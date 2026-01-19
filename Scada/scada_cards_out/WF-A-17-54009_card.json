@@ -43,5 +43,5 @@
   "tags": [
     "yaw_misalignment"
   ],
-  "summary": "Over the 6\u2011hour window wind was very light on average (mean ~1.48 m/s, sd ~0.72) with occasional gusts up to 8 m/s, and mean power output stayed effectively at zero (mean ~-0.0025, sd ~0.0011) with a small positive residual (~0.081). Rotor speed was steady (rpm sd ~1.9) but generator speed exhibited unusually high variability (sd ~220.9), pitch was held relatively high (~23.7\u00b0) and there was a large average directional offset (~103.2\u00b0); ambient temperature averaged ~26.1\u00b0C and no non-normal status flags were recorded."
+  "summary": "Over the 6\u2011hour window winds were very light on average (~1.5 m/s) with low variability but occasional gusting to 8 m/s; mean electrical power remained essentially zero with very small spread and operational status flags stayed normal. Mechanical signals show low rotor-speed variability but unusually high variability in generator speed, blade pitch averaged relatively high (~24\u00b0), there was a persistent large orientation offset (~103\u00b0) between the machine and the inflow, and ambient temperature averaged about 26\u00b0C, with a small positive power residual (~0.08)."
 }

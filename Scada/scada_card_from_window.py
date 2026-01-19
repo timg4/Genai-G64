@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Dict, List
 
 import pandas as pd
+from tqdm import tqdm
 
 from scada_processing import (
     build_tags,
@@ -249,7 +250,7 @@ def main() -> None:
     if not files:
         raise ValueError(f"No .json files found in {input_dir}")
 
-    for input_path in files:
+    for input_path in tqdm(files, desc="Building cards", unit="window"):
         output_path = output_dir / f"{input_path.stem}_card.json"
         process_payload_file(
             input_path,

@@ -43,5 +43,5 @@
   "tags": [
     "high_wind"
   ],
-  "summary": "Over the six-hour window the site saw high, fairly steady winds (mean \u224818 m/s with gusts to \u224834 m/s) while electrical output held nearly constant at about 0.976 with negligible variability. Operational patterns include zero measured variance in rotational speed with only small generator speed fluctuation, blade pitch steady near 15\u00b0, a sustained yaw offset around 8\u00b0, a slight negative average power residual, and moderate temperature (~67\u00b0C); no abnormal status flags were recorded."
+  "summary": "Over the six-hour window wind conditions were strong and steady (mean ~18.0 m/s, std ~1.0 m/s) with a short peak to 33.9 m/s, while electrical power remained extremely stable (mean ~0.9755, std ~0.0002) and status indicators stayed normal. Operational patterns show essentially zero rotor-speed variability, modest generator-speed variability, an average pitch around 14.8\u00b0, a persistent yaw offset near 8.1\u00b0, and a small negative mean power residual (~-0.107), indicating slight systematic underperformance versus the reference."
 }

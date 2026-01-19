@@ -43,5 +43,5 @@
   "tags": [
     "high_wind"
   ],
-  "summary": "Mean wind was about 18 m/s with a peak near 34 m/s, while active power stayed essentially constant at ~0.976 (std 0.0002), indicating very stable output despite high winds. Primary rotational speed showed no variability while the secondary rotation had modest fluctuation (std ~0.61); control angle averaged ~14.8\u00b0 and alignment offset averaged ~8.1\u00b0, with mean temperature \u224867.4\u00b0C. The mean power residual was about -0.11 (measured below expected), and no non-normal status events were recorded."
+  "summary": "Over the 6\u2011hour window winds were consistently high (mean ~18 m/s, SD ~1 m/s) with strong gusts up to ~34 m/s, yet active power remained extremely steady around 0.976 with minimal variability. Rotor speed was essentially constant while generator speed showed modest variation; blade pitch averaged about 14.8\u00b0 and the nacelle was persistently offset from the wind by roughly 8.1\u00b0. Average production was roughly 0.11 units below expected and temperatures averaged about 67\u00b0C \u2014 notable operational observations are the near\u2011constant rotor speed, sustained yaw offset, consistent pitch setting, and the presence of high gusts."
 }

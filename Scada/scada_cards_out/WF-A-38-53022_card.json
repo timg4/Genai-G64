@@ -45,5 +45,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window winds averaged ~14.6 m/s (\u03c3 1.74) with a brief peak to 39.1 m/s; power output stayed fairly steady at ~0.955 (\u03c3 0.028) while rotor speed was nearly constant and generator speed showed modest variability. Notable operational patterns include a consistent negative power residual (mean \u22120.093) indicating underperformance versus expectation, an average blade pitch around 8.9\u00b0, a persistent ~11.9\u00b0 offset between wind and turbine orientation, and elevated temperatures (~71.3\u00b0F), with no abnormal status entries recorded."
+  "summary": "Over the 6-hour window winds were mostly steady (mean ~14.6, std ~1.74) but included a short, strong gust up to 39.1. Power was consistently near 0.955 with low variability yet showed a persistent negative residual (~-0.093), while rotor speed stayed very stable and generator speed was comparatively more variable; pitch averaged ~8.9 and mean yaw misalignment was ~11.9 degrees. Recorded temperatures were elevated (mean ~71.3) and no non-normal status flags were logged."
 }

@@ -44,5 +44,5 @@
     "high_wind",
     "power_deficit"
   ],
-  "summary": "Over the six-hour window winds were consistently high (~16 m/s, SD ~1.2) with a brief extreme gust to 44.3 m/s; despite that, power stayed very tightly clustered around 0.974 (SD ~0.0044) and exhibited a persistent negative residual of about -0.12, indicating a steady shortfall relative to expected output. Rotational speed was effectively constant while generator speed showed only minor variability, blade pitch averaged ~10.5\u00b0, yaw was persistently misaligned by ~9.6\u00b0, system status was continuously flagged as non-normal, and temperature held near 68.6."
+  "summary": "Over the six-hour window wind conditions were strong and steady (mean ~15.9 with low variability) but included a large peak to 44.3, while ambient temperature averaged ~68.6. Power output was very stable (mean ~0.974, std ~0.0044) yet consistently below expectations (mean residual \u2248 -0.123); rotor speed showed no variability, generator speed only minor fluctuation, pitch averaged ~10.5\u00b0, yaw misalignment ~9.6\u00b0, and status indicators remained outside normal range for the entire period."
 }

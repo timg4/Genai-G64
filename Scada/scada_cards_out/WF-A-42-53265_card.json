@@ -41,5 +41,5 @@
     }
   },
   "tags": [],
-  "summary": "Over the 6\u2011hour window winds were low on average (\u22482.7 m/s, std \u22481.04) with a brief peak to 10 m/s, while electrical output stayed essentially at zero (mean \u2248\u22120.004, very low variability). Control surfaces were held near 88\u00b0, yaw misalignment averaged about 29\u00b0, and the operational state was marked non\u2011normal for the entire period; rotor speed was very stable (std \u22480.21) whereas generator speed showed much higher variability (std \u224827.8), temperatures were ~30\u00b0C, and power residuals remained small (~0.0038)."
+  "summary": "Over the 6\u2011hour window wind conditions were generally light (mean ~2.7 m/s) with a brief peak to 10 m/s, and mean electrical output remained essentially zero. Mechanical/controls signals show near\u2011constant high pitch (~88\u00b0) and substantial yaw offset (~29\u00b0), with low rotor speed variability but unusually large generator speed variability; the system also reported an atypical operational state for the entire period and ambient temperature was ~30\u00b0C."
 }

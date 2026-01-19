@@ -44,5 +44,5 @@
     "power_deficit",
     "power_variability"
   ],
-  "summary": "Over this 6\u2011hour window winds averaged about 13.5 m/s with low short\u2011term variability (std ~1.3) but included a large spike to 44 m/s; despite those conditions, power was low on average and highly variable (mean ~0.30, std ~0.45) with a sizable negative residual (~-0.63) indicating consistent underproduction versus expected output. Rotational speeds were notably variable (rotor rpm std ~6.9; generator rpm std ~769), pitch angle averaged high (~63.8\u00b0), yaw misalignment averaged ~8.3\u00b0, all status indicators were non\u2011normal throughout the window, and temperatures averaged ~61.1\u00b0C."
+  "summary": "Over the six-hour window wind was relatively steady on average (mean ~13.45, std ~1.30) but included an extreme short-lived gust (max 44). Power production was low on average (~0.30) yet highly variable (std ~0.45) with a negative mean residual (~-0.63); rotor speed variability was modest (~6.9) while generator speed variability was very large (~769), and blade pitch averaged high (~63.8) with a consistent yaw misalignment (~8.3). The system remained in non-normal operational states throughout the period and temperatures averaged about 61.1."
 }

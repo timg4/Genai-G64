@@ -44,5 +44,5 @@
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window winds were steady (mean 14.96 m/s, sd 0.82) with a short peak to 28.1 m/s; power output was very stable (mean 0.9726, sd 0.0059) and rotor speed showed minimal variability while generator speed was more variable (sd 1.05). Notable operational observations include a persistent yaw misalignment averaging about 8.93\u00b0, a negative mean power residual of \u22120.0836, and elevated component temperatures around 65.23\u00b0C, while status flags remained nominal (no non\u2011normal statuses)."
+  "summary": "Over the 6-hour window winds were consistently strong (mean ~15.0 m/s, std ~0.82) with a short peak to 28.1 m/s; power output was very steady (mean ~0.973, std ~0.0059) and rotor speed showed minimal variability while generator speed was comparatively more variable. Persistent operational characteristics include a mean pitch around 9.5\u00b0 and a yaw misalignment near 9\u00b0, a slightly negative power residual (~-0.084) indicating marginally lower-than-expected output, elevated temperatures (~65.2\u00b0C), and no non-normal status flags."
 }

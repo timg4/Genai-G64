@@ -41,5 +41,5 @@
     }
   },
   "tags": [],
-  "summary": "Over the six-hour window the site saw steady winds near 5.9 m/s with a single gust up to 13.9 m/s; power output stayed low and fairly stable (around 0.18 on average) with a small negative residual suggesting generation was slightly below expected. Rotor speed was stable while generator speed showed much higher variability, yaw was persistently offset by about 8\u00b0, temperatures were elevated but steady (~47.5\u00b0C), and no non-normal operational statuses were recorded."
+  "summary": "Over the 6-hour window wind was steady at low-to-moderate speed (mean \u2248 5.9 m/s, std \u2248 0.55) with a single peak to 13.9 m/s; power stayed low and relatively stable (mean \u2248 0.18, std \u2248 0.054) with a small negative residual (~-0.06). Rotor speed variability was minimal while generator speed variability was markedly higher (std \u2248 56 vs \u2248 0.5), pitch averaged about \u22121.65\u00b0, yaw misalignment averaged ~8.16\u00b0, temperature was \u224847.5\u00b0C, and no status changes were recorded."
 }

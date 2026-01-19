@@ -93,6 +93,11 @@ ANOMALY_FEATURES = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Sample SCADA windows for simulation.")
     parser.add_argument("--output-dir", default=str(BASE_DIR / "scada_windows"))
+    parser.add_argument(
+        "--manifest-dir",
+        default=None,
+        help="Directory for manifest and class mapping JSON (default: <output-dir>_meta).",
+    )
     parser.add_argument("--baseline-hours", type=int, default=168)
     parser.add_argument("--window-hours", type=int, default=6)
     parser.add_argument("--per-class", type=int, default=2)
@@ -172,19 +177,24 @@ def select_window(row_scores: pd.Series, window_len: int, mode: str) -> Tuple[in
     return int(idx), float(scores.loc[idx])
 
 
+def window_base_id(cand: Dict[str, object]) -> str:
+    return f"WF-A-{cand['dataset_id']}-{cand['window']['end_id']}"
+
+
 def select_candidates_by_class(
     candidates: List[Dict[str, object]], per_class: int
-) -> List[Tuple[Dict[str, object], str]]:
+) -> Tuple[List[Tuple[Dict[str, object], str]], set[str]]:
     selected: List[Tuple[Dict[str, object], str]] = []
-    used_dataset_ids = set()
+    used_base_ids: set[str] = set()
     for class_label in CLASSES:
         ranked = sorted(candidates, key=lambda c: c["scores"][class_label], reverse=True)
         picks: List[Dict[str, object]] = []
         for cand in ranked:
-            if cand["dataset_id"] in used_dataset_ids:
+            base_id = window_base_id(cand)
+            if base_id in used_base_ids:
                 continue
             picks.append(cand)
-            used_dataset_ids.add(cand["dataset_id"])
+            used_base_ids.add(base_id)
             if len(picks) >= per_class:
                 break
         if len(picks) < per_class:
@@ -192,22 +202,33 @@ def select_candidates_by_class(
                 if cand in picks:
                     continue
                 picks.append(cand)
+                used_base_ids.add(window_base_id(cand))
                 if len(picks) >= per_class:
                     break
+        if len(picks) < per_class and ranked:
+            idx = 0
+            while len(picks) < per_class:
+                picks.append(ranked[idx % len(ranked)])
+                idx += 1
         for cand in picks:
             selected.append((cand, class_label))
-    return selected
+    return selected, used_base_ids
 
 
-def select_nix_candidates(nix_candidates: List[Dict[str, object]], nix_count: int) -> List[Dict[str, object]]:
+def select_nix_candidates(
+    nix_candidates: List[Dict[str, object]],
+    nix_count: int,
+    used_base_ids: set[str] | None = None,
+) -> List[Dict[str, object]]:
     ranked = sorted(nix_candidates, key=lambda c: c["anomaly_score"])
     selected = []
-    used_dataset_ids = set()
+    seen_base_ids = set() if used_base_ids is None else set(used_base_ids)
     for cand in ranked:
-        if cand["dataset_id"] in used_dataset_ids:
+        base_id = window_base_id(cand)
+        if base_id in seen_base_ids:
             continue
         selected.append(cand)
-        used_dataset_ids.add(cand["dataset_id"])
+        seen_base_ids.add(base_id)
         if len(selected) >= nix_count:
             break
     if len(selected) < nix_count:
@@ -217,6 +238,11 @@ def select_nix_candidates(nix_candidates: List[Dict[str, object]], nix_count: in
             selected.append(cand)
             if len(selected) >= nix_count:
                 break
+    if len(selected) < nix_count and ranked:
+        idx = 0
+        while len(selected) < nix_count:
+            selected.append(ranked[idx % len(ranked)])
+            idx += 1
     return selected
 
 
@@ -250,7 +276,13 @@ def main() -> None:
     args = parse_args()
     window_len = int(round(args.window_hours * 6))
     output_dir = Path(args.output_dir)
+    manifest_dir = (
+        Path(args.manifest_dir)
+        if args.manifest_dir
+        else output_dir.parent / f"{output_dir.name}_meta"
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
+    manifest_dir.mkdir(parents=True, exist_ok=True)
 
     event_info = load_event_info(EVENT_INFO_PATH)
     candidates = []
@@ -380,8 +412,10 @@ def main() -> None:
                     }
                 )
 
-    selected = select_candidates_by_class(candidates, args.per_class)
-    nix_selected = [(cand, "Nix") for cand in select_nix_candidates(nix_candidates, args.nix_count)]
+    selected, used_base_ids = select_candidates_by_class(candidates, args.per_class)
+    nix_selected = [
+        (cand, "Nix") for cand in select_nix_candidates(nix_candidates, args.nix_count, used_base_ids)
+    ]
     selected.extend(nix_selected)
 
     by_class: Dict[str, List[str]] = {}
@@ -422,14 +456,15 @@ def main() -> None:
         by_class.setdefault(class_label, []).append(window_id)
         manifest.append({"window_id": window_id, "file": file_name, "meta": meta})
 
-    (output_dir / "scada_windows_manifest.json").write_text(
+    (manifest_dir / "scada_windows_manifest.json").write_text(
         json.dumps({"windows": manifest}, indent=2, ensure_ascii=True)
     )
-    (output_dir / "scada_windows_by_class.json").write_text(
+    (manifest_dir / "scada_windows_by_class.json").write_text(
         json.dumps(by_class, indent=2, ensure_ascii=True)
     )
 
     print(f"Saved {len(manifest)} windows to {output_dir}")
+    print(f"Saved manifest metadata to {manifest_dir}")
 
 
 if __name__ == "__main__":

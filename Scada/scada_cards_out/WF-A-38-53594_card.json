@@ -41,5 +41,5 @@
     }
   },
   "tags": [],
-  "summary": "Over the 6\u2011hour window winds were generally steady and moderate (mean \u2248 5.7 m/s, sd \u2248 0.67) with stable rotor speed (rotor rpm sd \u2248 0.53) and modest pitch activity (mean \u2248 -1.45\u00b0), though there was a short high\u2011wind spike up to 25.8 m/s and unusually high generator rpm variability (std \u2248 59.7). Power was low on average (mean \u2248 0.159) and tended to run below expectations (mean residual \u2248 -0.077), while a persistent yaw misalignment (~12.6\u00b0) and an elevated mean temperature (~50\u00b0C) are notable despite no non\u2011normal status indications."
+  "summary": "Over the six-hour window winds were steady around 5.7 m/s with low variability but included a brief extreme gust to 25.8 m/s; mean power output was low (~0.16) with modest variability. Rotor speed variability was low while generator speed showed large fluctuations (std \u2248 59.7), blade pitch averaged slightly negative (~\u22121.45\u00b0) and yaw misalignment was consistently high (~12.6\u00b0); power residuals were persistently negative (~\u22120.077). Temperature averaged about 50\u00b0C and the monitored status remained normal throughout."
 }

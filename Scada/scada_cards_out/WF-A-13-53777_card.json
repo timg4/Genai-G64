@@ -44,5 +44,5 @@
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the 6-hour window winds were consistently high (mean ~18.2, std ~1.14) with a maximum of 33.6, and power output remained extremely steady near its mean (~0.9755, std ~0.0002) but with a notable negative residual bias (~-0.14). Rotor speed showed essentially no variability while generator speed had modest fluctuation; pitch averaged ~15.5 and yaw misalignment averaged ~9.4. Temperatures were elevated (mean ~70.6) and no non-normal statuses were recorded."
+  "summary": "Over the 6-hour window the machine saw consistently high winds (average ~18.2 m/s with low variability and peaks to 33.6 m/s) and delivered very steady power (mean ~0.9755 with almost no variability). Rotor speed was effectively constant while generator speed showed only minor fluctuation; blade pitch averaged ~15.5\u00b0 and yaw misalignment averaged ~9.4\u00b0, and temperatures were elevated (~70.6). A small negative average power residual indicates the measured power was consistently slightly below expectation."
 }

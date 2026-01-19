@@ -43,5 +43,5 @@
   "tags": [
     "power_variability"
   ],
-  "summary": "Over the 6\u2011hour window winds were generally moderate and steady (mean ~13.7, std ~1.5) with an extreme peak to 43.7; power averaged ~0.93 with modest variability (std ~0.12) but showed greater fluctuation than the wind variability alone would predict. Rotor speed was tightly stable (std ~1.6) while generator speed exhibited much larger swings (std ~179), and blade pitch and yaw angles remained near ~8 on average; ambient temperature averaged ~72.5. The unit remained in a non\u2011standard operational state for the entire period, while mean power residuals were small (~0.01), indicating short-lived mismatches between expected and actual output."
+  "summary": "Over the 6\u2011hour window wind was generally steady (mean ~13.7, low variability) with a brief extreme gust to 43.7; power was high on average (~0.93) but exhibited noticeable variability (std ~0.12) while mean residuals remained small. One rotational speed showed large spread compared with the other, blade pitch and yaw offset averaged around 8\u00b0, average temperature was ~72.5, and all records were flagged as non\u2011normal throughout the period."
 }
