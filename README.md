@@ -24,7 +24,7 @@ Two steps, intentionally separated:
 
 **Window selection (simulation):** within each dataset we pick the 6h slice with the highest anomaly score (mean absolute z‑score vs. training baseline). For “Nix” we pick the most stable 6h slice from normal events.
 
-**Card contents:** source metadata, window times, summary stats, derived metrics (e.g., power residuals, status ratios), tags, and a short LLM summary. Class labels are kept in a separate `scada_windows_by_class.json` for evaluation.
+**Card contents:** source metadata, window times, summary stats, derived metrics (e.g., power residuals, status ratios), tags, and a short LLM summary. Class labels are kept in a separate `Scada/scada_windows_meta/scada_windows_by_class.json` for evaluation.
 
 ## Usage
 Install:
@@ -38,7 +38,7 @@ Generate window payloads (simulation):
 ```bash
 python3 Scada/scada_card_builder.py --per-class 5 --nix-count 5 --baseline-hours 168 --window-hours 6
 ```
-Outputs `Scada/scada_windows/*.json` plus `Scada/scada_windows/scada_windows_by_class.json`.
+Outputs `Scada/scada_windows/*.json` plus `Scada/scada_windows_meta/scada_windows_by_class.json` and `Scada/scada_windows_meta/scada_windows_manifest.json`.
 
 Generate cards from windows:
 ```bash
