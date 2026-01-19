@@ -1,0 +1,21 @@
+{
+  "examples": [
+    {    
+      "example_id": "DJI_0057_1_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0057_1_3.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Im oberen Bereich nahe der Vorderkante sind längliche Abrieb- und Verfärbungsspuren erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        },
+        {
+          "category_id": 4,
+          "category_name": "SF;PO",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Im mittleren Bereich der Blattoberfläche ist eine lokal begrenzte Stelle mit abgetragenem bzw. fehlendem Coating erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+        }
+      ]
+    }
+  ]
+}

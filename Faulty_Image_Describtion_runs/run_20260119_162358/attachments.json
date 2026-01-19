@@ -1,0 +1,49 @@
+{
+  "attachments": [
+    {
+      "type": "image",
+      "label": "example_1",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0004_0_3.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_2",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0009_0_4.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_3",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0703.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_4",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0025_1_3.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_5",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0030_0_2.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_6",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0035_1_2.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_7",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0044_1_0.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_8",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0097_0_1.JPG"
+    },
+    {
+      "type": "image",
+      "label": "query_full",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\test_images_cropped\\DJI_0009_0_3.JPG"
+    }
+  ]
+}
