@@ -109,17 +109,18 @@ class RunResponse(BaseModel):
 # -----------------------------
 # Query composer + recommender
 # -----------------------------
-SYSTEM_PROMPT_RECOMMEND = """You are a wind-turbine maintenance assistant.
+SYSTEM_PROMPT_RECOMMEND = """
 
 You will receive:
 1) incident context (SCADA summary + optional notes)
 2) top retrieved manual chunks, each with (source, page range, section, text)
 
 Task:
-- Write a practical action recommendation (in German) for a technician.
+- Write a practical action recommendation for a technician.
 - Use short numbered steps.
 - When you reference something from a chunk, cite it like: [source pX-Y].
 - If the chunks are irrelevant or only training/admin, say so and ask for the right manual.
+- Prioritize safety: if there are any safety warnings, mentiom them early. First priority is safety for technician.
 """
 
 
