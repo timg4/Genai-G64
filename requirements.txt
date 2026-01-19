@@ -6,3 +6,4 @@ pypdf
 sentence-transformers
 tqdm
 fastapi
+uvicorn
