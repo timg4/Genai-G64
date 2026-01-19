@@ -345,7 +345,7 @@
           <label>Mechanic notes (optional)</label>
           <textarea id="mechanicNotes" placeholder="e.g., customer report, recent maintenance, observed behavior..."></textarea>
 
-          <label>Images (drag & drop). We only forward text descriptions, not pixels.</label>
+          <label>Images (drag & drop). Images are used for automatic descriptions.</label>
           <div id="drop" class="drop">
             <b>Drop images here</b><div class="small">or click to select. You can also add pre-described samples below.</div>
             <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
@@ -424,9 +424,10 @@
 
 <script>
   const state = {
-    files: [], // {name, desc}
+    files: [], // {name, desc, data_url}
     scadaOptions: [],
     lastResults: [],
+    awaitingConfirm: false,
   };
 
   const sampleImageDescriptions = [
@@ -585,18 +586,53 @@
       .map(f => (f.desc || '').trim())
       .filter(Boolean);
 
-    const userSummary = [
-      freeText && `Free text: ${freeText}`,
-      mechanicNotes && `Mechanic notes: ${mechanicNotes}`,
-      scadaId && `SCADA: ${scadaId}`,
-      imageDescriptions.length && `Images: ${imageDescriptions.join(' | ')}`,
-    ].filter(Boolean).join('\n');
+    const imageFiles = state.files
+      .filter(f => !!f.data_url)
+      .map(f => ({ name: f.name || 'image', data_url: f.data_url }));
 
-    addChatMessage('user', 'Incident input', escapeHtml(userSummary || '(empty)'));
-
-    const placeholder = addChatMessage('assistant', 'Recommendation', '<span class="spinner"></span> thinking...');
-
+    let placeholder = null;
     try {
+      if (!state.awaitingConfirm && imageFiles.length) {
+        const resp = await fetch('/api/faulty-describe', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ image_files: imageFiles })
+        });
+        const data = await resp.json();
+        if(!resp.ok){
+          throw new Error(data?.detail || 'Faulty description failed');
+        }
+        const descs = data.descriptions || [];
+        state.files.forEach((f, idx) => {
+          const d = descs[idx];
+          if (d && d.description) {
+            f.desc = d.description;
+          }
+        });
+        state.awaitingConfirm = true;
+        el('runBtn').textContent = 'Confirm & Run';
+        renderFileList();
+        showWarn('Bitte die Bildbeschreibungen prüfen und Run erneut klicken.');
+        setStatus('confirm');
+        return;
+      }
+
+      if (state.awaitingConfirm) {
+        state.awaitingConfirm = false;
+        el('runBtn').textContent = 'Run';
+      }
+
+      const userSummary = [
+        freeText && `Free text: ${freeText}`,
+        mechanicNotes && `Mechanic notes: ${mechanicNotes}`,
+        scadaId && `SCADA: ${scadaId}`,
+        imageDescriptions.length && `Images: ${imageDescriptions.join(' | ')}`,
+      ].filter(Boolean).join('\n');
+
+      addChatMessage('user', 'Incident input', escapeHtml(userSummary || '(empty)'));
+
+      placeholder = addChatMessage('assistant', 'Recommendation', '<span class="spinner"></span> thinking...');
+
       const resp = await fetch('/api/run', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -617,7 +653,6 @@
       const rec = data.recommendation_markdown || '(no recommendation)';
       placeholder.querySelector('.m-b').textContent = rec;
 
-      // Optional: show built query pack in the model pill
       if(data.query_pack && data.query_pack.query){
         el('modelPill').textContent = `query ready`;
       }
@@ -625,10 +660,15 @@
       renderResultsTable(data.retrieved || []);
 
     } catch (e) {
-      placeholder.querySelector('.m-b').textContent = `Error: ${e.message}`;
+      const msg = `Error: ${e.message}`;
+      if (placeholder) {
+        placeholder.querySelector('.m-b').textContent = msg;
+      } else {
+        addChatMessage('assistant', 'Error', escapeHtml(msg));
+      }
       showWarn(e.message);
     } finally {
-      setStatus('idle');
+      setStatus(state.awaitingConfirm ? 'confirm' : 'idle');
       setRunning(false);
       el('runBtn').disabled = false;
     }
@@ -642,7 +682,14 @@
 
     function handleFiles(fileList){
       [...fileList].forEach(f => {
-        state.files.push({ name: f.name, desc: '' });
+        const item = { name: f.name, desc: '', data_url: '' };
+        state.files.push(item);
+        const reader = new FileReader();
+        reader.onload = () => {
+          item.data_url = reader.result || '';
+          renderFileList();
+        };
+        reader.readAsDataURL(f);
       });
       renderFileList();
     }

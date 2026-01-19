@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import base64
 import json
 import math
 import os
 import re
 import sys
+import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -22,6 +24,7 @@ except Exception:  # pragma: no cover
 APP_DIR = Path(__file__).resolve().parent
 DATA_DIR = APP_DIR / "data"
 SCADA_SAMPLES_PATH = DATA_DIR / "scada_samples.json"
+UPLOADS_DIR = DATA_DIR / "uploads"
 def _find_repo_root(start: Path) -> Path:
     for parent in [start] + list(start.parents):
         if (parent / "manuals").is_dir():
@@ -41,8 +44,22 @@ TOKEN_RE = re.compile(r"[A-Za-z0-9_]+")
 class RunRequest(BaseModel):
     free_text: str = ""
     image_descriptions: List[str] = Field(default_factory=list)
+    image_files: List[Dict[str, str]] = Field(default_factory=list)
     scada_id: Optional[str] = None
     top_k: int = 10
+
+
+class ImageFile(BaseModel):
+    name: str = "upload.jpg"
+    data_url: str
+
+
+class DescribeRequest(BaseModel):
+    image_files: List[ImageFile] = Field(default_factory=list)
+
+
+class DescribeResponse(BaseModel):
+    descriptions: List[Dict[str, str]]
 
 
 class RetrievedChunk(BaseModel):
@@ -323,6 +340,62 @@ else:
 
 
 # -----------------------------
+# Faulty image description integration (optional)
+# -----------------------------
+
+FAULTY_IMPORT_ERROR: Optional[str] = None
+FAULTY_EXAMPLES_PATH = REPO_ROOT / "Faulty_Image_Describtion" / "examples.json"
+try:
+    from Faulty_Image_Describtion.io_utils import read_examples as read_faulty_examples  # type: ignore
+    from Faulty_Image_Describtion.openai_adapter import run_openai_vision as run_faulty_openai  # type: ignore
+    from Faulty_Image_Describtion.prompt import build_prompt as build_faulty_prompt  # type: ignore
+except Exception as exc:  # pragma: no cover
+    FAULTY_IMPORT_ERROR = str(exc)
+
+
+def _decode_data_url(data_url: str) -> bytes:
+    if "," in data_url:
+        data_url = data_url.split(",", 1)[1]
+    return base64.b64decode(data_url)
+
+
+def _save_upload(data_url: str, filename: str) -> Path:
+    UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+    suffix = Path(filename).suffix or ".jpg"
+    out_path = UPLOADS_DIR / f"{uuid.uuid4().hex}{suffix}"
+    out_path.write_bytes(_decode_data_url(data_url))
+    return out_path
+
+
+def describe_faulty_image(image_path: Path) -> Optional[str]:
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key or OpenAI is None:
+        return None
+    if FAULTY_IMPORT_ERROR or not FAULTY_EXAMPLES_PATH.exists():
+        return None
+
+    examples = read_faulty_examples(FAULTY_EXAMPLES_PATH)
+    max_examples = int(os.environ.get("FAULTY_FEWSHOT_K", "4"))
+    prompt, attachments = build_faulty_prompt(
+        examples,
+        image_path,
+        max_examples=max_examples,
+        base_dir=REPO_ROOT,
+    )
+    result = run_faulty_openai(
+        prompt,
+        attachments,
+        model=os.environ.get("FAULTY_MODEL", os.environ.get("OPENAI_MODEL", "gpt-4o-mini")),
+        api_key=api_key,
+    )
+    parsed = result.get("parsed_json") or {}
+    if isinstance(parsed, dict) and parsed.get("description"):
+        return str(parsed["description"])
+    raw = str(result.get("raw_text", "")).strip()
+    return raw or None
+
+
+# -----------------------------
 # App setup
 # -----------------------------
 
@@ -397,9 +470,24 @@ def run(req: RunRequest) -> RunResponse:
                 scada_case = s["case"]
                 break
 
+    image_descriptions = [x for x in req.image_descriptions if x.strip()] if req.image_descriptions else []
+    if req.image_files and not image_descriptions:
+        for item in req.image_files:
+            data_url = item.get("data_url") or ""
+            if not data_url:
+                continue
+            filename = item.get("name") or "upload.jpg"
+            try:
+                image_path = _save_upload(data_url, filename)
+            except Exception:
+                continue
+            desc = describe_faulty_image(image_path)
+            if desc:
+                image_descriptions.append(desc)
+
     context = {
         "scada_case": scada_case,
-        "fault_images_description": "\n".join([x for x in req.image_descriptions if x.strip()]) if req.image_descriptions else "",
+        "fault_images_description": "\n".join(image_descriptions) if image_descriptions else "",
         "mechanic_notes": req.free_text,
     }
 
@@ -434,6 +522,27 @@ def run(req: RunRequest) -> RunResponse:
         recommendation_markdown=recommendation,
         retrieved=retrieved,
     )
+
+
+@app.post("/api/faulty-describe", response_model=DescribeResponse)
+def faulty_describe(req: DescribeRequest) -> DescribeResponse:
+    if not req.image_files:
+        return DescribeResponse(descriptions=[])
+
+    descriptions: List[Dict[str, str]] = []
+    for item in req.image_files:
+        if not item.data_url:
+            descriptions.append({"name": item.name, "description": ""})
+            continue
+        try:
+            image_path = _save_upload(item.data_url, item.name or "upload.jpg")
+        except Exception:
+            descriptions.append({"name": item.name, "description": ""})
+            continue
+        desc = describe_faulty_image(image_path) or ""
+        descriptions.append({"name": item.name, "description": desc})
+
+    return DescribeResponse(descriptions=descriptions)
 
 
 if __name__ == "__main__":
