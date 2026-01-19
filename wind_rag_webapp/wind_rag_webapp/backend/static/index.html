@@ -305,6 +305,12 @@
     body.is-running .processing-hint {
       display: flex;
     }
+    .inspect-inline {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
     .image-review {
       display: grid;
       gap: 12px;
@@ -545,19 +551,14 @@
       <div class="card">
         <div class="card-h"><h2>Inputs</h2><span class="pill" id="statusPill">idle</span></div>
         <div class="card-b">
-          <label>Free text context</label>
-          <textarea id="freeText" placeholder="e.g., underperformance in high wind, no alarms..."></textarea>
-
           <label>Mechanic notes (optional)</label>
           <textarea id="mechanicNotes" placeholder="e.g., customer report, recent maintenance, observed behavior..."></textarea>
 
           <label>Images (drag & drop). Images are used for automatic descriptions.</label>
           <div id="drop" class="drop">
-            <b>Drop images here</b><div class="small">or click to select. You can also add pre-described samples below.</div>
+            <b>Drop images here</b><div class="small">or click to select.</div>
             <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
           </div>
-
-          <div class="chips" id="sampleChips"></div>
           <div class="file-list" id="fileList"></div>
 
           <!-- SCADA Toggle -->
@@ -707,14 +708,9 @@
     allClasses: [],  // All available classes
     lastResults: [],
     awaitingConfirm: false,
+    imagesApproved: false,
     reviewMessage: null,
   };
-
-  const sampleImageDescriptions = [
-    "crack near leading edge; erosion visible",
-    "surface coating damage / paint peel; possible gelcoat delamination",
-    "lightning receptor damage near tip; burn marks"
-  ];
 
   function el(id){ return document.getElementById(id); }
 
@@ -757,27 +753,16 @@
       <div class="chat-image">
         <img src="${item.data_url}" alt="${escapeHtml(item.name || "uploaded image")}" />
         <div class="caption">${escapeHtml(item.name || "uploaded image")}</div>
+        <div class="inspect-inline">
+          <button class="btn-mini inspect-btn">Inspect images</button>
+        </div>
       </div>
     `;
-    addChatMessage("user", "Uploaded image", body);
-  }
-
-  function renderSampleChips(){
-    const c = el('sampleChips');
-    if (!c) {
-      return;
+    const wrap = addChatMessage("user", "Uploaded image", body);
+    const btn = wrap.querySelector(".inspect-btn");
+    if (btn) {
+      btn.onclick = inspectImages;
     }
-    c.innerHTML = '';
-    sampleImageDescriptions.forEach((desc) => {
-      const chip = document.createElement('div');
-      chip.className = 'chip';
-      chip.textContent = `+ ${desc}`;
-      chip.onclick = () => {
-        state.files.push({ name: 'sample-image', desc, use: true });
-        renderFileList();
-      };
-      c.appendChild(chip);
-    });
   }
 
   function renderFileList(){
@@ -808,6 +793,8 @@
       `;
       item.querySelector('button').onclick = () => {
         state.files.splice(idx, 1);
+        state.imagesApproved = false;
+        state.awaitingConfirm = false;
         renderFileList();
       };
       item.querySelector('input').oninput = (e) => {
@@ -904,13 +891,17 @@
 
     const confirmBtn = document.createElement("button");
     confirmBtn.className = "btn";
-    confirmBtn.textContent = "Confirm & Run";
+    confirmBtn.textContent = "Accept images";
     confirmBtn.onclick = () => {
       if (state.reviewMessage) {
         state.reviewMessage.remove();
         state.reviewMessage = null;
       }
-      run();
+      state.imagesApproved = true;
+      state.awaitingConfirm = false;
+      showWarn("");
+      setStatus("idle");
+      updateInspectButton();
     };
 
     const rejectBtn = document.createElement("button");
@@ -923,12 +914,16 @@
           f.desc = "";
         }
       });
+      state.imagesApproved = true;
+      state.awaitingConfirm = false;
       renderFileList();
       if (state.reviewMessage) {
         state.reviewMessage.remove();
         state.reviewMessage = null;
       }
-      run();
+      showWarn("");
+      setStatus("idle");
+      updateInspectButton();
     };
 
     actionRow.appendChild(confirmBtn);
@@ -1137,7 +1132,6 @@
     setRunning(true);
     el('runBtn').disabled = true;
 
-    const freeText = el('freeText').value || '';
     const mechanicNotes = el('mechanicNotes').value || '';
     const scadaEnabled = el('scadaToggle').checked;
     const scadaId = scadaEnabled ? el('scadaSelect').value : null;
@@ -1156,44 +1150,11 @@
 
     let placeholder = null;
     try {
-      if (!state.awaitingConfirm && imageFiles.length) {
-        const resp = await fetch('/api/faulty-describe', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ image_files: imageFiles })
-        });
-        const data = await resp.json();
-        if(!resp.ok){
-          throw new Error(data?.detail || 'Faulty description failed');
-        }
-        const descs = data.descriptions || [];
-        imageTargets.forEach((f, idx) => {
-          const d = descs[idx];
-          if (d && d.description) {
-            f.desc = normalizeDescription(d.description);
-          }
-          if (typeof f.use === "undefined") {
-            f.use = true;
-          }
-        });
-        state.awaitingConfirm = true;
-        el('runBtn').textContent = 'Confirm & Run';
-        renderFileList();
-        renderImageReview();
-        showWarn('Bitte die Bildbeschreibungen pruefen und bestaetigen.');
-        setStatus('confirm');
-        setRunning(false);
-        el('runBtn').disabled = false;
-        return;
-      }
-
-      if (state.awaitingConfirm) {
-        state.awaitingConfirm = false;
-        el('runBtn').textContent = 'Run';
+      if (imageFiles.length && !state.imagesApproved) {
+        throw new Error("Please inspect and accept the image descriptions first.");
       }
 
       const userSummary = [
-        freeText && `Free text: ${freeText}`,
         mechanicNotes && `Mechanic notes: ${mechanicNotes}`,
         scadaId && `SCADA: ${scadaId}`,
         imageDescriptions.length && `Images: ${imageDescriptions.join(' | ')}`,
@@ -1217,7 +1178,6 @@
         body: JSON.stringify({
           scada_id: scadaId,
           scada_case: scadaCase,
-          free_text: freeText,
           mechanic_notes: mechanicNotes,
           image_descriptions: imageDescriptions,
           top_k: topK,
@@ -1253,6 +1213,71 @@
     }
   }
 
+  async function inspectImages(){
+    showWarn('');
+    const imageTargets = state.files
+      .filter(f => f.use !== false && !!f.data_url);
+    const imageFiles = imageTargets
+      .map(f => ({ name: f.name || 'image', data_url: f.data_url }));
+
+      if (!imageFiles.length) {
+        showWarn("No images to inspect.");
+        return;
+      }
+
+      setStatus("inspecting");
+      setRunning(true);
+      el("runBtn").disabled = true;
+      document.querySelectorAll(".inspect-btn").forEach((btn) => {
+        btn.disabled = true;
+      });
+      const hint = el("processingHint");
+      if (hint) {
+        hint.innerHTML = "<span class=\"spinner\"></span> Inspecting image…";
+      }
+
+    try {
+      const resp = await fetch("/api/faulty-describe", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ image_files: imageFiles })
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data?.detail || "Faulty description failed");
+      }
+
+      const descs = data.descriptions || [];
+      imageTargets.forEach((f, idx) => {
+        const d = descs[idx];
+        if (d && d.description) {
+          f.desc = normalizeDescription(d.description);
+        }
+        if (typeof f.use === "undefined") {
+          f.use = true;
+        }
+      });
+      state.imagesApproved = false;
+      state.awaitingConfirm = true;
+      renderFileList();
+      renderImageReview();
+      showWarn("Bitte die Bildbeschreibungen pruefen und bestaetigen.");
+      setStatus("confirm");
+    } catch (e) {
+      showWarn(e.message);
+      setStatus("idle");
+    } finally {
+      setRunning(false);
+      el("runBtn").disabled = false;
+      document.querySelectorAll(".inspect-btn").forEach((btn) => {
+        btn.disabled = false;
+      });
+      if (hint) {
+        hint.innerHTML = "<span class=\"spinner\"></span> Processing request…";
+      }
+    }
+  }
+
   function setupDropZone(){
     const drop = el('drop');
     const input = el('fileInput');
@@ -1263,6 +1288,8 @@
       [...fileList].forEach(f => {
         const item = { name: f.name, desc: '', data_url: '', use: true };
         state.files.push(item);
+        state.imagesApproved = false;
+        state.awaitingConfirm = false;
         const reader = new FileReader();
         reader.onload = () => {
           item.data_url = reader.result || '';
@@ -1310,7 +1337,6 @@
   }
 
   (async function init(){
-    renderSampleChips();
     renderFileList();
     setupDropZone();
     setupControls();
