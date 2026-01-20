@@ -1,0 +1,258 @@
+{
+  "examples": [
+    {
+      "example_id": "DJI_0057_1_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0057_1_3.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Im oberen Bereich nahe der Vorderkante sind längliche Abrieb- und Verfärbungsspuren erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        },
+        {
+          "category_id": 4,
+          "category_name": "SF;PO",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Im mittleren Bereich der Blattoberfläche ist eine lokal begrenzte Stelle mit abgetragenem bzw. fehlendem Coating erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0004_0_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0004_0_3.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 0,
+          "category_name": "VG;MT",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Auf der Blattoberfläche sind zwei voneinander getrennte Fehlerstellen auf dem Vortex Generating Panel erkennbar; eine liegt eher im linken Abschnitt des sichtbaren Blattbereichs, die zweite weiter rechts im mittleren bis rechten Abschnitt. An den betreffenden Stellen fehlen Zähne am VG-Panel, entsprechend VG;MT (Vortex Generating Panel - Missing Teeth)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0009_0_4",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0009_0_4.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 2,
+          "category_name": "LR;DA",
+          "image_description": "Das Bild zeigt die Blattspitze eines Rotorblatts. Direkt im Bereich der Spitze ist eine lokale Beschädigung am Blitzableiter erkennbar, entsprechend LR;DA (Lightning Receptor - Damage)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0025_1_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0025_1_3.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt die Blattspitze eines Rotorblatts. Nahe der Vorderkante im Spitzenbereich sind lokale Abrieb- bzw. Auswaschungen und Verfärbungen erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0030_0_2",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0030_0_2.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 3,
+          "category_name": "LE;CR",
+          "image_description": "Das Bild zeigt den Rotor mit einem nach oben gerichteten Rotorblatt. Im oberen Blattbereich nahe der Vorderkante ist ein länglicher, linienförmiger Schaden erkennbar, entsprechend LE;CR (Leading Edge - Crack)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0034_1_2",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0034_1_2.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 3,
+          "category_name": "LE;CR",
+          "image_description": "Das Bild zeigt zwei Rotorblätter. Am vorderen Rotorblatt sind mehrere voneinander getrennte, linienförmige Schäden entlang der Vorderkante erkennbar, entsprechend LE;CR (Leading Edge - Crack)."
+        },
+        {
+          "category_id": 0,
+          "category_name": "VG;MT",
+          "image_description": "Das Bild zeigt zwei Rotorblätter. Auf dem Vortex Generating Panel sind zwei getrennte Stellen erkennbar, an denen Zähne fehlen, entsprechend VG;MT (Vortex Generating Panel - Missing Teeth)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0035_1_2",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0035_1_2.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 3,
+          "category_name": "LE;CR",
+          "image_description": "Das Bild zeigt einen Rotorblattabschnitt. Entlang der Vorderkante sind mehrere voneinander getrennte, linienförmige Risse erkennbar, entsprechend LE;CR (Leading Edge - Crack)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0044_1_0",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0044_1_0.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt einen Rotorblattabschnitt im äußeren Blattbereich. Nahe der Vorderkante sind lokale Abtrags- und Verfärbungsstellen erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0100_0_1",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0100_0_1.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt ein Rotorblatt über eine größere Länge. Nahe der Vorderkante sind Abrieb- und Auswaschungsspuren erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        },
+        {
+          "category_id": 4,
+          "category_name": "SF;PO",
+          "image_description": "Das Bild zeigt ein Rotorblatt über eine größere Länge. Im mittleren Bereich der Blattoberfläche ist eine lokal begrenzte Stelle mit abgetragenem Coating erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0097_0_1",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0097_0_1.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 4,
+          "category_name": "SF;PO",
+          "image_description": "Das Bild zeigt einen Rotorblattabschnitt. Auf der Blattoberfläche ist lokal abgetragene bzw. fehlende Beschichtung erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+        }
+      ]
+    },
+
+    {
+      "example_id": "DJI_0977",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0977.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Im mittleren Bereich nahe der Vorderkante ist eine локal begrenzte Abrieb- und Verfärbungsstelle erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0191",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0191.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Entlang der Vorderkante sind zwei voneinander getrennte Erosionsstellen erkennbar: eine im Bereich der Blattspitze und eine weitere weiter innen im mittleren Bereich des sichtbaren Blatts. Beide Schäden entsprechen LE;ER (Leading Edge - Erosion)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0327",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0327.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Nahe der Vorderkante im oberen bis mittleren Blattbereich sind Abrieb- und Auswaschungsspuren erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        },
+        {
+          "category_id": 4,
+          "category_name": "SF;PO",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Im unteren Bereich der Blattoberfläche ist eine lokal begrenzte Stelle mit abgetragenem bzw. fehlendem Coating erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0433",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0433.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 0,
+          "category_name": "VG;MT",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Entlang des Vortex Generating Panels ist eine deutliche Unterbrechung in der Zahnreihe erkennbar; an dieser Stelle fehlen Zähne am VG-Panel, entsprechend VG;MT (Vortex Generating Panel - Missing Teeth)."
+        },
+        {
+          "category_id": 4,
+          "category_name": "SF;PO",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Unterhalb des Vortex Generating Panels sind lokal begrenzte Schürf- bzw. Abriebspuren mit sichtbar angegriffenem Coating erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0694",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0694.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt ein Rotorblatt. Entlang der Vorderkante sind mehrere voneinander getrennte Abrieb- und Verfärbungsstellen in unterschiedlichen Blattbereichen erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0703",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0703.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 2,
+          "category_name": "LR;DA",
+          "image_description": "Das Bild zeigt die Blattspitze eines Rotorblatts. Im Spitzenbereich ist eine lokale Beschädigung am Blitzableiter erkennbar, entsprechend LR;DA (Lightning Receptor - Damage)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0747",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0747.JPG",
+      "example_type": "damage",
+      "findings": [
+        {
+          "category_id": 1,
+          "category_name": "LE;ER",
+          "image_description": "Das Bild zeigt einen Rotorblattabschnitt. Nahe der Vorderkante ist eine локal begrenzte Abrieb- und Schadstelle erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+        }
+      ]
+    },
+    {
+      "example_id": "DJI_0033_1_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0033_1_3.JPG",
+      "example_type": "No Damage",
+      "findings": [
+        {
+          "category_id": 5,
+          "category_name": "No Damage",
+          "image_description": "Auf diesem Bild ist kein Windrad zu erkennen. Bitte lade ein Bild von einem Windrad hoch oder überspringe diesen Schritt."
+        }
+      ]
+    },
+        {
+      "example_id": "DJI_0033_1_3",
+      "rel_path": "Data_Preprossesing\\subset_export\\images copy\\DJI_0434.JPG",
+      "example_type": "No Damage",
+      "findings": [
+        {
+          "category_id": 5,
+          "category_name": "No Damage",
+          "image_description": "Auf dem Bild ist ein Rotorblatt eines Windrades zu erkenn. Jedoch kann ich darauf keinen Schaden erkennen. Bitte gib mir weiter Hinweise zu dem Schaden oder trage den Schaden manuell ein."
+        }
+      ]
+    }
+  ]
+}

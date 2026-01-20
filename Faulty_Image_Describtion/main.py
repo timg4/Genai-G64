@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
 
     run = sub.add_parser("run-openai", help="Call OpenAI Vision and save output")
     run.add_argument("--run", required=True)
-    run.add_argument("--model", default="gpt-5-mini")
+    run.add_argument("--model", default="gpt-5.2")
     run.add_argument("--api-key", default="")
 
     return parser.parse_args()

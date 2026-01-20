@@ -9,7 +9,8 @@ CATEGORY_MAP = {
     2: "LR;DA",
     3: "LE;CR",
     4: "SF;PO",
-    5: "No Damage"
+    5: "No Damage",
+    6: "Invalid_Image"
 }
 
 
@@ -28,6 +29,7 @@ def build_prompt(
     max_examples: int = 8,
     query_tiles: Optional[List[Path]] = None,
     base_dir: Optional[Path] = None,
+    few_shot_spec: Optional[dict] = None,
 ) -> Tuple[str, List[dict]]:
     attachments: List[dict] = []
     lines: List[str] = []
@@ -36,10 +38,10 @@ def build_prompt(
 
     lines.append(
         "You are a cautious wind turbine blade inspection assistant. "
+        "Your task is to describe what is seen at the input image and if there a damages present."
         "Examples below are for calibration only. Do NOT include any example image findings "
         "or categories in the final output. Only analyze the QUERY image(s) at the end. "
         "If the image quality is poor, distant, or ambiguous, say you are unsure. "
-        "Never guess. Always follow the output format exactly."
     )
     lines.append("")
     lines.append("Categories:")
@@ -50,8 +52,24 @@ def build_prompt(
     lines.append("Rules:")
     lines.append("- Describe only the QUERY image.")
     lines.append("- The description must state whether defects are present, absent, or uncertain.")
+    lines.append("- If no wind turbine or relevant component is visible, say so and state that damage cannot be assessed.")
+    lines.append("- If a turbine component is visible but no defects are seen, state that no defects are present.")
     lines.append("- If unsure, say so explicitly instead of guessing.")
+    if isinstance(few_shot_spec, dict):
+        constraints = few_shot_spec.get("output_constraints") or []
+        if constraints:
+            lines.append("- Additional constraints:")
+            for c in constraints:
+                lines.append(f"  - {c}")
     lines.append("")
+
+    if isinstance(few_shot_spec, dict):
+        triggers = few_shot_spec.get("class_triggers") or {}
+        if triggers:
+            lines.append("Class triggers (reference only):")
+            for name, desc in triggers.items():
+                lines.append(f"- {name}: {desc}")
+            lines.append("")
 
     lines.append("Few-shot examples (do not analyze for final answer):")
     lines.append("")
@@ -100,9 +118,12 @@ def _example_categories(example: dict) -> Set[str]:
 def _select_balanced_examples(examples: List[dict], max_examples: int) -> List[dict]:
     no_damage = [e for e in examples if e.get("example_type") == "no_damage"]
     damage = [e for e in examples if e.get("example_type") == "damage"]
+    invalid = [e for e in examples if e.get("example_type") == "invalid"]
 
     selected: List[dict] = []
     selected.extend(no_damage[:2])
+    if invalid:
+        selected.extend(invalid[:1])
 
     damage_sorted = sorted(damage, key=lambda e: len(_example_categories(e)))
     used_categories: Set[str] = set()
@@ -156,6 +177,12 @@ def _format_findings(findings: List[dict]) -> str:
 def _example_text(example: dict) -> str:
     if example.get("gold_text"):
         return str(example["gold_text"])
+    if example.get("image_description"):
+        return str(example["image_description"])
+    if example.get("example_type") == "invalid":
+        return "Kein Windrad bzw. kein relevanter Windradbereich ist sichtbar; eine Schadensbewertung ist nicht möglich."
+    if example.get("example_type") == "no_damage":
+        return "Windradbereich sichtbar; keine Schäden erkennbar."
     findings = example.get("findings") or []
     if not findings:
         return "No visible defects are present."
