@@ -1,0 +1,9 @@
+gold\pred,Invalid_Image,LE;CR,LE;ER,LE;ER|SF;PO,LR;DA,No Damage,SF;PO,VG;MT
+Invalid_Image,3,0,0,0,0,0,0,0
+LE;CR,0,0,0,0,0,1,0,0
+LE;ER,0,0,1,0,0,0,0,0
+LE;ER|SF;PO,0,0,1,0,0,0,0,0
+LR;DA,0,0,0,0,3,0,0,0
+No Damage,0,0,0,0,0,3,0,0
+SF;PO,0,0,1,0,0,0,1,0
+VG;MT,0,0,0,0,0,1,0,2

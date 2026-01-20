@@ -1,0 +1,69 @@
+{
+  "num_samples": 23,
+  "exact_match_accuracy": 0.391304347826087,
+  "micro_precision": 0.40540540540540543,
+  "micro_recall": 0.5555555555555556,
+  "micro_f1": 0.46875,
+  "macro_f1": 0.4741496598639455,
+  "per_class": {
+    "VG;MT": {
+      "tp": 2,
+      "fp": 4,
+      "fn": 2,
+      "precision": 0.3333333333333333,
+      "recall": 0.5,
+      "f1": 0.4
+    },
+    "LE;ER": {
+      "tp": 3,
+      "fp": 5,
+      "fn": 3,
+      "precision": 0.375,
+      "recall": 0.5,
+      "f1": 0.42857142857142855
+    },
+    "LR;DA": {
+      "tp": 3,
+      "fp": 6,
+      "fn": 0,
+      "precision": 0.3333333333333333,
+      "recall": 1.0,
+      "f1": 0.5
+    },
+    "LE;CR": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4
+    },
+    "SF;PO": {
+      "tp": 2,
+      "fp": 4,
+      "fn": 2,
+      "precision": 0.3333333333333333,
+      "recall": 0.5,
+      "f1": 0.4
+    },
+    "No Damage": {
+      "tp": 1,
+      "fp": 2,
+      "fn": 2,
+      "precision": 0.3333333333333333,
+      "recall": 0.3333333333333333,
+      "f1": 0.3333333333333333
+    },
+    "Invalid_Image": {
+      "tp": 3,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.75,
+      "recall": 1.0,
+      "f1": 0.8571428571428571
+    }
+  },
+  "missing_images": [],
+  "unmapped_predictions": 3,
+  "conflicts": 6
+}

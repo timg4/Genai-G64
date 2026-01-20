@@ -1,0 +1,478 @@
+{
+  "results": [
+    {
+      "filename": "DJI_0007_2_1.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0007_2_1.JPG",
+      "source": "original_no_box",
+      "gold_labels": [
+        "No Damage"
+      ],
+      "pred_labels": [
+        "No Damage"
+      ],
+      "description": "A section of a wind turbine rotor blade is visible against a grassy background. The blade surface and edges appear smooth in this view, with no clear signs of leading-edge erosion, cracks, lightning receptor damage, vortex-generator missing teeth, or paint/coating loss; no defects are detectable.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": true,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": [
+          "LE;ER",
+          "LR;DA",
+          "SF;PO",
+          "VG;MT"
+        ]
+      }
+    },
+    {
+      "filename": "DJI_0010_0_3.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0010_0_3_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "VG;MT"
+      ],
+      "pred_labels": [
+        "VG;MT"
+      ],
+      "description": "A wind turbine rotor blade section is visible. Along the vortex-generating panel/serrated strip on the blade surface, there is a localized gap where the tooth pattern is missing, consistent with damage category_id 0 (VG;MT). No other defined defects are clearly visible in this image.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0018_0_3.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0018_0_3_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "VG;MT"
+      ],
+      "pred_labels": [
+        "VG;MT"
+      ],
+      "description": "A wind turbine rotor blade section is visible against a grassy background. Along the blade surface there is a visible vortex-generator tooth row; a short segment appears interrupted with missing teeth/gap, but the image is somewhat distant so this defect cannot be confirmed with full certainty (category_id: 0, category_name: VG;MT, image_description: possible local gap/missing teeth in the vortex-generator panel).",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0022_1_4.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0022_1_4_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;ER"
+      ],
+      "pred_labels": [
+        "Uncertain"
+      ],
+      "description": "A wind turbine rotor-blade tip section is visible against a grassy background. A small localized dark/scuffed area is present at the extreme tip, consistent with damage around the lightning receptor (category_id: 2, category_name: LR;DA, image_description: local tip-area damage/marking at the lightning receptor location).",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0027_1_3.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0027_1_3.JPG",
+      "source": "original_no_box",
+      "gold_labels": [
+        "No Damage"
+      ],
+      "pred_labels": [
+        "No Damage"
+      ],
+      "description": "A wind turbine rotor blade section is visible against a grassy background. No clear defects are present; no leading-edge erosion, leading-edge cracking, lightning receptor damage, vortex-generator missing teeth, or paint-off areas are detectable in this image (category_id: 5, category_name: No Damage, image_description: Blade surface appears intact with no distinct damage features).",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": true,
+        "conflict": true,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0035_0_2.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0035_0_2_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;CR"
+      ],
+      "pred_labels": [
+        "Uncertain"
+      ],
+      "description": "A wind turbine nacelle and the inboard/root section of one rotor blade are visible. No clearly identifiable blade defects of the defined classes (VG;MT, LE;ER, LR;DA, LE;CR, SF;PO) can be confirmed in this view; only minor dark discoloration/soiling near the blade root is visible, but the image resolution and lighting make it uncertain whether this represents actual damage.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": true,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0036_1_2.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0036_1_2_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;CR"
+      ],
+      "pred_labels": [
+        "No Damage"
+      ],
+      "description": "A wind turbine rotor blade near the hub and tower is visible. The blade surface and leading edge appear smooth with no clearly detectable defects of the defined damage classes; any faint tonal variations seem consistent with lighting/shadow rather than damage.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0044_1_1.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0044_1_1_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;CR"
+      ],
+      "pred_labels": [
+        "Uncertain"
+      ],
+      "description": "Only a small portion of a wind turbine blade is visible along the bottom edge of the image; the rest is background terrain. The visible blade area is too limited and lacks detail to reliably assess for defects, and no clear damage is discernible in this small visible section.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0053_0_3.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0053_0_3_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;ER"
+      ],
+      "pred_labels": [
+        "LE;ER"
+      ],
+      "description": "A wind turbine rotor blade section is visible, showing the outer blade area and tip. Defect present: category_id 1, category_name \"LE;ER\" — an elongated, grayish discoloration/wear strip is visible along the leading-edge region in the lower-left portion of the blade, consistent with leading edge erosion. No other damage of the defined categories is clearly visible in this image.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0089_0_1.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0089_0_1_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;ER",
+        "SF;PO"
+      ],
+      "pred_labels": [
+        "Uncertain"
+      ],
+      "description": "A wind turbine rotor blade section is visible diagonally across the image over a grassy background. Most of the visible blade surface appears uniform with no clearly confirmed defects. There is a small dark, line-shaped mark near the leading-edge area toward the upper-left portion of the blade; it is unclear from this image whether this is dirt/staining or actual damage, so defect presence and type are uncertain. Finding: category_id: uncertain, category_name: uncertain, image_description: Small dark linear mark near the leading edge in the upper-left area; cannot confirm if it represents a defect.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0105_2_3.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0105_2_3.JPG",
+      "source": "original_no_box",
+      "gold_labels": [
+        "No Damage"
+      ],
+      "pred_labels": [
+        "No Damage"
+      ],
+      "description": "A wind turbine rotor blade section is visible diagonally across the upper part of the image over a grassy background. The blade surface is distant and slightly blurred/overexposed, and no clear defects of the defined types are discernible; however, due to the limited image detail, the presence or absence of small damages cannot be assessed with certainty.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0129_1_1.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0129_1_1_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;ER"
+      ],
+      "pred_labels": [
+        "Uncertain"
+      ],
+      "description": "A wind turbine rotor blade outer section including the tip is visible against a field background. The blade surface appears generally smooth with no clear evidence of leading-edge erosion, cracks, lightning-receptor damage, or missing vortex-generator teeth; however, there are a few small dark specks/marks on the blade surface and, at this distance, it is uncertain whether these represent minor surface coating defects or just dirt.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": true,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0205_1_2.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0205_1_2_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;CR",
+        "LE;ER",
+        "VG;MT"
+      ],
+      "pred_labels": [
+        "Uncertain"
+      ],
+      "description": "The image shows a wind turbine tower with two rotor blades partially visible. The blade surfaces appear generally smooth, and no clear signs of leading-edge erosion, cracks, lightning receptor damage, vortex generator missing teeth, or paint-off are detectable; however, the viewing angle and distance limit fine-detail inspection, so small defects could be missed.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": true,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": [
+          "LE;ER",
+          "LR;DA",
+          "SF;PO",
+          "VG;MT"
+        ]
+      }
+    },
+    {
+      "filename": "DJI_0336_1_3.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0336_1_3_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "SF;PO"
+      ],
+      "pred_labels": [
+        "LE;ER"
+      ],
+      "description": "A wind turbine rotor blade section is visible. Defects are present.\n- category_id: 1, category_name: LE;ER, image_description: Along the leading-edge region (upper side of the visible blade), there is an elongated, irregular grayish/discolored band consistent with leading-edge erosion/abrasion.\nNo clear evidence of cracks, vortex-generator missing teeth, or lightning-receptor damage is visible in this image.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0358_0_2.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0358_0_2_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "VG;MT"
+      ],
+      "pred_labels": [
+        "No Damage"
+      ],
+      "description": "A wind turbine rotor blade section is partially visible on the right side of the image. The visible blade surface and edge appear smooth, and no defects of the defined classes are detectable in this view (Category 5: No Damage).",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": true,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0409_0_2.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0409_0_2_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "SF;PO"
+      ],
+      "pred_labels": [
+        "SF;PO"
+      ],
+      "description": "A wind turbine rotor blade section is visible in close view. Defects are present: {\"category_id\": 4, \"category_name\": \"SF;PO\", \"image_description\": \"Several elongated, lighter/patchy areas on the blade surface consistent with locally abraded or missing coating (paint-off/scuff marks).\"}",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0620_0_3.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0620_0_3_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LE;ER",
+        "SF;PO"
+      ],
+      "pred_labels": [
+        "LE;ER"
+      ],
+      "description": "A close-up of a wind turbine blade surface is visible. A darkened/discolored band is present along the blade edge on the right side; this could be consistent with category_id 1 (LE;ER, Leading Edge - Erosion) due to edge discoloration/abrasion, but the image is ambiguous and it may also be surface soiling, so the defect status is uncertain. No clear cracks, lightning receptor damage, missing VG teeth, or obvious paint-off areas are definitively visible.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": true,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0700_0_1.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0700_0_1_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LR;DA"
+      ],
+      "pred_labels": [
+        "LR;DA"
+      ],
+      "description": "The image shows the tip section of a wind turbine rotor blade against a cloudy sky. A small dark spot/mark is visible very near the blade tip; however, due to the image resolution and lack of close-up detail it is unclear whether this is actual damage or surface contamination, so the presence of a defect is uncertain. Finding: category_id: 2, category_name: LR;DA, image_description: A small dark mark near the blade tip could be consistent with lightning receptor area damage, but this is uncertain from the image.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": true,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0703_1_2.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0703_1_2_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LR;DA"
+      ],
+      "pred_labels": [
+        "LR;DA"
+      ],
+      "description": "The image shows the outer tip of a wind turbine rotor blade. A dark, localized spot with a short streak is visible near the tip area, which could indicate damage at/near the lightning receptor consistent with LR;DA (Lightning Receptor - Damage), but the image is somewhat distant/soft and the defect cannot be confirmed with certainty.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": false,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0706_0_1.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0706_0_1_N.JPG",
+      "source": "unlabeled",
+      "gold_labels": [
+        "LR;DA"
+      ],
+      "pred_labels": [
+        "LR;DA"
+      ],
+      "description": "The image shows the outer tip region of a wind turbine blade against a cloudy sky. A small dark feature is visible very near the tip and may correspond to the lightning receptor; potential local damage is suggested but cannot be confirmed due to distance/limited detail (category_id: 2, category_name: LR;DA, image_description: Small dark spot/protrusion near the blade tip; damage at the lightning receptor is uncertain). There is also faint dark discoloration along the leading edge near the tip that could indicate erosion, but this is uncertain in this image (category_id: 1, category_name: LE;ER, image_description: Slight darkening/discoloration along the leading edge near the tip; erosion not clearly verifiable). No definite cracks or clearly missing coating are identifiable.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": true,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0707_1_0.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0707_1_0.JPG",
+      "source": "original_no_box",
+      "gold_labels": [
+        "Invalid_Image"
+      ],
+      "pred_labels": [
+        "Invalid_Image"
+      ],
+      "description": "The image shows a distant landscape with sky, trees, and buildings; no wind turbine or blade is visible, so damage cannot be assessed (category_id: 6, category_name: Invalid_Image, image_description: No relevant wind turbine component present).",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0707_1_4.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0707_1_4.JPG",
+      "source": "original_no_box",
+      "gold_labels": [
+        "Invalid_Image"
+      ],
+      "pred_labels": [
+        "Invalid_Image"
+      ],
+      "description": "The image shows a distant landscape with sky, water, and fields; no wind turbine or blade component is visible, so damage cannot be assessed.",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    },
+    {
+      "filename": "DJI_0707_2_4.JPG",
+      "eval_image": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\selection\\DJI_0707_2_4.JPG",
+      "source": "original_no_box",
+      "gold_labels": [
+        "Invalid_Image"
+      ],
+      "pred_labels": [
+        "Invalid_Image"
+      ],
+      "description": "No wind turbine or relevant turbine component is visible in the image; only a distant landscape/water area is seen. A blade damage assessment is not possible (category_id: 6, category_name: Invalid_Image, image_description: No turbine component visible to inspect).",
+      "used_existing_output": true,
+      "match_meta": {
+        "invalid_hit": true,
+        "no_damage_hit": false,
+        "conflict": false,
+        "empty_text": false,
+        "negated_terms": []
+      }
+    }
+  ]
+}

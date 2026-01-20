@@ -1,0 +1,245 @@
+{
+  "num_samples": 23,
+  "uncertain_only": 6,
+  "uncertain_with_other": 0,
+  "modes": {
+    "strict": {
+      "skipped": 0,
+      "num_samples": 23,
+      "exact_match_accuracy": 0.5652173913043478,
+      "micro_precision": 0.6086956521739131,
+      "micro_recall": 0.5185185185185185,
+      "micro_f1": 0.5599999999999999,
+      "macro_f1": 0.5326388888888889,
+      "labels": [
+        "Invalid_Image",
+        "LE;CR",
+        "LE;ER",
+        "LR;DA",
+        "No Damage",
+        "SF;PO",
+        "Uncertain",
+        "VG;MT"
+      ],
+      "per_class": {
+        "Invalid_Image": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "LE;CR": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 4,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "LE;ER": {
+          "tp": 2,
+          "fp": 1,
+          "fn": 4,
+          "precision": 0.6666666666666666,
+          "recall": 0.3333333333333333,
+          "f1": 0.4444444444444444
+        },
+        "LR;DA": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "No Damage": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.7499999999999999
+        },
+        "SF;PO": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.25,
+          "f1": 0.4
+        },
+        "Uncertain": {
+          "tp": 0,
+          "fp": 6,
+          "fn": 0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "VG;MT": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      }
+    },
+    "abstain_penalize": {
+      "skipped": 0,
+      "num_samples": 23,
+      "exact_match_accuracy": 0.5652173913043478,
+      "micro_precision": 0.8235294117647058,
+      "micro_recall": 0.5185185185185185,
+      "micro_f1": 0.6363636363636364,
+      "macro_f1": 0.6087301587301587,
+      "labels": [
+        "Invalid_Image",
+        "LE;CR",
+        "LE;ER",
+        "LR;DA",
+        "No Damage",
+        "SF;PO",
+        "VG;MT"
+      ],
+      "per_class": {
+        "Invalid_Image": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "LE;CR": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 4,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "LE;ER": {
+          "tp": 2,
+          "fp": 1,
+          "fn": 4,
+          "precision": 0.6666666666666666,
+          "recall": 0.3333333333333333,
+          "f1": 0.4444444444444444
+        },
+        "LR;DA": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "No Damage": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.7499999999999999
+        },
+        "SF;PO": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 3,
+          "precision": 1.0,
+          "recall": 0.25,
+          "f1": 0.4
+        },
+        "VG;MT": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.5,
+          "f1": 0.6666666666666666
+        }
+      }
+    },
+    "abstain_skip": {
+      "skipped": 6,
+      "coverage": 0.7391304347826086,
+      "num_samples": 17,
+      "exact_match_accuracy": 0.7647058823529411,
+      "micro_precision": 0.8235294117647058,
+      "micro_recall": 0.7777777777777778,
+      "micro_f1": 0.7999999999999999,
+      "macro_f1": 0.6928571428571428,
+      "labels": [
+        "Invalid_Image",
+        "LE;CR",
+        "LE;ER",
+        "LR;DA",
+        "No Damage",
+        "SF;PO",
+        "VG;MT"
+      ],
+      "per_class": {
+        "Invalid_Image": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "LE;CR": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "LE;ER": {
+          "tp": 2,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1": 0.8
+        },
+        "LR;DA": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "No Damage": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.7499999999999999
+        },
+        "SF;PO": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 2,
+          "precision": 1.0,
+          "recall": 0.3333333333333333,
+          "f1": 0.5
+        },
+        "VG;MT": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 1,
+          "precision": 1.0,
+          "recall": 0.6666666666666666,
+          "f1": 0.8
+        }
+      }
+    }
+  }
+}
