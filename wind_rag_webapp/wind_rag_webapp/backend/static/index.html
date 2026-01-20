@@ -982,6 +982,8 @@
     incidentCounter: 0,
     inspectingImageId: null,
     lastDiagnosisHtml: "",
+    lastDiagnosisMessage: null,
+    runToken: 0,
   };
 
   function el(id){ return document.getElementById(id); }
@@ -1009,6 +1011,14 @@
     if (chatWrap) {
       chatWrap.scrollTop = 0;
     }
+  }
+
+  function moveInputToTop(){
+    const wrap = el('currentInput');
+    if (!wrap || wrap.style.display === 'none') {
+      return;
+    }
+    moveConversationItemToTop(wrap);
   }
 
   function updateChatMetrics(){
@@ -1041,7 +1051,6 @@
     if (!wrap || !body) {
       return;
     }
-    const wasVisible = wrap.style.display !== 'none';
     const safe = escapeHtml(text || '').replace(/\n/g, '<br>');
     if (!safe.trim()) {
       wrap.style.display = 'none';
@@ -1052,8 +1061,9 @@
     wrap.style.display = 'block';
     body.innerHTML = safe;
     body.classList.remove("collapsed");
-    if (!wasVisible) {
+    if (wrap.dataset.runToken !== String(state.runToken)) {
       moveConversationItemToTop(wrap);
+      wrap.dataset.runToken = String(state.runToken);
     }
     updateChatMetrics();
   }
@@ -1064,7 +1074,6 @@
     if (!wrap || !body) {
       return;
     }
-    const wasVisible = wrap.style.display !== 'none';
     const safe = escapeHtml(text || '');
     if (!safe.trim()) {
       wrap.style.display = 'none';
@@ -1075,8 +1084,9 @@
     wrap.style.display = 'block';
     body.innerHTML = safe;
     body.classList.remove("collapsed");
-    if (!wasVisible) {
+    if (wrap.dataset.runToken !== String(state.runToken)) {
       moveConversationItemToTop(wrap);
+      wrap.dataset.runToken = String(state.runToken);
     }
     updateChatMetrics();
   }
@@ -1087,7 +1097,6 @@
     if (!wrap || !body) {
       return;
     }
-    const wasVisible = wrap.style.display !== "none";
     if (!htmlText) {
       wrap.style.display = "none";
       body.innerHTML = "";
@@ -1097,8 +1106,9 @@
     wrap.style.display = "block";
     body.innerHTML = isLoading ? `<span class="spinner"></span> ${htmlText}` : htmlText;
     body.classList.remove("collapsed");
-    if (!wasVisible) {
+    if (wrap.dataset.runToken !== String(state.runToken)) {
       moveConversationItemToTop(wrap);
+      wrap.dataset.runToken = String(state.runToken);
     }
     updateChatMetrics();
   }
@@ -1137,6 +1147,10 @@
       btn.setAttribute("aria-label", "Expand");
     }
     state.lastDiagnosisHtml = "";
+    if (state.lastDiagnosisMessage && state.lastDiagnosisMessage.isConnected) {
+      state.lastDiagnosisMessage.remove();
+    }
+    state.lastDiagnosisMessage = null;
   }
 
   function addChatMessage(role, title, body, opts){
@@ -1664,6 +1678,8 @@
       "Diagnosis",
       "<span class=\"spinner\"></span> Generating diagnosis..."
     );
+    state.lastDiagnosisMessage = wrap;
+    moveInputToTop();
     const body = wrap.querySelector(".m-b");
     try {
       const resp = await fetch('/api/diagnosis', {
@@ -1688,7 +1704,6 @@
       }
       state.lastDiagnosisHtml = safe;
     } finally {
-      moveConversationItemToTop(wrap);
       updateChatMetrics();
     }
   }
@@ -1698,6 +1713,7 @@
     setStatus('running');
     setRunning(true);
     el('runBtn').disabled = true;
+    state.runToken += 1;
 
     const mechanicNotes = el('mechanicNotes').value || '';
     const scadaEnabled = el('scadaToggle').checked;
