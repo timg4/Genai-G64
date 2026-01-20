@@ -21,7 +21,7 @@ def parse_args() -> argparse.Namespace:
     prep = sub.add_parser("prepare-run", help="Prepare prompt + attachments")
     prep.add_argument("--query", required=True)
     prep.add_argument("--examples", required=True, help="Examples JSON file")
-    prep.add_argument("--runs-dir", default="Faulty_Image_Describtion_runs")
+    prep.add_argument("--runs-dir", default="evalution/runs")
     prep.add_argument("--max-examples", type=int, default=8)
     prep.add_argument("--tiles", action="store_true", default=False)
     prep.add_argument("--tile-size", type=int, default=1024)

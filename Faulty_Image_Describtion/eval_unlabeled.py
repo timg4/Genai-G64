@@ -297,7 +297,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Compute metrics from eval_results.json")
     parser.add_argument(
         "--results",
-        default="Faulty_Image_Describtion_runs_eval/eval_results.json",
+        default="evalution/runs_eval/eval_results.json",
         help="Path to eval_results.json",
     )
     parser.add_argument(

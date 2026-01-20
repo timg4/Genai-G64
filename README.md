@@ -1,51 +1,90 @@
-# Wind Turbine Inspection Assistant
+# Wind Turbine Blade Few-Shot Pipeline
 
-![Project visual](Gemini_Generated_Image_bi9r96bi9r96bi9r.png)
+Local, offline-friendly few-shot prompting workflow for wind turbine blade defect checks with retrieval-based example selection.
 
-This repo contains the MVP pipeline for a wind turbine inspection assistant, including:
-- Text-first manuals RAG baseline (chunking, hybrid retrieval, grounded JSON reports).
-- SCADA preprocessing and card generation used in the broader pipeline.
+## Project layout
 
-See `manuals/README.md` for the text RAG setup and usage.
+```
+.
+├─ main.py
+├─ wind_fewshot/
+│  ├─ __init__.py
+│  ├─ config.py
+│  ├─ embedding.py
+│  ├─ indexer.py
+│  ├─ prompt.py
+│  ├─ retrieval.py
+│  ├─ schema.py
+│  ├─ tiling.py
+│  └─ utils.py
+├─ fewshot_bank/
+│  ├─ README.md
+│  └─ metadata.jsonl
+├─ indices/
+│  └─ .gitkeep
+└─ runs/
+   └─ .gitkeep
+```
 
-## SCADA data (Wind Farm A)
-We use the CARE To Compare SCADA dataset under `Scada/CARE_To_Compare/`.
-Each dataset file is 10‑minute sensor data with an `event_info.csv` descriptor.
+## Installation
 
-## SCADA pipeline
-Two steps, intentionally separated:
+Create a virtual environment and install requirements:
 
-1) **Data → window** (simulation only)  
-   Extracts 6h windows and includes 7 days of history in a single JSON payload.
-   This does not produce cards; it only prepares inputs for step 2.
-
-2) **Window → card** (real use)  
-   Takes a single JSON payload and produces a SCADA card (stats, tags, summary).
-
-**Window selection (simulation):** within each dataset we pick the 6h slice with the highest anomaly score (mean absolute z‑score vs. training baseline). For “Nix” we pick the most stable 6h slice from normal events.
-
-**Card contents:** source metadata, window times, summary stats, derived metrics (e.g., power residuals, status ratios), tags, and a short LLM summary. Class labels are kept in a separate `Scada/scada_windows_meta/scada_windows_by_class.json` for evaluation.
-
-## Usage
-Install:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Generate window payloads (simulation):
-```bash
-python3 Scada/scada_card_builder.py --per-class 5 --nix-count 5 --baseline-hours 168 --window-hours 6
-```
-Outputs `Scada/scada_windows/*.json` plus `Scada/scada_windows_meta/scada_windows_by_class.json` and `Scada/scada_windows_meta/scada_windows_manifest.json`.
+Optional (better embeddings): install PyTorch + OpenCLIP and ensure weights are cached locally.
 
-Generate cards from windows:
+## Populate few-shot bank
+
+Use `fewshot_bank/metadata.jsonl` (JSONL, one object per line). See `fewshot_bank/README.md` for schema.
+
+Recommended:
+- Provide `path_full` and optionally `path_crop`.
+- Provide `gold_json` as the expected output for that example.
+- Include some `no_damage`, `look_alike`, and `uncertain` examples.
+
+## Build index
+
 ```bash
-export OPENAI_API_KEY="your_key_here"
-python3 Scada/scada_card_from_window.py --input-directory Scada/scada_windows --output-path Scada/scada_cards_out
+python main.py build-index --metadata fewshot_bank/metadata.jsonl --index-dir indices
 ```
-Or a single file:
+
+Backends:
+- `auto` (default): tries OpenCLIP, falls back to histogram.
+- `open_clip`: use OpenCLIP only (requires local weights).
+- `histogram`: lightweight fallback.
+
+## Prepare a run
+
 ```bash
-python3 Scada/scada_card_from_window.py --input-json Scada/scada_windows/WF-A-10-53591.json --output-path Scada/scada_card.json
+python main.py prepare-run --query path/to/query.jpg --metadata fewshot_bank/metadata.jsonl --index-dir indices --runs-dir runs
 ```
+
+Artifacts under `runs/run_YYYYMMDD_HHMMSS/`:
+- `prompt.txt`
+- `attachments.json`
+- `retrieval.json`
+- `query_tiles/`
+
+## Model invocation
+
+Use `prompt.txt` and `attachments.json` with your vision model of choice.
+The prompt enforces JSON-only output and includes few-shot examples.
+
+## Validate output
+
+```bash
+python main.py validate-output --run runs/run_YYYYMMDD_HHMMSS --json path/to/model_output.json
+```
+
+Produces `validation_report.txt`.
+
+## Notes
+
+- The schema requires `damage_present=false` to have empty findings.
+- If the image is ambiguous, the model must output `damage_present="uncertain"`.
+- Retrieval enforces diversity and minimum counts for no-damage and uncertain examples (if available).

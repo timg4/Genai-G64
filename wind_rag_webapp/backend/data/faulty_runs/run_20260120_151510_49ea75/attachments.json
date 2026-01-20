@@ -1,0 +1,29 @@
+{
+  "attachments": [
+    {
+      "type": "image",
+      "label": "example_1",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0434.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_2",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0033_1_3.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_3",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0004_0_3.JPG"
+    },
+    {
+      "type": "image",
+      "label": "example_4",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\Data_Preprossesing\\subset_export\\images copy\\DJI_0009_0_4.JPG"
+    },
+    {
+      "type": "image",
+      "label": "query_full",
+      "path": "C:\\Users\\larsb\\Desktop\\WS2025\\GenAi\\Genai-G63\\wind_rag_webapp\\wind_rag_webapp\\backend\\data\\uploads\\5b1f9f42ecca4e58aa25f3b2f7e5a77e.JPG"
+    }
+  ]
+}

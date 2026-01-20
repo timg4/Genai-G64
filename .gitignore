@@ -11,5 +11,5 @@ __pycache__/
 wind_rag_webapp/wind_rag_webapp/backend/data/
 wind_rag_webapp/wind_rag_webapp/backend/__pycache__/
 Faulty_Image_Description/__pycache__/
-Faulty_Image_Description_runs_eval/DJI_*
-Faulty_Image_Description_runs_eval/DJI_*/**
+evalution/runs_eval/DJI_*
+evalution/runs_eval/DJI_*/**
