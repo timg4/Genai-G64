@@ -202,6 +202,11 @@
       font-size: 12px;
       cursor: pointer;
     }
+    .btn-mini.is-loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
     .btn-mini:hover { border-color: rgba(255,255,255,.35); }
 
     .actions {
@@ -242,7 +247,11 @@
       min-height: 560px;
       height: 70vh;
       max-height: 70vh;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .chat-wrap > * {
+      flex-shrink: 0;
     }
     .retrieval-wrap {
       max-height: 70vh;
@@ -284,7 +293,7 @@
       color: var(--text);
       font-size: 13px;
       line-height: 1.5;
-      max-height: 60vh;
+      max-height: none;
       overflow: visible;
     }
     .current-reco .label {
@@ -295,32 +304,32 @@
       margin-bottom: 6px;
     }
     .current-reco .panel-body {
-      max-height: calc(60vh - 48px);
-      overflow-y: auto;
-      padding-right: 6px;
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
     }
     .processing-hint {
       display: none !important;
     }
     .chat {
-      min-height: 0;
+      --chat-body-height: 520px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      max-height: 100%;
-      overflow-y: auto;
-      padding-right: 6px;
-      flex: 1;
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
+      flex: 1 0 auto;
     }
     .msg .m-b {
-      max-height: 220px;
-      overflow-y: auto;
+      max-height: none;
+      overflow: visible;
       padding-right: 6px;
     }
     .msg {
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden;
+      overflow: visible;
       background: rgba(0,0,0,.16);
     }
     .msg .m-h {
@@ -379,21 +388,38 @@
     }
     .mono { font-family: var(--mono); }
     .chat-image {
-      display: grid;
-      gap: 8px;
+      display: flex;
+      gap: 12px;
+      max-width: 100%;
+      align-items: flex-start;
+      flex-wrap: wrap;
     }
     .chat-image img {
       width: 100%;
-      max-height: 360px;
+      max-width: clamp(180px, 32vw, 320px);
+      max-height: clamp(160px, calc(var(--chat-body-height) - 260px), 320px);
       object-fit: contain;
       border-radius: 12px;
       border: 1px solid var(--border);
       background: #0b1118;
+      flex: 0 0 auto;
     }
     .chat-image .caption {
       font-size: 12px;
       color: var(--muted);
       word-break: break-all;
+    }
+    .chat-details {
+      display: grid;
+      gap: 6px;
+      min-width: 200px;
+      flex: 1;
+    }
+    .chat-details .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
     }
 
     .spinner {
@@ -410,14 +436,41 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
+    }
+    .inspect-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(34,197,94,.35);
+      background: rgba(34,197,94,.12);
     }
     .inspect-status {
       font-size: 12px;
-      color: var(--accent);
-      border: 1px solid rgba(34,197,94,.35);
       padding: 2px 8px;
       border-radius: 999px;
       display: inline-flex;
+      border: 1px solid transparent;
+      background: rgba(0,0,0,.15);
+    }
+    .inspect-status.pending {
+      color: #f59e0b;
+      border-color: rgba(245,158,11,.45);
+      background: rgba(245,158,11,.12);
+    }
+    .inspect-status.accepted {
+      color: var(--accent);
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.12);
+    }
+    .inspect-status.rejected {
+      color: var(--danger);
+      border-color: rgba(239,68,68,.4);
+      background: rgba(239,68,68,.12);
     }
     .image-review {
       display: grid;
@@ -843,8 +896,17 @@
 
       <!-- OUTPUTS -->
       <div class="card">
-      <div class="card-h"><h2>Conversation</h2><span class="pill" id="modelPill">model: auto</span></div>
-      <div class="card-b chat-wrap">
+      <div class="card-h">
+        <h2>Conversation</h2>
+        <div class="btn-row">
+          <div class="inspect-indicator" id="inspectIndicator" style="display:none">
+            <span class="spinner"></span>
+            Inspecting image
+          </div>
+          <span class="pill" id="modelPill">model: auto</span>
+        </div>
+      </div>
+      <div class="card-b chat-wrap" id="chatWrap">
         <div class="processing-hint" id="processingHint" aria-live="polite">
           <span class="spinner"></span>
           Processing request…
@@ -918,6 +980,7 @@
     lastResults: [],
     reviewMessage: null,
     incidentCounter: 0,
+    inspectingImageId: null,
   };
 
   function el(id){ return document.getElementById(id); }
@@ -925,6 +988,36 @@
 
   function setStatus(text){
     el('statusPill').textContent = text;
+  }
+
+  function setInspecting(isInspecting){
+    const indicator = el('inspectIndicator');
+    if (!indicator) {
+      return;
+    }
+    indicator.style.display = isInspecting ? 'inline-flex' : 'none';
+  }
+
+  function moveConversationItemToTop(node){
+    const chat = el('chat');
+    const chatWrap = el('chatWrap');
+    if (!node || !chat) {
+      return;
+    }
+    chat.prepend(node);
+    if (chatWrap) {
+      chatWrap.scrollTop = 0;
+    }
+  }
+
+  function updateChatMetrics(){
+    const chat = el('chat');
+    const chatWrap = el('chatWrap');
+    const heightSource = chatWrap || chat;
+    if (!chat || !heightSource) {
+      return;
+    }
+    chat.style.setProperty('--chat-body-height', `${heightSource.clientHeight}px`);
   }
 
   function setRunning(isRunning){
@@ -951,11 +1044,14 @@
     if (!safe.trim()) {
       wrap.style.display = 'none';
       body.innerHTML = '';
+      updateChatMetrics();
       return;
     }
     wrap.style.display = 'block';
     body.innerHTML = safe;
     body.classList.remove("collapsed");
+    moveConversationItemToTop(wrap);
+    updateChatMetrics();
   }
 
   function setCurrentQuery(text){
@@ -968,11 +1064,14 @@
     if (!safe.trim()) {
       wrap.style.display = 'none';
       body.innerHTML = '';
+      updateChatMetrics();
       return;
     }
     wrap.style.display = 'block';
     body.innerHTML = safe;
     body.classList.remove("collapsed");
+    moveConversationItemToTop(wrap);
+    updateChatMetrics();
   }
 
   function setCurrentRecommendation(htmlText, isLoading){
@@ -984,11 +1083,14 @@
     if (!htmlText) {
       wrap.style.display = "none";
       body.innerHTML = "";
+      updateChatMetrics();
       return;
     }
     wrap.style.display = "block";
     body.innerHTML = isLoading ? `<span class="spinner"></span> ${htmlText}` : htmlText;
     body.classList.remove("collapsed");
+    moveConversationItemToTop(wrap);
+    updateChatMetrics();
   }
 
   function archiveCurrentCase(){
@@ -1024,6 +1126,7 @@
 
   function addChatMessage(role, title, body, opts){
     const chat = el('chat');
+    const chatWrap = el('chatWrap');
     const wrap = document.createElement('div');
     wrap.className = 'msg';
     wrap.innerHTML = `
@@ -1038,11 +1141,17 @@
       </div>
       <div class="m-b" id="msg_${Date.now()}">${body}</div>
     `;
-    const placeTop = opts && opts.prepend;
+    const placeTop = opts && typeof opts.prepend === "boolean" ? opts.prepend : true;
     if (placeTop) {
       chat.prepend(wrap);
+      if (chatWrap) {
+        chatWrap.scrollTop = 0;
+      }
     } else {
       chat.appendChild(wrap);
+      if (chatWrap) {
+        chatWrap.scrollTop = chatWrap.scrollHeight;
+      }
     }
     const btn = wrap.querySelector(".collapse-btn");
     if (btn) {
@@ -1052,9 +1161,6 @@
         btn.classList.toggle("is-collapsed", isCollapsed);
         btn.setAttribute("aria-label", isCollapsed ? "Expand" : "Collapse");
       };
-    }
-    if (!placeTop) {
-      chat.scrollTop = chat.scrollHeight;
     }
     return wrap;
   }
@@ -1066,20 +1172,39 @@
     const body = `
       <div class="chat-image">
         <img src="${item.data_url}" alt="${escapeHtml(item.name || "uploaded image")}" />
-        <div class="caption">${escapeHtml(item.name || "uploaded image")}</div>
-        <div class="caption image-desc" data-image-id="${escapeHtml(item.id)}" style="margin-top:6px;">
-          ${escapeHtml(item.desc || "")}
-        </div>
-        <div class="inspect-inline">
-          <button class="btn-mini inspect-btn" data-image-id="${escapeHtml(item.id)}">Inspect images</button>
-          <span class="inspect-status">Accepted</span>
+        <div class="chat-details">
+          <div class="caption">${escapeHtml(item.name || "uploaded image")}</div>
+          <div class="label">Description</div>
+          <div class="caption image-desc" data-image-id="${escapeHtml(item.id)}">
+            ${escapeHtml(item.desc || "")}
+          </div>
+          <div class="inspect-inline">
+            <button class="btn-mini inspect-btn" data-image-id="${escapeHtml(item.id)}">Inspect image</button>
+            <button class="btn-mini accept-btn" data-image-id="${escapeHtml(item.id)}" style="display:none">Accept</button>
+            <button class="btn-mini reject-btn" data-image-id="${escapeHtml(item.id)}" style="display:none">Reject</button>
+            <button class="btn-mini decision-btn" data-image-id="${escapeHtml(item.id)}" style="display:none">Change</button>
+            <span class="inspect-status">Not inspected</span>
+          </div>
         </div>
       </div>
     `;
     const wrap = addChatMessage("user", "Uploaded image", body);
+    wrap.classList.add("has-image");
     const btn = wrap.querySelector(".inspect-btn");
     if (btn) {
       btn.onclick = () => inspectSingleImage(item.id);
+    }
+    const acceptBtn = wrap.querySelector(".accept-btn");
+    if (acceptBtn) {
+      acceptBtn.onclick = () => acceptImage(item.id);
+    }
+    const rejectBtn = wrap.querySelector(".reject-btn");
+    if (rejectBtn) {
+      rejectBtn.onclick = () => rejectImage(item.id);
+    }
+    const decisionBtn = wrap.querySelector(".decision-btn");
+    if (decisionBtn) {
+      decisionBtn.onclick = () => toggleDecision(item.id);
     }
     updateInspectStatus();
   }
@@ -1616,13 +1741,12 @@
       return;
     }
 
-      setStatus("inspecting");
-      setRunning(true);
+    setStatus("inspecting");
+    setInspecting(true);
+    setRunning(true);
     el("runBtn").disabled = true;
-    const clickedBtn = document.querySelector(`.inspect-btn[data-image-id="${CSS.escape(imageId)}"]`);
-    if (clickedBtn) {
-      clickedBtn.disabled = true;
-    }
+    state.inspectingImageId = imageId;
+    updateInspectStatus();
     const hint = el("processingHint");
     if (hint) {
       hint.innerHTML = "<span class=\"spinner\"></span> Inspecting image…";
@@ -1644,14 +1768,11 @@
       if (d && d.description) {
         target.desc = normalizeDescription(d.description);
       }
-      if (typeof target.use === "undefined") {
-        target.use = true;
-      }
+      target.use = true;
       target.inspected = true;
       target.approved = false;
       state.reviewTargetId = imageId;
       renderFileList();
-      renderImageReview();
       showWarn("Bitte die Bildbeschreibungen pruefen und bestaetigen.");
       setStatus("confirm");
     } catch (e) {
@@ -1659,10 +1780,9 @@
       setStatus("idle");
     } finally {
       setRunning(false);
+      setInspecting(false);
+      state.inspectingImageId = null;
       el("runBtn").disabled = false;
-      if (clickedBtn) {
-        clickedBtn.disabled = false;
-      }
       if (hint) {
         hint.innerHTML = "<span class=\"spinner\"></span> Processing request…";
       }
@@ -1670,20 +1790,114 @@
     }
   }
 
+  function acceptImage(imageId){
+    const target = state.files.find((f) => f.id === imageId);
+    if (!target) {
+      return;
+    }
+    target.use = true;
+    target.approved = true;
+    target.inspected = true;
+    renderFileList();
+    showWarn("");
+    setStatus("idle");
+    updateInspectStatus();
+  }
+
+  function rejectImage(imageId){
+    const target = state.files.find((f) => f.id === imageId);
+    if (!target) {
+      return;
+    }
+    target.use = false;
+    target.approved = false;
+    target.inspected = true;
+    renderFileList();
+    showWarn("");
+    setStatus("idle");
+    updateInspectStatus();
+  }
+
+  function toggleDecision(imageId){
+    const target = state.files.find((f) => f.id === imageId);
+    if (!target) {
+      return;
+    }
+    if (target.approved) {
+      target.approved = false;
+      target.use = false;
+    } else {
+      target.approved = true;
+      target.use = true;
+    }
+    target.inspected = true;
+    renderFileList();
+    updateInspectStatus();
+  }
+
   function updateInspectStatus(){
     document.querySelectorAll(".inspect-btn").forEach((btn) => {
       const imageId = btn.getAttribute("data-image-id");
       const item = state.files.find((f) => f.id === imageId);
       const approved = !!item?.approved;
-      btn.textContent = approved ? "Re-inspect image" : "Inspect images";
+      const isLoading = state.inspectingImageId === imageId;
+      btn.classList.toggle("is-loading", isLoading);
+      if (isLoading) {
+        btn.innerHTML = "<span class=\"spinner\"></span> Inspecting";
+        btn.disabled = true;
+        return;
+      }
+      btn.textContent = approved ? "Re-inspect image" : "Inspect image";
       btn.disabled = false;
+    });
+    document.querySelectorAll(".accept-btn").forEach((btn) => {
+      const imageId = btn.getAttribute("data-image-id");
+      const item = state.files.find((f) => f.id === imageId);
+      const inspected = !!item?.inspected;
+      const decided = !!item?.approved || (inspected && item?.use === false);
+      const canAccept = inspected && !decided;
+      btn.style.display = canAccept ? "inline-flex" : "none";
+      btn.disabled = !canAccept;
+    });
+    document.querySelectorAll(".reject-btn").forEach((btn) => {
+      const imageId = btn.getAttribute("data-image-id");
+      const item = state.files.find((f) => f.id === imageId);
+      const inspected = !!item?.inspected;
+      const decided = !!item?.approved || (inspected && item?.use === false);
+      const canReject = inspected && !decided;
+      btn.style.display = canReject ? "inline-flex" : "none";
+      btn.disabled = !canReject;
+    });
+    document.querySelectorAll(".decision-btn").forEach((btn) => {
+      const imageId = btn.getAttribute("data-image-id");
+      const item = state.files.find((f) => f.id === imageId);
+      const inspected = !!item?.inspected;
+      const approved = !!item?.approved;
+      const rejected = inspected && item?.use === false;
+      const showDecision = approved || rejected;
+      btn.style.display = showDecision ? "inline-flex" : "none";
+      btn.textContent = approved ? "Change to Reject" : "Change to Accept";
+      btn.disabled = !showDecision;
     });
     document.querySelectorAll(".inspect-status").forEach((badge) => {
       const wrap = badge.closest(".chat-image");
       const btn = wrap ? wrap.querySelector(".inspect-btn") : null;
       const imageId = btn ? btn.getAttribute("data-image-id") : null;
       const item = state.files.find((f) => f.id === imageId);
-      badge.textContent = item?.approved ? "Accepted" : "Not accepted";
+      badge.classList.remove("pending", "accepted", "rejected");
+      if (!item?.inspected) {
+        badge.textContent = "Not inspected";
+        badge.classList.add("pending");
+      } else if (item?.approved) {
+        badge.textContent = "Accepted";
+        badge.classList.add("accepted");
+      } else if (item?.use === false) {
+        badge.textContent = "Rejected";
+        badge.classList.add("rejected");
+      } else {
+        badge.textContent = "Pending";
+        badge.classList.add("pending");
+      }
     });
     document.querySelectorAll(".image-desc").forEach((el) => {
       const imageId = el.getAttribute("data-image-id");
@@ -1763,6 +1977,7 @@
         const isCollapsed = panel.classList.contains("collapsed");
         btn.classList.toggle("is-collapsed", isCollapsed);
         btn.setAttribute("aria-label", isCollapsed ? "Expand" : "Collapse");
+        updateChatMetrics();
       };
     });
   }
@@ -1771,11 +1986,14 @@
     renderFileList();
     setupDropZone();
     setupControls();
+    updateChatMetrics();
+    window.addEventListener('resize', updateChatMetrics);
     try {
       await loadScadaOptions();
     } catch (e) {
       showWarn(e.message);
     }
+    updateChatMetrics();
   })();
 </script>
 </body>
