@@ -265,7 +265,7 @@ def build_summary_prompt(card: Dict[str, object]) -> str:
     status_summary = "; ".join(status_parts) if status_parts else "no status data"
 
     prompt = (
-        "Summarize this 6h SCADA window in 2-3 sentences. "
+        "Summarize this 6h SCADA window in 3-4 sentences. "
         "Focus on operational patterns and anomalies. "
         "Do not diagnose faults. "
         "Stats: wind_speed_mean={wind_speed_mean}, wind_speed_std={wind_speed_std}, "
