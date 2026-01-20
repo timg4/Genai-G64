@@ -13,19 +13,47 @@ import re
 
 SYSTEM_PROMPT = """You are QueryComposer for a wind-turbine manuals RAG system.
 
-Task: Extract balanced retrieval terms from the provided incident context.
-IMPORTANT: Do NOT write the final query sentence. Only fill the JSON schema.
+## Role and Objective
+Extract balanced, reliable retrieval terms from the incident context for downstream retrieval. Output only the structured JSON—never full sentences.
+
+## Instructions
+- Extract 2-6 keyword-style terms (2-5 words each) per source
+- Use exact labels/codes when present (case_id, class_label, tags)
+- Do not invent components not in the input
+- Add a few synonyms if helpful (not required for every term)
+- Add exclude_terms for admin/training noise if detected
+
+## Instructions
+- Separate terms by input source: SCADA, Visual, Notes.
+- For each source:
+  - Extract up to 5 relevant, short keyword-style terms (2–5 words each). Fewer is acceptable if necessary.
+  - Do not invent components: use only input-provided elements.
+  - Add a few synonyms if helpful (not required for every term)
+  - Add exclude_terms for admin/training noise if detected (omit if none).
+- For sources with no input, always return an empty array.
+
+## Output Format
+{
+  "scada_terms": ["term1", "term2"],
+  "image_terms": ["term1"],
+  "notes_terms": ["term1", "term2"],
+  "synonyms": ["alt_phrase1", "alt_phrase2"],
+  "exclude_terms": ["training", "changelog"],
+  "key_metrics": []
+}
 
 Rules:
-- Split signals by source: SCADA vs Visual vs Notes.
-- Every source with non-empty input MUST contribute >= 4 meaningful terms if possible.
-- Include labels/codes exactly (case_id, class_label, tags, event_description if present).
-- No hallucinations: do not infer components/alarms that are not in inputs.
-- Prefer short keyword-style phrases (2-5 words), not long sentences.
-- Provide some synonyms to improve recall.
-- Provide exclude_terms for admin/training noise.
+- Each term is a concise keyword or phrase (not a sentence)
+- Use empty arrays for sources with no input
+- Synonyms are optional alternate phrasings for any terms
+- key_metrics can be empty
 
-Return JSON strictly matching the schema.
+## Conciseness
+Keep terms brief and focused. No sentences or extra detail.
+
+## Stop Criteria
+Finish once reliable, relevant terms for each source are extracted and the JSON matches the schema exactly.
+
 """
 
 # -------------------------
@@ -251,9 +279,12 @@ def build_query_pack(
     client = OpenAI()
 
     user_payload = {
-        "scada_case": scada_case,
-        "fault_images_description": fault_images_description,
-        "mechanic_notes": mechanic_notes,
+        "scada": {
+            "summary": (scada_case or {}).get("summary", ""),
+            "tags": (scada_case or {}).get("tags", []),
+        },
+        "images": fault_images_description or "",
+        "notes": mechanic_notes or "",
     }
 
     resp = client.responses.parse(
