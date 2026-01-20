@@ -4,16 +4,18 @@
     "scada_case": {
       "window_id": "WF-A-0-53522",
       "summary": "Over this 6-hour window the turbine remained in Normal Operation for all 37 ten-minute intervals. Mean power was 0.93 with high power variability, wind_speed_mean 13.7, yaw_misalignment_mean 8.6. Tags: power_variability.",
-      "tags": ["power_variability"]
+      "tags": [
+        "power_variability"
+      ]
     },
     "mechanic_notes": "Blade inspection required after suspected lightning event. Noticed pitting marks on lightning receptor at tip. Need to check continuity of LPS and inspect surrounding area for burn damage or laminate cracks.",
     "fault_images_description": "Image shows lightning receptor on blade tip with visible pitting marks approximately 3mm deep. Small dark discoloration around receptor base extending about 15mm. No obvious cracks visible but coating appears rough in 50mm radius around receptor.",
     "gold_chunk_ids": [
+      "manuals::manual-04.txt-5642976c::chunk_000000",
       "manuals::manual-04.txt-5642976c::chunk_000002",
-      "manuals::manual-04.txt-5642976c::chunk_000003",
       "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000003",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000005",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000006"
+      "manuals::manual-01.txt-469c39c8::chunk_000092",
+      "manuals::manual-04.txt-5642976c::chunk_000003"
     ]
   },
   {
@@ -26,11 +28,11 @@
     "mechanic_notes": "Turbine shut down due to excessive vibration. Before climbing tower need to verify LOTO procedures. Suspect possible blade damage or ice buildup causing imbalance. Perform visual inspection of all three blades.",
     "fault_images_description": "Image of blade leading edge at approximately 40% span showing surface roughness and dull finish. Small pitting visible along 200mm section. Depth appears less than 1mm. No exposed fibers visible.",
     "gold_chunk_ids": [
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000002",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000003",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000006",
       "manuals::manual-02.txt-71aed8bb::chunk_000014",
-      "manuals::manual-01.txt-469c39c8::chunk_000030"
+      "manuals::manual-02.txt-71aed8bb::chunk_000041",
+      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000003",
+      "manuals::manual-01.txt-469c39c8::chunk_000124",
+      "manuals::manual-02.txt-71aed8bb::chunk_000042"
     ]
   },
   {
@@ -38,16 +40,18 @@
     "scada_case": {
       "window_id": "WF-A-71-52941",
       "summary": "Normal Operation for all 37 intervals but with near-zero power output and zero rotor RPM variability. High yaw misalignment mean 76.6. Low wind 1.21 m/s.",
-      "tags": ["yaw_misalignment"]
+      "tags": [
+        "yaw_misalignment"
+      ]
     },
     "mechanic_notes": "Scheduled maintenance inspection. Need to check blade surface coating condition. Previous report mentioned paint flaking near trailing edge. Prepare for coating repair if needed.",
     "fault_images_description": "Image shows blade surface at trailing edge with visible paint loss patches. Multiple areas totaling approximately 150 cm2. Edges of paint loss appear stable, not actively flaking. Primer layer visible but no exposed laminate.",
     "gold_chunk_ids": [
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000002",
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000003",
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000007",
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000009",
-      "manuals::manual-01.txt-469c39c8::chunk_000008"
+      "manuals::manual-01.txt-469c39c8::chunk_000118",
+      "manuals::manual-01.txt-469c39c8::chunk_000133",
+      "manuals::manual-01.txt-469c39c8::chunk_000119",
+      "manuals::manual-01.txt-469c39c8::chunk_000082",
+      "manuals::manual-01.txt-469c39c8::chunk_000085"
     ]
   },
   {
@@ -55,16 +59,18 @@
     "scada_case": {
       "window_id": "WF-A-14-53434",
       "summary": "Normal Operation for all 37 intervals. Very low wind 1.64 m/s with isolated spike to 17.2. High yaw misalignment 67.6. Near-zero power output.",
-      "tags": ["yaw_misalignment"]
+      "tags": [
+        "yaw_misalignment"
+      ]
     },
     "mechanic_notes": "Performing trailing edge inspection. Crack suspected near bond line based on previous ground-level observation. Need tap test equipment and crack measurement tools.",
     "fault_images_description": "Image of trailing edge showing hairline crack approximately 80mm long in coating. Crack runs parallel to edge. Tap test boundary marked with marker showing dull sound area approximately 30mm wide around crack.",
     "gold_chunk_ids": [
       "manuals::manual-06-synthetic.txt-60987e06::chunk_000002",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000003",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000006",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000007",
-      "manuals::manual-01.txt-469c39c8::chunk_000011"
+      "manuals::manual-01.txt-469c39c8::chunk_000119",
+      "manuals::manual-01.txt-469c39c8::chunk_000118",
+      "manuals::manual-01.txt-469c39c8::chunk_000133",
+      "manuals::manual-06-synthetic.txt-60987e06::chunk_000006"
     ]
   },
   {
@@ -77,11 +83,11 @@
     "mechanic_notes": "Preparing for laminate repair work. Need to review PPE requirements for working with epoxy resin. Ensure proper ventilation and chemical handling procedures are followed.",
     "fault_images_description": "Image shows damaged laminate area approximately 300 cm2 at 35% span on suction side. Two layers of glass fiber visible through damaged coating. Damage boundary clearly visible. Area marked with tape for repair.",
     "gold_chunk_ids": [
-      "manuals::manual-01.txt-469c39c8::chunk_000031",
-      "manuals::manual-01.txt-469c39c8::chunk_000032",
-      "manuals::manual-01.txt-469c39c8::chunk_000037",
-      "manuals::manual-01.txt-469c39c8::chunk_000009",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000002"
+      "manuals::manual-01.txt-469c39c8::chunk_000023",
+      "manuals::manual-01.txt-469c39c8::chunk_000142",
+      "manuals::manual-01.txt-469c39c8::chunk_000143",
+      "manuals::manual-01.txt-469c39c8::chunk_000106",
+      "manuals::manual-01.txt-469c39c8::chunk_000107"
     ]
   },
   {
@@ -94,11 +100,11 @@
     "mechanic_notes": "Annual lightning protection system inspection. Need to measure resistance from tip receptor to root connection and verify continuity throughout the down conductor system.",
     "fault_images_description": "Image shows lightning receptor at blade tip. Receptor surface appears in good condition with minor surface oxidation. No visible pitting or deformation. Sealant around receptor perimeter intact.",
     "gold_chunk_ids": [
+      "manuals::manual-04.txt-5642976c::chunk_000000",
       "manuals::manual-04.txt-5642976c::chunk_000002",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000003",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000005",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000006",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000009"
+      "manuals::manual-04.txt-5642976c::chunk_000003",
+      "manuals::manual-01.txt-469c39c8::chunk_000093",
+      "manuals::manual-01.txt-469c39c8::chunk_000095"
     ]
   },
   {
@@ -111,11 +117,11 @@
     "mechanic_notes": "Investigating unusual blade sound reported by site personnel. Described as whistling noise at medium wind speeds. Suspect leading edge damage or erosion. Need visual inspection.",
     "fault_images_description": "Image of leading edge at 50% span showing erosion damage. Continuous wear band visible over 400mm length. Depth estimated at 2mm. Filler material partially exposed but no structural fibers visible.",
     "gold_chunk_ids": [
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000003",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000004",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000006",
-      "manuals::manual-02.txt-71aed8bb::chunk_000041",
-      "manuals::manual-03.txt-a5c5b792::chunk_000027"
+      "manuals::manual-01.txt-469c39c8::chunk_000124",
+      "manuals::manual-01.txt-469c39c8::chunk_000125",
+      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000002",
+      "manuals::manual-01.txt-469c39c8::chunk_000123",
+      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000003"
     ]
   },
   {
@@ -128,11 +134,11 @@
     "mechanic_notes": "Performing sandwich panel inspection. Previous inspection noted small delamination area on pressure side. Need tap test equipment to determine extent and decide repair approach.",
     "fault_images_description": "Image shows blade surface with tap test grid marked. Dull sound area outlined in marker covering approximately 80 cm2. Surface coating intact but slight bulge visible under oblique lighting.",
     "gold_chunk_ids": [
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000003",
+      "manuals::manual-01.txt-469c39c8::chunk_000088",
       "manuals::manual-06-synthetic.txt-60987e06::chunk_000004",
-      "manuals::manual-01.txt-469c39c8::chunk_000043",
-      "manuals::manual-01.txt-469c39c8::chunk_000011",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000009"
+      "manuals::manual-06-synthetic.txt-60987e06::chunk_000011",
+      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000010",
+      "manuals::manual-01.txt-469c39c8::chunk_000058"
     ]
   },
   {
@@ -146,10 +152,10 @@
     "fault_images_description": "Image of blade root area showing corrosion on metal fittings. Salt deposits visible on blade surface. Small crack in coating near blade root extending approximately 40mm.",
     "gold_chunk_ids": [
       "manuals::manual-02.txt-71aed8bb::chunk_000014",
-      "manuals::manual-03.txt-a5c5b792::chunk_000051",
       "manuals::manual-03.txt-a5c5b792::chunk_000052",
-      "manuals::manual-03.txt-a5c5b792::chunk_000006",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000002"
+      "manuals::manual-01.txt-469c39c8::chunk_000042",
+      "manuals::manual-03.txt-a5c5b792::chunk_000028",
+      "manuals::manual-03.txt-a5c5b792::chunk_000048"
     ]
   },
   {
@@ -162,11 +168,11 @@
     "mechanic_notes": "Preparing for blade repair work. Need to review work instruction for surface repair procedure. Ensure correct filler materials and coating system available. Check weather conditions for application.",
     "fault_images_description": "Image shows prepared repair area on blade surface. Old coating removed in 150mm diameter circle. Surface sanded smooth with feathered edges. Ready for filler application.",
     "gold_chunk_ids": [
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000006",
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000007",
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000009",
+      "manuals::manual-01.txt-469c39c8::chunk_000008",
       "manuals::manual-01.txt-469c39c8::chunk_000020",
-      "manuals::manual-01.txt-469c39c8::chunk_000021"
+      "manuals::manual-01.txt-469c39c8::chunk_000117",
+      "manuals::manual-01.txt-469c39c8::chunk_000023",
+      "manuals::manual-01.txt-469c39c8::chunk_000142"
     ]
   },
   {
@@ -179,11 +185,11 @@
     "mechanic_notes": "Inverter showing fault code. Need to troubleshoot electrical system. Check for ground fault and verify all connections. Review fault code list in manual.",
     "fault_images_description": "Image of inverter display panel showing fault code 7000 - Ground Fault. LED indicators show system in fault condition. No visible damage to external components.",
     "gold_chunk_ids": [
+      "manuals::manual-02.txt-71aed8bb::chunk_000034",
       "manuals::manual-02.txt-71aed8bb::chunk_000033",
-      "manuals::manual-02.txt-71aed8bb::chunk_000025",
-      "manuals::manual-02.txt-71aed8bb::chunk_000026",
       "manuals::manual-02.txt-71aed8bb::chunk_000028",
-      "manuals::manual-03.txt-a5c5b792::chunk_000039"
+      "manuals::manual-02.txt-71aed8bb::chunk_000025",
+      "manuals::manual-02.txt-71aed8bb::chunk_000026"
     ]
   },
   {
@@ -199,8 +205,8 @@
       "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000006",
       "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000008",
       "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000009",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000010",
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000009"
+      "manuals::manual-01.txt-469c39c8::chunk_000124",
+      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000005"
     ]
   },
   {
@@ -213,11 +219,11 @@
     "mechanic_notes": "Investigating power limitation issue. Suspect blade surface degradation affecting aerodynamic performance. Schedule comprehensive blade inspection with focus on leading edge condition.",
     "fault_images_description": "Image of blade leading edge showing extensive surface roughness across 30-50% span range. Multiple erosion patches with varying severity. Some areas showing exposed filler material.",
     "gold_chunk_ids": [
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000003",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000004",
+      "manuals::manual-01.txt-469c39c8::chunk_000125",
+      "manuals::manual-01.txt-469c39c8::chunk_000124",
+      "manuals::manual-01.txt-469c39c8::chunk_000123",
       "manuals::manual-01.txt-469c39c8::chunk_000042",
-      "manuals::manual-01.txt-469c39c8::chunk_000008",
-      "manuals::manual-03.txt-a5c5b792::chunk_000027"
+      "manuals::manual-01.txt-469c39c8::chunk_000044"
     ]
   },
   {
@@ -231,10 +237,10 @@
     "fault_images_description": "Image showing blade damage at 25% span. Crack visible in laminate approximately 120mm long running chordwise. Tap test reveals soft sound area extending 50mm beyond visible crack ends.",
     "gold_chunk_ids": [
       "manuals::manual-06-synthetic.txt-60987e06::chunk_000002",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000003",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000004",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000009",
-      "manuals::manual-01.txt-469c39c8::chunk_000002"
+      "manuals::manual-01.txt-469c39c8::chunk_000090",
+      "manuals::manual-01.txt-469c39c8::chunk_000091",
+      "manuals::manual-06-synthetic.txt-60987e06::chunk_000006",
+      "manuals::manual-01.txt-469c39c8::chunk_000088"
     ]
   },
   {
@@ -247,10 +253,10 @@
     "mechanic_notes": "Planning chemical handling for upcoming repair work. Need to review safety data sheets for epoxy resin system. Ensure proper PPE available and emergency equipment accessible.",
     "fault_images_description": "Image of workshop area showing repair materials laid out. Epoxy resin containers with hazard labels visible. PPE station with respirators, gloves, and protective suits ready for use.",
     "gold_chunk_ids": [
-      "manuals::manual-01.txt-469c39c8::chunk_000037",
-      "manuals::manual-01.txt-469c39c8::chunk_000038",
       "manuals::manual-01.txt-469c39c8::chunk_000016",
       "manuals::manual-01.txt-469c39c8::chunk_000017",
+      "manuals::manual-01.txt-469c39c8::chunk_000018",
+      "manuals::manual-01.txt-469c39c8::chunk_000019",
       "manuals::manual-01.txt-469c39c8::chunk_000031"
     ]
   },
@@ -266,9 +272,9 @@
     "gold_chunk_ids": [
       "manuals::manual-02.txt-71aed8bb::chunk_000041",
       "manuals::manual-02.txt-71aed8bb::chunk_000042",
-      "manuals::manual-03.txt-a5c5b792::chunk_000029",
-      "manuals::manual-03.txt-a5c5b792::chunk_000030",
-      "manuals::manual-03.txt-a5c5b792::chunk_000031"
+      "manuals::manual-02.txt-71aed8bb::chunk_000039",
+      "manuals::manual-02.txt-71aed8bb::chunk_000005",
+      "manuals::manual-02.txt-71aed8bb::chunk_000004"
     ]
   },
   {
@@ -281,11 +287,11 @@
     "mechanic_notes": "Scheduled tower and guy wire inspection. Need to check guy wire tension, anchor points, and turnbuckle security. Site has sandy conditions affecting anchors.",
     "fault_images_description": "Image of guy wire anchor point showing some rust on cable clamps. Sand accumulation at tower base approximately 200mm deep. Turnbuckle safety wire intact.",
     "gold_chunk_ids": [
-      "manuals::manual-03.txt-a5c5b792::chunk_000037",
-      "manuals::manual-03.txt-a5c5b792::chunk_000038",
-      "manuals::manual-03.txt-a5c5b792::chunk_000006",
-      "manuals::manual-02.txt-71aed8bb::chunk_000038",
-      "manuals::manual-03.txt-a5c5b792::chunk_000047"
+      "manuals::manual-03.txt-a5c5b792::chunk_000018",
+      "manuals::manual-03.txt-a5c5b792::chunk_000025",
+      "manuals::manual-03.txt-a5c5b792::chunk_000017",
+      "manuals::manual-03.txt-a5c5b792::chunk_000049",
+      "manuals::manual-03.txt-a5c5b792::chunk_000055"
     ]
   },
   {
@@ -298,11 +304,11 @@
     "mechanic_notes": "Post-lightning event inspection required. Need to check all lightning receptors on all three blades. Perform resistance measurement and visual inspection for strike damage.",
     "fault_images_description": "Image of blade tip receptor showing fresh pitting marks and slight metal deformation. Surrounding area shows scorch marks extending approximately 40mm from receptor. Coating discolored in 100mm radius.",
     "gold_chunk_ids": [
-      "manuals::manual-04.txt-5642976c::chunk_000003",
-      "manuals::manual-04.txt-5642976c::chunk_000004",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000002",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000003",
-      "manuals::manual-07-synthetic.txt-e21d83c6::chunk_000008"
+      "manuals::manual-01.txt-469c39c8::chunk_000092",
+      "manuals::manual-04.txt-5642976c::chunk_000000",
+      "manuals::manual-01.txt-469c39c8::chunk_000093",
+      "manuals::manual-04.txt-5642976c::chunk_000002",
+      "manuals::manual-04.txt-5642976c::chunk_000003"
     ]
   },
   {
@@ -315,11 +321,11 @@
     "mechanic_notes": "Preparing for alternator inspection and bearing check. Need to lower turbine and disassemble rotor. Review bearing replacement procedure if wear detected.",
     "fault_images_description": "Image of alternator assembly with front rotor removed. Stator visible with some dark marks from previous friction contact. Bearing hub shows normal wear pattern. Jacking screws in position.",
     "gold_chunk_ids": [
-      "manuals::manual-03.txt-a5c5b792::chunk_000029",
       "manuals::manual-03.txt-a5c5b792::chunk_000030",
-      "manuals::manual-03.txt-a5c5b792::chunk_000031",
-      "manuals::manual-03.txt-a5c5b792::chunk_000032",
-      "manuals::manual-03.txt-a5c5b792::chunk_000033"
+      "manuals::manual-03.txt-a5c5b792::chunk_000033",
+      "manuals::manual-03.txt-a5c5b792::chunk_000029",
+      "manuals::manual-03.txt-a5c5b792::chunk_000051",
+      "manuals::manual-02.txt-71aed8bb::chunk_000041"
     ]
   },
   {
@@ -332,11 +338,11 @@
     "mechanic_notes": "Performing sanding work on blade repair area. Need to verify correct grit sequence and dust control measures. Confirm surface is ready for filler application.",
     "fault_images_description": "Image of blade surface being prepared for repair. Sanded area visible with smooth transition to surrounding coating. No sharp edges at boundary. Surface appears clean and dust-free.",
     "gold_chunk_ids": [
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000006",
       "manuals::manual-08-synthetic.txt-99350d8e::chunk_000007",
-      "manuals::manual-01.txt-469c39c8::chunk_000010",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000005",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000006"
+      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000009",
+      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000006",
+      "manuals::manual-01.txt-469c39c8::chunk_000023",
+      "manuals::manual-01.txt-469c39c8::chunk_000008"
     ]
   },
   {
@@ -350,10 +356,10 @@
     "fault_images_description": "Image of electrical panel showing battery bank connections. Some oxidation visible on positive terminal. Fuse block appears intact. Charge controller LED indicators showing normal status.",
     "gold_chunk_ids": [
       "manuals::manual-03.txt-a5c5b792::chunk_000040",
-      "manuals::manual-03.txt-a5c5b792::chunk_000041",
       "manuals::manual-03.txt-a5c5b792::chunk_000043",
-      "manuals::manual-02.txt-71aed8bb::chunk_000016",
-      "manuals::manual-03.txt-a5c5b792::chunk_000039"
+      "manuals::manual-03.txt-a5c5b792::chunk_000052",
+      "manuals::manual-03.txt-a5c5b792::chunk_000041",
+      "manuals::manual-03.txt-a5c5b792::chunk_000050"
     ]
   },
   {
@@ -366,11 +372,11 @@
     "mechanic_notes": "Trailing edge crack repair in progress. Need to recreate blade profile after filling crack. Verify proper curing before final coating application.",
     "fault_images_description": "Image of trailing edge repair area with crack filled and partially cured. Filler material visible, slight excess to be sanded. Ambient temperature gauge showing 22C.",
     "gold_chunk_ids": [
-      "manuals::manual-01.txt-469c39c8::chunk_000011",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000007",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000008",
-      "manuals::manual-08-synthetic.txt-99350d8e::chunk_000010",
-      "manuals::manual-05-synthetic.txt-c4449dcc::chunk_000010"
+      "manuals::manual-01.txt-469c39c8::chunk_000118",
+      "manuals::manual-01.txt-469c39c8::chunk_000119",
+      "manuals::manual-01.txt-469c39c8::chunk_000133",
+      "manuals::manual-01.txt-469c39c8::chunk_000120",
+      "manuals::manual-01.txt-469c39c8::chunk_000073"
     ]
   },
   {
@@ -383,11 +389,11 @@
     "mechanic_notes": "Comprehensive blade inspection using tap test method. Need to document all findings with photos and measurements. Check for delamination in sandwich panel areas.",
     "fault_images_description": "Image showing blade inspection in progress. Inspector marking tap test results on blade surface. Grid pattern visible with some areas circled indicating suspect zones. Measuring tape in frame.",
     "gold_chunk_ids": [
-      "manuals::manual-01.txt-469c39c8::chunk_000002",
-      "manuals::manual-01.txt-469c39c8::chunk_000003",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000004",
-      "manuals::manual-01.txt-469c39c8::chunk_000010",
-      "manuals::manual-01.txt-469c39c8::chunk_000043"
+      "manuals::manual-01.txt-469c39c8::chunk_000088",
+      "manuals::manual-01.txt-469c39c8::chunk_000091",
+      "manuals::manual-01.txt-469c39c8::chunk_000090",
+      "manuals::manual-01.txt-469c39c8::chunk_000058",
+      "manuals::manual-01.txt-469c39c8::chunk_000085"
     ]
   },
   {
@@ -401,10 +407,10 @@
     "fault_images_description": "Image of blade root area showing mounting location for balancing weight. One screw missing and weight shows slight movement. Corrosion visible on remaining screw heads.",
     "gold_chunk_ids": [
       "manuals::manual-03.txt-a5c5b792::chunk_000028",
+      "manuals::manual-03.txt-a5c5b792::chunk_000057",
       "manuals::manual-03.txt-a5c5b792::chunk_000052",
       "manuals::manual-03.txt-a5c5b792::chunk_000055",
-      "manuals::manual-02.txt-71aed8bb::chunk_000041",
-      "manuals::manual-03.txt-a5c5b792::chunk_000027"
+      "manuals::manual-03.txt-a5c5b792::chunk_000056"
     ]
   },
   {
@@ -417,11 +423,11 @@
     "mechanic_notes": "Completing laminate repair with vacuum consolidation method. Need to monitor cure temperature and verify proper consolidation. Document all repair parameters.",
     "fault_images_description": "Image shows vacuum bag applied over laminate repair area. Vacuum gauge visible showing proper pressure. Heating blanket edges visible. Temperature thermocouple wire running to monitoring equipment.",
     "gold_chunk_ids": [
-      "manuals::manual-01.txt-469c39c8::chunk_000010",
-      "manuals::manual-01.txt-469c39c8::chunk_000011",
-      "manuals::manual-01.txt-469c39c8::chunk_000008",
-      "manuals::manual-06-synthetic.txt-60987e06::chunk_000008",
-      "manuals::manual-01.txt-469c39c8::chunk_000009"
+      "manuals::manual-01.txt-469c39c8::chunk_000144",
+      "manuals::manual-01.txt-469c39c8::chunk_000075",
+      "manuals::manual-01.txt-469c39c8::chunk_000076",
+      "manuals::manual-01.txt-469c39c8::chunk_000113",
+      "manuals::manual-01.txt-469c39c8::chunk_000112"
     ]
   }
 ]
