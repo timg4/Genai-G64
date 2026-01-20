@@ -71,7 +71,7 @@ except Exception as exc:  # pragma: no cover
 
 
 class RunRequest(BaseModel):
-    free_text: str = ""
+    mechanic_notes: str = ""
     image_descriptions: List[str] = Field(default_factory=list)
     image_files: List[Dict[str, str]] = Field(default_factory=list)
     scada_id: Optional[str] = None
@@ -112,17 +112,19 @@ class RunResponse(BaseModel):
 # -----------------------------
 # Query composer + recommender
 # -----------------------------
-SYSTEM_PROMPT_RECOMMEND = """You are a wind-turbine maintenance assistant.
+SYSTEM_PROMPT_RECOMMEND = """
 
 You will receive:
 1) incident context (SCADA summary + optional notes)
 2) top retrieved manual chunks, each with (source, page range, section, text)
 
 Task:
-- Write a practical action recommendation (in German) for a technician.
+- Write a practical action recommendation for a technician.
 - Use short numbered steps.
-- When you reference something from a chunk, cite it like: [source pX-Y].
+- When you reference something from a chunk, cite the manual name and pages, e.g. [ManualName pX-Y].
 - If the chunks are irrelevant or only training/admin, say so and ask for the right manual.
+- Prioritize safety: if there are any safety warnings, mentiom them early. First priority is safety for technician.
+- If there is no issue indicated, start by saying everything is ok, then add optional maintenance steps (e.g., "Everything is OK, but for maintenance you can still do: ...").
 """
 
 
@@ -487,7 +489,7 @@ def run(req: RunRequest) -> RunResponse:
     context = {
         "scada_case": scada_case,
         "fault_images_description": "\n".join(image_descriptions) if image_descriptions else "",
-        "mechanic_notes": req.free_text,
+        "mechanic_notes": req.mechanic_notes,
     }
 
     # 2) QueryComposer (LLM or fallback)

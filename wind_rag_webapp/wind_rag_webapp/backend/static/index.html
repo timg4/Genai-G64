@@ -67,6 +67,9 @@
       background: rgba(255,255,255,.04);
       padding: 6px;
     }
+    .logo.is-spinning {
+      animation: logo-spin 1.2s ease-in-out;
+    }
     .title h1 {
       margin: 0;
       font-size: 22px;
@@ -232,11 +235,71 @@
     }
 
     /* Chat area */
-    .chat {
-      min-height: 560px;
+    .chat-wrap {
       display: flex;
       flex-direction: column;
       gap: 12px;
+      min-height: 560px;
+      height: 70vh;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+    .current-input {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .current-input .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      margin-bottom: 6px;
+    }
+    .panel-h {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .panel-h .label {
+      margin: 0;
+    }
+    .panel-body.collapsed {
+      display: none;
+    }
+    .current-reco {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .current-reco .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      margin-bottom: 6px;
+    }
+    .processing-hint {
+      display: none !important;
+    }
+    .chat {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: none;
+      overflow: visible;
+      flex: 1;
     }
     .msg {
       border: 1px solid var(--border);
@@ -256,6 +319,37 @@
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: .3px;
+    }
+    .msg .m-h .left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .collapse-btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: normal;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .collapse-btn::before {
+      content: "▾";
+      line-height: 1;
+    }
+    .collapse-btn.is-collapsed::before {
+      content: "▸";
+    }
+    .msg.collapsed .m-b {
+      display: none;
     }
     .msg .m-b {
       padding: 14px;
@@ -289,21 +383,6 @@
       border-radius: 999px;
       animation: spin 1s linear infinite;
       vertical-align: -2px;
-    }
-    .processing-hint {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(34,197,94,.10);
-      color: var(--text);
-      font-size: 13px;
-    }
-    body.is-running .processing-hint {
-      display: flex;
     }
     .inspect-inline {
       margin-top: 10px;
@@ -360,6 +439,7 @@
       align-items: center;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes logo-spin { to { transform: rotate(360deg); } }
 
     /* Table */
     table { width: 100%; border-collapse: collapse; }
@@ -529,13 +609,113 @@
     }
     .scada-section {
       transition: max-height .3s ease, opacity .2s ease;
-      max-height: 800px;
+      max-height: 1200px;
       overflow: hidden;
     }
     .scada-section.collapsed {
       max-height: 0;
       opacity: 0;
       pointer-events: none;
+    }
+
+    /* SCADA card list */
+    .scada-card-list {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,.12);
+    }
+    .scada-card-item {
+      display: grid;
+      grid-template-columns: 24px 140px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .1s;
+      font-size: 12px;
+    }
+    .scada-card-item:last-child {
+      border-bottom: none;
+    }
+    .scada-card-item:hover {
+      background: rgba(255,255,255,.04);
+    }
+    .scada-card-item.selected {
+      background: rgba(34,197,94,.12);
+      border-color: var(--accent);
+    }
+    .scada-card-item input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: var(--accent);
+    }
+    .scada-card-id {
+      font-family: var(--mono);
+      color: var(--text);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .scada-card-class {
+      font-family: var(--mono);
+      color: var(--accent-2);
+      font-size: 11px;
+    }
+    .scada-card-status {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+    }
+    .scada-card-status.anomaly {
+      color: var(--danger);
+    }
+    .scada-card-tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      min-width: 100px;
+    }
+    .scada-card-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(56,189,248,.15);
+      color: var(--accent-2);
+      white-space: nowrap;
+    }
+    .scada-card-empty {
+      padding: 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .scada-list-header {
+      display: grid;
+      grid-template-columns: 24px 140px 1fr;
+      gap: 8px;
+      padding: 6px 12px;
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,.15);
+      position: sticky;
+      top: 0;
+    }
+    .scada-list-header span:last-child {
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
     }
   </style>
 </head>
@@ -544,13 +724,13 @@
     <div class="header">
       <div class="title">
         <span class="logo-wrap">
-          <img class="logo" src="/static/logo.png" alt="Project logo" />
+          <img class="logo is-spinning" src="/static/Windradsvg.svg" alt="Wind turbine logo" />
         </span>
-        <div>
-          <h1>Wind Turbine Inspection Assistant</h1>
-          <div class="subtitle">Manual RAG with SCADA context (vision input WIP)</div>
-        </div>
+      <div>
+        <h1>Wind Turbine Inspection Assistant</h1>
+        <div class="subtitle">Manual RAG with SCADA context (vision input WIP)</div>
       </div>
+    </div>
       <span class="pill">MVP</span>
     </div>
 
@@ -597,22 +777,6 @@
           <!-- SCADA Card Selection with Filters -->
           <label>Select SCADA card for testing</label>
           <div class="filter-section">
-            <div class="filter-row">
-              <div class="filter-group">
-                <label>Filter by class</label>
-                <select id="classFilter">
-                  <option value="">All classes</option>
-                </select>
-              </div>
-              <div class="filter-group">
-                <label>Filter by anomaly status</label>
-                <select id="anomalyFilter">
-                  <option value="">All</option>
-                  <option value="anomaly">anomaly</option>
-                  <option value="normal">no recorded anomaly</option>
-                </select>
-              </div>
-            </div>
             <div class="filter-group">
               <label>Filter by tags</label>
               <div class="tag-checkboxes" id="tagCheckboxes">
@@ -622,21 +786,16 @@
           </div>
 
           <label>Available SCADA cards (<span id="cardCount">0</span> matching)</label>
-          <select id="scadaSelect"></select>
+          <div class="scada-card-list" id="scadaCardList">
+            <div class="scada-list-header">
+              <span></span>
+              <span>ID</span>
+              <span>Tags</span>
+            </div>
+            <!-- Cards populated by JS -->
+          </div>
+          <input type="hidden" id="scadaSelect" />
           <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
-
-          <!-- Class abbreviations legend -->
-          <details class="legend">
-            <summary>📖 Class abbreviations legend</summary>
-            <table class="legend-table">
-              <tr><td>VG;MT</td><td>Vortex Generating Panel – Missing Teeth</td></tr>
-              <tr><td>LE;ER</td><td>Leading Edge – Erosion</td></tr>
-              <tr><td>LR;DA</td><td>Lightning Receptor – Damage</td></tr>
-              <tr><td>LE;CR</td><td>Leading Edge – Crack</td></tr>
-              <tr><td>SF;PO</td><td>Surface – Paint-Off</td></tr>
-              <tr><td>Normalzustand</td><td>No damage class assigned</td></tr>
-            </table>
-          </details>
           </div><!-- end scadaSection -->
 
           <div class="row">
@@ -664,42 +823,57 @@
       <!-- OUTPUTS -->
       <div class="card">
       <div class="card-h"><h2>Conversation</h2><span class="pill" id="modelPill">model: auto</span></div>
-      <div class="card-b">
+      <div class="card-b chat-wrap">
         <div class="processing-hint" id="processingHint" aria-live="polite">
           <span class="spinner"></span>
           Processing request…
         </div>
+        <div class="current-input" id="currentInput" style="display:none;">
+          <div class="panel-h">
+            <div class="label">Incident input</div>
+            <button class="collapse-btn" type="button" data-target="currentInputBody" aria-label="Collapse"></button>
+          </div>
+          <div id="currentInputBody" class="panel-body"></div>
+        </div>
+        <div class="current-reco" id="currentReco" style="display:none;">
+          <div class="panel-h">
+            <div class="label">Recommendation</div>
+            <button class="collapse-btn" type="button" data-target="currentRecoBody" aria-label="Collapse"></button>
+          </div>
+          <div id="currentRecoBody" class="panel-body"></div>
+        </div>
         <div class="chat" id="chat"></div>
 
-          <div style="height: 14px;"></div>
+        <div style="height: 14px;"></div>
 
-          <div class="card" style="box-shadow:none;">
-            <div class="card-h">
-              <h2>Top retrieved manual chunks</h2>
-              <div class="table-controls">
-                <div class="left">
-                  <span class="small">Show</span>
-                  <input class="range" id="rangeRows" type="range" min="3" max="30" value="10" />
-                  <span class="pill" id="rangeLabel">10</span>
-                </div>
+        <div class="card" style="box-shadow:none;">
+          <div class="card-h">
+            <h2>Top retrieved manual chunks</h2>
+            <button class="collapse-btn" type="button" data-target="retrievalBody" aria-label="Collapse"></button>
+            <div class="table-controls">
+              <div class="left">
+                <span class="small">Show</span>
+                <input class="range" id="rangeRows" type="range" min="3" max="30" value="10" />
+                <span class="pill" id="rangeLabel">10</span>
               </div>
             </div>
-            <div class="card-b" style="padding:0;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Score</th>
-                    <th>Source</th>
-                    <th>Pages</th>
-                    <th>Section</th>
-                    <th>Snippet</th>
-                  </tr>
-                </thead>
-                <tbody id="resultsBody"></tbody>
-              </table>
-            </div>
           </div>
+          <div class="card-b panel-body" id="retrievalBody" style="padding:0;">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Score</th>
+                  <th>Source</th>
+                  <th>Pages</th>
+                  <th>Section</th>
+                  <th>Snippet</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+        </div>
 
         </div>
       </div>
@@ -739,15 +913,62 @@
     box.textContent = msg || '';
   }
 
+  function setCurrentInput(text){
+    const wrap = el('currentInput');
+    const body = el('currentInputBody');
+    if (!wrap || !body) {
+      return;
+    }
+    const safe = escapeHtml(text || '').replace(/\n/g, '<br>');
+    if (!safe.trim()) {
+      wrap.style.display = 'none';
+      body.innerHTML = '';
+      return;
+    }
+    wrap.style.display = 'block';
+    body.innerHTML = safe;
+    body.classList.remove("collapsed");
+  }
+
+  function setCurrentRecommendation(htmlText, isLoading){
+    const wrap = el("currentReco");
+    const body = el("currentRecoBody");
+    if (!wrap || !body) {
+      return;
+    }
+    if (!htmlText) {
+      wrap.style.display = "none";
+      body.innerHTML = "";
+      return;
+    }
+    wrap.style.display = "block";
+    body.innerHTML = isLoading ? `<span class="spinner"></span> ${htmlText}` : htmlText;
+    body.classList.remove("collapsed");
+  }
+
   function addChatMessage(role, title, body){
     const chat = el('chat');
     const wrap = document.createElement('div');
     wrap.className = 'msg';
     wrap.innerHTML = `
-      <div class="m-h"><span>${title}</span><span class="pill">${role}</span></div>
+      <div class="m-h">
+        <div class="left">
+          <button class="collapse-btn" type="button">Collapse</button>
+          <span>${title}</span>
+        </div>
+        <span class="pill">${role}</span>
+      </div>
       <div class="m-b" id="msg_${Date.now()}">${body}</div>
     `;
-    chat.prepend(wrap);
+    chat.appendChild(wrap);
+    const btn = wrap.querySelector(".collapse-btn");
+    if (btn) {
+      btn.onclick = () => {
+        wrap.classList.toggle("collapsed");
+        btn.textContent = wrap.classList.contains("collapsed") ? "Expand" : "Collapse";
+      };
+    }
+    chat.scrollTop = chat.scrollHeight;
     return wrap;
   }
 
@@ -958,6 +1179,75 @@
       .replaceAll("'", '&#039;');
   }
 
+  function renderMarkdownSimple(text){
+    const lines = (text || "").split(/\r?\n/);
+    let html = "";
+    let inOl = false;
+    let inUl = false;
+
+    const closeLists = () => {
+      if (inOl) {
+        html += "</ol>";
+        inOl = false;
+      }
+      if (inUl) {
+        html += "</ul>";
+        inUl = false;
+      }
+    };
+
+    lines.forEach((rawLine) => {
+      const line = rawLine.trim();
+      if (!line) {
+        closeLists();
+        html += "<br>";
+        return;
+      }
+
+      if (line.startsWith("### ")) {
+        closeLists();
+        html += `<h3>${escapeHtml(line.slice(4))}</h3>`;
+        return;
+      }
+      if (line.startsWith("#### ")) {
+        closeLists();
+        html += `<h4>${escapeHtml(line.slice(5))}</h4>`;
+        return;
+      }
+
+      const olMatch = line.match(/^(\d+)\.\s+(.*)$/);
+      if (olMatch) {
+        if (!inOl) {
+          closeLists();
+          html += "<ol>";
+          inOl = true;
+        }
+        const itemText = escapeHtml(olMatch[2]).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html += `<li>${itemText}</li>`;
+        return;
+      }
+
+      const ulMatch = line.match(/^-+\s+(.*)$/);
+      if (ulMatch) {
+        if (!inUl) {
+          closeLists();
+          html += "<ul>";
+          inUl = true;
+        }
+        const itemText = escapeHtml(ulMatch[1]).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html += `<li>${itemText}</li>`;
+        return;
+      }
+
+      closeLists();
+      const withBold = escapeHtml(line).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      html += `<p>${withBold}</p>`;
+    });
+
+    closeLists();
+    return html;
+  }
+
   function normalizeDescription(text){
     const raw = (text || "").trim();
     if (!raw) {
@@ -986,16 +1276,6 @@
     state.allTags = data.all_tags || [];
     state.allClasses = data.all_classes || [];
     
-    // Populate class filter dropdown
-    const classFilter = el('classFilter');
-    classFilter.innerHTML = '<option value="">All classes</option>';
-    state.allClasses.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.code;
-      opt.textContent = c.code === 'Nix' ? 'Normalzustand' : c.code;
-      classFilter.appendChild(opt);
-    });
-    
     // Populate tag checkboxes
     const tagContainer = el('tagCheckboxes');
     tagContainer.innerHTML = '';
@@ -1011,10 +1291,6 @@
       });
     }
     
-    // Set up filter change handlers
-    classFilter.onchange = applyFilters;
-    el('anomalyFilter').onchange = applyFilters;
-    
     // Initial filter application
     applyFilters();
   }
@@ -1025,27 +1301,10 @@
   }
 
   function applyFilters() {
-    const classFilter = el('classFilter').value;
-    const anomalyFilter = el('anomalyFilter').value;
     const selectedTags = getSelectedTags();
     
-    // Apply AND filtering
+    // Apply tags filtering
     state.filteredScadaCards = state.allScadaCards.filter(card => {
-      // Class filter
-      if (classFilter && card.class_code !== classFilter) {
-        return false;
-      }
-      
-      // Anomaly filter
-      if (anomalyFilter) {
-        if (anomalyFilter === 'normal' && card.event_label !== 'normal') {
-          return false;
-        }
-        if (anomalyFilter === 'anomaly' && card.event_label !== 'anomaly') {
-          return false;
-        }
-      }
-      
       // Tags filter (AND: card must have ALL selected tags)
       if (selectedTags.length > 0) {
         const cardTags = card.tags || [];
@@ -1065,49 +1324,70 @@
   }
 
   function renderScadaDropdown() {
-    const sel = el('scadaSelect');
-    sel.innerHTML = '';
+    const list = el('scadaCardList');
+    const hiddenInput = el('scadaSelect');
+    
+    // Keep the header, remove other children
+    const header = list.querySelector('.scada-list-header');
+    list.innerHTML = '';
+    if (header) list.appendChild(header);
     
     if (state.filteredScadaCards.length === 0) {
-      const opt = document.createElement('option');
-      opt.value = '';
-      opt.textContent = 'No matching cards';
-      opt.disabled = true;
-      sel.appendChild(opt);
+      const empty = document.createElement('div');
+      empty.className = 'scada-card-empty';
+      empty.textContent = 'No matching cards';
+      list.appendChild(empty);
+      hiddenInput.value = '';
       el('scadaPreview').textContent = '';
       return;
     }
     
-    state.filteredScadaCards.forEach(card => {
-      const opt = document.createElement('option');
-      opt.value = card.id;
+    state.filteredScadaCards.forEach((card, idx) => {
+      const item = document.createElement('div');
+      item.className = 'scada-card-item' + (idx === 0 ? ' selected' : '');
+      item.dataset.cardId = card.id;
       
-      // Build descriptive label
-      const parts = [card.id];
+      // Radio button
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'scadaCard';
+      radio.value = card.id;
+      radio.checked = idx === 0;
       
-      // Add class (using Normalzustand for Nix)
-      if (card.class_code) {
-        const classDisplay = card.class_code === 'Nix' ? 'Normalzustand' : card.class_code;
-        parts.push(classDisplay);
-      }
+      // ID - show full ID
+      const idSpan = document.createElement('span');
+      idSpan.className = 'scada-card-id';
+      idSpan.textContent = card.id;
+      idSpan.title = card.id;
       
-      // Add anomaly info
-      if (card.event_label === 'anomaly' && card.event_description) {
-        parts.push(`anomaly: ${card.event_description}`);
-      } else {
-        parts.push(card.event_label_display);
-      }
+      // Tags
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'scada-card-tags';
+      (card.tags || []).forEach(tag => {
+        const tagSpan = document.createElement('span');
+        tagSpan.className = 'scada-card-tag';
+        tagSpan.textContent = tag;
+        tagsDiv.appendChild(tagSpan);
+      });
       
-      // Add tags
-      if (card.tags && card.tags.length > 0) {
-        parts.push(`tags: [${card.tags.join(', ')}]`);
-      }
+      item.appendChild(radio);
+      item.appendChild(idSpan);
+      item.appendChild(tagsDiv);
       
-      opt.textContent = `${parts[0]} (${parts.slice(1).join(', ')})`;
-      sel.appendChild(opt);
+      // Click handler
+      item.onclick = () => {
+        list.querySelectorAll('.scada-card-item').forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        radio.checked = true;
+        hiddenInput.value = card.id;
+        renderScadaPreview();
+      };
+      
+      list.appendChild(item);
     });
     
-    sel.onchange = () => renderScadaPreview();
+    // Set initial value
+    hiddenInput.value = state.filteredScadaCards[0]?.id || '';
     renderScadaPreview();
   }
 
@@ -1178,13 +1458,9 @@
         imageDescriptions.length && `Images: ${imageDescriptions.join(' | ')}`,
       ].filter(Boolean).join('\n');
 
-      addChatMessage('user', 'Incident input', escapeHtml(userSummary || '(empty)'));
+      setCurrentInput(userSummary || '');
 
-      placeholder = addChatMessage(
-        "assistant",
-        "Recommendation",
-        "<span class=\"spinner\"></span> thinking..."
-      );
+      setCurrentRecommendation("Thinking...", true);
 
       // Get SCADA case data from filtered cards (only if enabled)
       const selectedCard = scadaEnabled ? state.filteredScadaCards.find(c => c.id === scadaId) : null;
@@ -1208,7 +1484,7 @@
       }
 
       const rec = data.recommendation_markdown || '(no recommendation)';
-      placeholder.querySelector('.m-b').textContent = rec;
+      setCurrentRecommendation(renderMarkdownSimple(rec), false);
 
       if(data.query_pack && data.query_pack.query){
         el('modelPill').textContent = `query ready`;
@@ -1218,11 +1494,7 @@
 
     } catch (e) {
       const msg = `Error: ${e.message}`;
-      if (placeholder) {
-        placeholder.querySelector('.m-b').textContent = msg;
-      } else {
-        addChatMessage('assistant', 'Error', escapeHtml(msg));
-      }
+      setCurrentRecommendation(escapeHtml(msg), false);
       showWarn(e.message);
     } finally {
       setStatus(state.awaitingConfirm ? 'confirm' : 'idle');
@@ -1377,6 +1649,23 @@
       el('showRows').value = range.value;
       renderResultsTable(state.lastResults);
     };
+
+    document.querySelectorAll(".collapse-btn").forEach((btn) => {
+      const targetId = btn.getAttribute("data-target");
+      if (!targetId) {
+        return;
+      }
+      btn.onclick = () => {
+        const panel = el(targetId);
+        if (!panel) {
+          return;
+        }
+        panel.classList.toggle("collapsed");
+        const isCollapsed = panel.classList.contains("collapsed");
+        btn.classList.toggle("is-collapsed", isCollapsed);
+        btn.setAttribute("aria-label", isCollapsed ? "Expand" : "Collapse");
+      };
+    });
   }
 
   (async function init(){
