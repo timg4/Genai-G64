@@ -8,3 +8,6 @@ Images/DTU-annotations/
 
 .venv/
 __pycache__/
+wind_rag_webapp/wind_rag_webapp/backend/data/
+wind_rag_webapp/wind_rag_webapp/backend/__pycache__/
+Faulty_Image_Description/__pycache__/

@@ -79,6 +79,17 @@ class RunRequest(BaseModel):
     top_k: int = 10
 
 
+class DiagnosisRequest(BaseModel):
+    mechanic_notes: str = ""
+    image_descriptions: List[str] = Field(default_factory=list)
+    scada_id: Optional[str] = None
+    scada_case: Optional[Dict[str, Any]] = None  # Direct case data from frontend
+
+
+class DiagnosisResponse(BaseModel):
+    diagnosis: str
+
+
 class ImageFile(BaseModel):
     name: str = "upload.jpg"
     data_url: str
@@ -125,6 +136,14 @@ Task:
 - If the chunks are irrelevant or only training/admin, say so and ask for the right manual.
 - Prioritize safety: if there are any safety warnings, mentiom them early. First priority is safety for technician.
 - If there is no issue indicated, start by saying everything is ok, then add optional maintenance steps (e.g., "Everything is OK, but for maintenance you can still do: ...").
+"""
+
+SYSTEM_PROMPT_DIAGNOSIS = """
+You will receive incident input used for RAG (SCADA summary, mechanic notes, image descriptions).
+Write a concise English diagnosis in 2-3 sentences.
+- Summarize observations only; do not give recommendations or steps.
+- If key information is missing, mention that briefly.
+Return plain text only.
 """
 
 
@@ -177,6 +196,81 @@ def recommend_actions(context: Dict[str, Any], retrieved: List[Dict[str, Any]]) 
         max_output_tokens=700,
     )
 
+    return resp.output_text.strip()
+
+
+def _extract_scada_summary(scada_case: Optional[Dict[str, Any]]) -> str:
+    if not scada_case or not isinstance(scada_case, dict):
+        return ""
+    candidates: List[Optional[str]] = [
+        scada_case.get("summary"),
+    ]
+    case_block = scada_case.get("case")
+    if isinstance(case_block, dict):
+        candidates.append(case_block.get("summary"))
+    candidates.extend(
+        [
+            scada_case.get("event_description"),
+            scada_case.get("event_label_display"),
+            scada_case.get("event_label"),
+        ]
+    )
+    for item in candidates:
+        if isinstance(item, str) and item.strip():
+            return item.strip()
+    return ""
+
+
+def _ensure_sentence(text: str) -> str:
+    text = (text or "").strip()
+    if not text:
+        return ""
+    if text[-1] in ".!?":
+        return text
+    return f"{text}."
+
+
+def _diagnosis_offline(context: Dict[str, Any]) -> str:
+    sentences: List[str] = []
+    scada_summary = str(context.get("scada_summary") or "").strip()
+    scada_id = str(context.get("scada_id") or "").strip()
+    if scada_summary:
+        sentences.append(_ensure_sentence(f"SCADA summary: {scada_summary}"))
+    elif scada_id:
+        sentences.append(_ensure_sentence(f"SCADA source: {scada_id}"))
+
+    notes = str(context.get("mechanic_notes") or "").strip()
+    if notes:
+        sentences.append(_ensure_sentence(f"Mechanic notes report: {notes}"))
+
+    images = context.get("image_descriptions") or []
+    if isinstance(images, list):
+        cleaned = [str(x).strip() for x in images if isinstance(x, str) and str(x).strip()]
+        if cleaned:
+            joined = "; ".join(cleaned)
+            sentences.append(_ensure_sentence(f"Image observations include {joined}"))
+
+    if not sentences:
+        sentences = ["No diagnostic input was provided."]
+    if len(sentences) < 2:
+        sentences.append("Available information is limited, so this summary is tentative.")
+    return " ".join(sentences[:3]).strip()
+
+
+def generate_diagnosis(context: Dict[str, Any]) -> str:
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key or OpenAI is None:
+        return _diagnosis_offline(context)
+
+    client = OpenAI()
+    resp = client.responses.create(
+        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+        input=[
+            {"role": "system", "content": SYSTEM_PROMPT_DIAGNOSIS},
+            {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
+        ],
+        max_output_tokens=180,
+    )
     return resp.output_text.strip()
 
 
@@ -448,6 +542,38 @@ def retrieve(
         filtered.append(item)
 
     return filtered[:top_k]
+
+
+@app.post("/api/diagnosis", response_model=DiagnosisResponse)
+def diagnosis(req: DiagnosisRequest) -> DiagnosisResponse:
+    scada_case: Dict[str, Any] = {}
+    if req.scada_case:
+        scada_case = req.scada_case
+    elif req.scada_id:
+        card_path = SCADA_CARDS_DIR / f"{req.scada_id}_card.json"
+        if card_path.exists():
+            scada_case = _load_json(card_path)
+        else:
+            samples = _load_json(SCADA_SAMPLES_PATH)
+            for s in samples:
+                if s["id"] == req.scada_id:
+                    scada_case = s["case"]
+                    break
+
+    image_descriptions = [
+        x for x in (req.image_descriptions or []) if isinstance(x, str) and x.strip()
+    ]
+    scada_summary = _extract_scada_summary(scada_case)
+
+    context = {
+        "scada_id": req.scada_id,
+        "scada_summary": scada_summary,
+        "mechanic_notes": req.mechanic_notes,
+        "image_descriptions": image_descriptions,
+    }
+
+    diagnosis_text = generate_diagnosis(context=context)
+    return DiagnosisResponse(diagnosis=diagnosis_text)
 
 
 @app.post("/api/run", response_model=RunResponse)

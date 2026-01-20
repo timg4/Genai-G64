@@ -981,6 +981,7 @@
     reviewMessage: null,
     incidentCounter: 0,
     inspectingImageId: null,
+    lastDiagnosisHtml: "",
   };
 
   function el(id){ return document.getElementById(id); }
@@ -1040,6 +1041,7 @@
     if (!wrap || !body) {
       return;
     }
+    const wasVisible = wrap.style.display !== 'none';
     const safe = escapeHtml(text || '').replace(/\n/g, '<br>');
     if (!safe.trim()) {
       wrap.style.display = 'none';
@@ -1050,7 +1052,9 @@
     wrap.style.display = 'block';
     body.innerHTML = safe;
     body.classList.remove("collapsed");
-    moveConversationItemToTop(wrap);
+    if (!wasVisible) {
+      moveConversationItemToTop(wrap);
+    }
     updateChatMetrics();
   }
 
@@ -1060,6 +1064,7 @@
     if (!wrap || !body) {
       return;
     }
+    const wasVisible = wrap.style.display !== 'none';
     const safe = escapeHtml(text || '');
     if (!safe.trim()) {
       wrap.style.display = 'none';
@@ -1070,7 +1075,9 @@
     wrap.style.display = 'block';
     body.innerHTML = safe;
     body.classList.remove("collapsed");
-    moveConversationItemToTop(wrap);
+    if (!wasVisible) {
+      moveConversationItemToTop(wrap);
+    }
     updateChatMetrics();
   }
 
@@ -1080,6 +1087,7 @@
     if (!wrap || !body) {
       return;
     }
+    const wasVisible = wrap.style.display !== "none";
     if (!htmlText) {
       wrap.style.display = "none";
       body.innerHTML = "";
@@ -1089,7 +1097,9 @@
     wrap.style.display = "block";
     body.innerHTML = isLoading ? `<span class="spinner"></span> ${htmlText}` : htmlText;
     body.classList.remove("collapsed");
-    moveConversationItemToTop(wrap);
+    if (!wasVisible) {
+      moveConversationItemToTop(wrap);
+    }
     updateChatMetrics();
   }
 
@@ -1098,7 +1108,8 @@
     const recoBody = el("currentRecoBody");
     const inputHtml = inputBody ? inputBody.innerHTML.trim() : "";
     const recoHtml = recoBody ? recoBody.innerHTML.trim() : "";
-    if (!inputHtml && !recoHtml) {
+    const diagHtml = (state.lastDiagnosisHtml || "").trim();
+    if (!inputHtml && !recoHtml && !diagHtml) {
       return;
     }
 
@@ -1106,6 +1117,9 @@
     const parts = [];
     if (inputHtml) {
       parts.push(`<strong>Incident input</strong><br>${inputHtml}`);
+    }
+    if (diagHtml) {
+      parts.push(`<strong>Diagnosis</strong><br>${diagHtml}`);
     }
     if (recoHtml) {
       parts.push(`<strong>Recommendation</strong><br>${recoHtml}`);
@@ -1122,6 +1136,7 @@
       btn.classList.add("is-collapsed");
       btn.setAttribute("aria-label", "Expand");
     }
+    state.lastDiagnosisHtml = "";
   }
 
   function addChatMessage(role, title, body, opts){
@@ -1643,6 +1658,41 @@
     });
   }
 
+  async function requestDiagnosis(payload){
+    const wrap = addChatMessage(
+      "assistant",
+      "Diagnosis",
+      "<span class=\"spinner\"></span> Generating diagnosis..."
+    );
+    const body = wrap.querySelector(".m-b");
+    try {
+      const resp = await fetch('/api/diagnosis', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data?.detail || 'Diagnosis failed');
+      }
+      const text = data?.diagnosis || '(no diagnosis)';
+      const safe = escapeHtml(text).replace(/\n/g, '<br>');
+      if (body) {
+        body.innerHTML = safe;
+      }
+      state.lastDiagnosisHtml = safe;
+    } catch (e) {
+      const safe = escapeHtml(`Diagnosis error: ${e.message}`);
+      if (body) {
+        body.innerHTML = safe;
+      }
+      state.lastDiagnosisHtml = safe;
+    } finally {
+      moveConversationItemToTop(wrap);
+      updateChatMetrics();
+    }
+  }
+
   async function run(){
     showWarn('');
     setStatus('running');
@@ -1686,6 +1736,13 @@
       // Get SCADA case data from filtered cards (only if enabled)
       const selectedCard = scadaEnabled ? state.filteredScadaCards.find(c => c.id === scadaId) : null;
       const scadaCase = selectedCard?.case || null;
+
+      requestDiagnosis({
+        scada_id: scadaId,
+        scada_case: scadaCase,
+        mechanic_notes: mechanicNotes,
+        image_descriptions: imageDescriptions,
+      });
 
       const resp = await fetch('/api/run', {
         method: 'POST',
