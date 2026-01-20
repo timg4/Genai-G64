@@ -14,6 +14,12 @@ CATEGORY_MAP = {
 }
 
 
+def _portable_rel_path(raw: str) -> Path:
+    # Allow Windows-style rel paths (backslashes) to work on macOS/Linux.
+    # JSON example files often store rel_path with "\" separators.
+    return Path((raw or "").replace("\\", "/"))
+
+
 def _schema_block() -> str:
     return (
         "Output JSON schema:\n"
@@ -151,9 +157,10 @@ def _select_balanced_examples(examples: List[dict], max_examples: int) -> List[d
 
 def _resolve_example_path(example: dict, base_dir: Path) -> Path:
     if example.get("path_full"):
-        return Path(example["path_full"]).resolve()
+        raw = str(example["path_full"])
+        return Path(raw.replace("\\", "/")).expanduser().resolve()
     if example.get("rel_path"):
-        rel = Path(example["rel_path"])
+        rel = _portable_rel_path(str(example["rel_path"]))
         candidate = (base_dir / rel)
         if candidate.exists():
             return candidate.resolve()
