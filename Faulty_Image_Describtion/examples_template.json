@@ -8,12 +8,12 @@
         {
           "category_id": 1,
           "category_name": "LE;ER",
-          "image_description": "Das Bild zeigt ein Rotorblatt. Im oberen Bereich nahe der Vorderkante sind längliche Abrieb- und Verfärbungsspuren erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+          "image_description": "The image shows a rotor blade. In the upper area near the leading edge, elongated abrasion and discoloration marks are visible, consistent with LE;ER (Leading Edge - Erosion)."
         },
         {
           "category_id": 4,
           "category_name": "SF;PO",
-          "image_description": "Das Bild zeigt ein Rotorblatt. Im mittleren Bereich der Blattoberfläche ist eine lokal begrenzte Stelle mit abgetragenem bzw. fehlendem Coating erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+          "image_description": "The image shows a rotor blade. In the central area of the blade surface, a localized area with abraded or missing coating is visible, consistent with SF;PO (Surface - Paint-Off)."
         }
       ]
     }

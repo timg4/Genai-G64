@@ -3,8 +3,8 @@
     "decision_rules": {
       "invalid": {
         "when": [
-          "Kein Windrad bzw. kein relevanter Windradbereich (Rotorblatt, Nabe/Spinner, Gondel, Turm) ist erkennbar.",
-          "Der relevante Bereich ist nicht bewertbar (z. B. zu unscharf, zu weit entfernt, verdeckt), sodass keine Aussage zu Schäden möglich ist."
+          "No wind turbine or no relevant turbine area (blade, hub/spinner, nacelle, tower) is visible.",
+          "The relevant area cannot be assessed (e.g., too blurry, too far away, occluded), so no statement about damage is possible."
         ],
         "set_fields": {
           "example_type": "invalid",
@@ -16,8 +16,8 @@
       },
       "no_damage": {
         "when": [
-          "Ein Windrad-/Bauteilbereich ist klar erkennbar.",
-          "Es sind keine Schäden der definierten Klassen sichtbar (VG;MT, LE;ER, LR;DA, LE;CR, SF;PO)."
+          "A wind turbine/component area is clearly visible.",
+          "No damage of the defined classes is visible (VG;MT, LE;ER, LR;DA, LE;CR, SF;PO)."
         ],
         "set_fields": {
           "example_type": "no_damage",
@@ -28,28 +28,28 @@
       },
       "damage": {
         "when": [
-          "Ein Windrad-/Bauteilbereich ist erkennbar.",
-          "Mindestens eine Schadenklasse ist sichtbar."
+          "A wind turbine/component area is visible.",
+          "At least one damage class is visible."
         ],
         "set_fields": {
           "example_type": "damage",
           "wind_turbine_visible": true,
           "damage_present": true,
-          "findings": "Liste aller zutreffenden Klassen (Multi-Label erlaubt)."
+          "findings": "List all applicable classes (multi-label allowed)."
         }
       }
     },
     "class_triggers": {
-      "VG;MT": "Unterbrechung/Fehlstellen in der Zahnreihe des Vortex Generating Panels; lokal fehlen Zähne.",
-      "LE;ER": "Abrieb/Auswaschungen/Verfärbungen entlang der Vorderkante, häufig länglich oder streifenförmig.",
-      "LE;CR": "Liniger Riss/Bruchlinie an oder unmittelbar entlang der Vorderkante, klar abgegrenzt.",
-      "LR;DA": "Lokale Beschädigung am Blitzableiter, typischerweise im Bereich der Blattspitze.",
-      "SF;PO": "Lokal fehlendes/abgetragenes Coating, abgeplatzte Beschichtung oder Schürfstellen auf der Oberfläche."
+      "VG;MT": "Gaps/missing sections in the tooth row of the vortex generating panel; teeth are missing locally.",
+      "LE;ER": "Abrasion/wash-out/discoloration along the leading edge, often elongated or stripe-like.",
+      "LE;CR": "Linear crack/fracture line on or directly along the leading edge, clearly delineated.",
+      "LR;DA": "Local damage at the lightning receptor, typically near the blade tip.",
+      "SF;PO": "Locally missing/abraded coating, chipped coating, or scuff marks on the surface."
     },
     "output_constraints": [
-      "Keine Erwähnung von Boxen/Markierungen.",
-      "Beschreibungen sind deklarativ (keine Rückfragen oder Hinweise wie 'bitte gib weitere Informationen').",
-      "Pro Finding: category_id, category_name, image_description."
+      "Do not mention boxes/markings.",
+      "Descriptions are declarative (no follow-up questions or hints like 'please provide more information').",
+      "Per finding: category_id, category_name, image_description."
     ]
   },
   "examples": [
@@ -63,7 +63,7 @@
         {
           "category_id": 0,
           "category_name": "VG;MT",
-          "image_description": "Das Bild zeigt ein Rotorblatt. Auf der Blattoberfläche sind zwei voneinander getrennte Fehlerstellen auf dem Vortex Generating Panel erkennbar; eine liegt eher im linken Abschnitt des sichtbaren Blattbereichs, die zweite weiter rechts im mittleren bis rechten Abschnitt. An den betreffenden Stellen fehlen Zähne am VG-Panel, entsprechend VG;MT (Vortex Generating Panel - Missing Teeth)."
+          "image_description": "The image shows a rotor blade. Two separate defect areas are visible on the vortex generating panel on the blade surface; one more on the left side of the visible blade area and the second further to the right in the mid-to-right area. In these locations, teeth are missing from the VG panel, consistent with VG;MT (Vortex Generating Panel - Missing Teeth)."
         }
       ]
     },
@@ -77,7 +77,7 @@
         {
           "category_id": 2,
           "category_name": "LR;DA",
-          "image_description": "Das Bild zeigt die Blattspitze eines Rotorblatts. Direkt im Bereich der Spitze ist eine lokale Beschädigung am Blitzableiter erkennbar, entsprechend LR;DA (Lightning Receptor - Damage)."
+          "image_description": "The image shows the tip of a rotor blade. Local damage at the lightning receptor is visible directly in the tip area, consistent with LR;DA (Lightning Receptor - Damage)."
         }
       ]
     },
@@ -91,7 +91,7 @@
         {
           "category_id": 3,
           "category_name": "LE;CR",
-          "image_description": "Das Bild zeigt einen Rotorblattabschnitt. Entlang der Vorderkante sind mehrere voneinander getrennte, linienförmige Risse erkennbar, entsprechend LE;CR (Leading Edge - Crack)."
+          "image_description": "The image shows a rotor-blade section. Several separate, line-shaped cracks are visible along the leading edge, consistent with LE;CR (Leading Edge - Crack)."
         }
       ]
     },
@@ -105,7 +105,7 @@
         {
           "category_id": 1,
           "category_name": "LE;ER",
-          "image_description": "Das Bild zeigt einen Rotorblattabschnitt im äußeren Blattbereich. Nahe der Vorderkante sind lokale Abtrags- und Verfärbungsstellen erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+          "image_description": "The image shows a rotor-blade section in the outer blade area. Local abrasion and discoloration near the leading edge are visible, consistent with LE;ER (Leading Edge - Erosion)."
         }
       ]
     },
@@ -119,7 +119,7 @@
         {
           "category_id": 4,
           "category_name": "SF;PO",
-          "image_description": "Das Bild zeigt einen Rotorblattabschnitt. Auf der Blattoberfläche ist lokal abgetragene bzw. fehlende Beschichtung erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+          "image_description": "The image shows a rotor-blade section. Locally abraded or missing coating is visible on the blade surface, consistent with SF;PO (Surface - Paint-Off)."
         }
       ]
     },
@@ -133,12 +133,12 @@
         {
           "category_id": 1,
           "category_name": "LE;ER",
-          "image_description": "Das Bild zeigt ein Rotorblatt. Im oberen Bereich nahe der Vorderkante sind längliche Abrieb- und Verfärbungsspuren erkennbar, entsprechend LE;ER (Leading Edge - Erosion)."
+          "image_description": "The image shows a rotor blade. In the upper area near the leading edge, elongated abrasion and discoloration marks are visible, consistent with LE;ER (Leading Edge - Erosion)."
         },
         {
           "category_id": 4,
           "category_name": "SF;PO",
-          "image_description": "Das Bild zeigt ein Rotorblatt. Im mittleren Bereich der Blattoberfläche ist eine lokal begrenzte Stelle mit abgetragenem bzw. fehlendem Coating erkennbar, entsprechend SF;PO (Surface - Paint-Off)."
+          "image_description": "The image shows a rotor blade. In the central area of the blade surface, a localized area with abraded or missing coating is visible, consistent with SF;PO (Surface - Paint-Off)."
         }
       ]
     },
@@ -152,12 +152,12 @@
         {
           "category_id": 3,
           "category_name": "LE;CR",
-          "image_description": "Das Bild zeigt zwei Rotorblätter. Am vorderen Rotorblatt sind mehrere voneinander getrennte, linienförmige Schäden entlang der Vorderkante erkennbar, entsprechend LE;CR (Leading Edge - Crack)."
+          "image_description": "The image shows two rotor blades. On the front blade, several separate, line-shaped damages along the leading edge are visible, consistent with LE;CR (Leading Edge - Crack)."
         },
         {
           "category_id": 0,
           "category_name": "VG;MT",
-          "image_description": "Das Bild zeigt zwei Rotorblätter. Auf dem Vortex Generating Panel sind zwei getrennte Stellen erkennbar, an denen Zähne fehlen, entsprechend VG;MT (Vortex Generating Panel - Missing Teeth)."
+          "image_description": "The image shows two rotor blades. On the vortex generating panel, two separate locations where teeth are missing are visible, consistent with VG;MT (Vortex Generating Panel - Missing Teeth)."
         }
       ]
     },
@@ -168,7 +168,7 @@
       "wind_turbine_visible": true,
       "damage_present": false,
       "findings": [],
-      "image_description": "Ein Rotorblatt ist klar sichtbar; es sind keine Sch?den der definierten Klassen erkennbar."
+      "image_description": "A rotor blade is clearly visible; no damage of the defined classes is detectable."
     },
     {
       "example_id": "DJI_0033_1_3",
@@ -178,7 +178,7 @@
       "damage_present": false,
       "invalid_reason": "no_turbine_visible",
       "findings": [],
-      "image_description": "Kein Windrad bzw. kein relevanter Windradbereich ist sichtbar; eine Schadensbewertung ist nicht m?glich."
+      "image_description": "No wind turbine or relevant turbine area is visible; a damage assessment is not possible."
     }
   ]
 }

@@ -187,9 +187,9 @@ def _example_text(example: dict) -> str:
     if example.get("image_description"):
         return str(example["image_description"])
     if example.get("example_type") == "invalid":
-        return "Kein Windrad bzw. kein relevanter Windradbereich ist sichtbar; eine Schadensbewertung ist nicht möglich."
+        return "No wind turbine or relevant turbine area is visible; a damage assessment is not possible."
     if example.get("example_type") == "no_damage":
-        return "Windradbereich sichtbar; keine Schäden erkennbar."
+        return "A wind turbine/component area is visible; no defects are identifiable."
     findings = example.get("findings") or []
     if not findings:
         return "No visible defects are present."
