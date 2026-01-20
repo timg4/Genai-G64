@@ -9,6 +9,7 @@ import re
 import sys
 import time
 import uuid
+from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -87,8 +88,17 @@ class DiagnosisRequest(BaseModel):
     scada_case: Optional[Dict[str, Any]] = None  # Direct case data from frontend
 
 
+class RiskCode(str, Enum):
+    high_risk = "high_risk"
+    medium_risk = "medium_risk"
+    low_risk = "low_risk"
+    no_risk = "no_risk"
+    not_classified = "not_classified"
+
+
 class DiagnosisResponse(BaseModel):
     diagnosis: str
+    risk_code: RiskCode
 
 
 class ImageFile(BaseModel):
@@ -133,7 +143,7 @@ You will receive:
 Task:
 - Write a practical action recommendation for a technician.
 - Use short numbered steps.
-- When you reference something from a chunk, cite the manual name and pages, e.g. [ManualName pX-Y].
+- Try to reference from chunks, cite the manual name and pages, e.g. [ManualName pX-Y].
 - If the chunks are irrelevant or only training/admin, say so and ask for the right manual.
 - Prioritize safety: if there are any safety warnings, mentiom them early. First priority is safety for technician.
 - If there is no issue indicated, start by saying everything is ok, then add optional maintenance steps (e.g., "Everything is OK, but for maintenance you can still do: ...").
@@ -141,10 +151,16 @@ Task:
 
 SYSTEM_PROMPT_DIAGNOSIS = """
 You will receive incident input used for RAG (SCADA summary, mechanic notes, image descriptions).
-Write a concise English diagnosis in 2-3 sentences.
-- Summarize observations only; do not give recommendations or steps.
-- If key information is missing, mention that briefly.
-Return plain text only.
+Return strict JSON with keys:
+- diagnosis: string (concise English diagnosis, 2-3 sentences, observations only, no recommendations/steps)
+- risk_code: one of ["high_risk","medium_risk","low_risk","no_risk","not_classified"]
+
+Risk guidance:
+- high_risk: strong indication of severe damage or immediate danger (or strong stop-criteria signals).
+- medium_risk: clear issue/anomaly but not obviously immediate danger.
+- low_risk: minor anomaly / early indicator / low severity.
+- no_risk: inputs indicate normal state / no anomaly.
+- not_classified: insufficient or ambiguous information; default to this if unsure.
 """
 
 
@@ -258,21 +274,42 @@ def _diagnosis_offline(context: Dict[str, Any]) -> str:
     return " ".join(sentences[:3]).strip()
 
 
-def generate_diagnosis(context: Dict[str, Any]) -> str:
+class DiagnosisLLMOutput(BaseModel):
+    diagnosis: str
+    risk_code: RiskCode = RiskCode.not_classified
+
+
+def generate_diagnosis(context: Dict[str, Any]) -> Tuple[str, RiskCode]:
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key or OpenAI is None:
-        return _diagnosis_offline(context)
+        return _diagnosis_offline(context), RiskCode.not_classified
 
     client = OpenAI()
-    resp = client.responses.create(
-        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
-        input=[
-            {"role": "system", "content": SYSTEM_PROMPT_DIAGNOSIS},
-            {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
-        ],
-        max_output_tokens=180,
-    )
-    return resp.output_text.strip()
+    try:
+        resp = client.responses.parse(
+            model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+            input=[
+                {"role": "system", "content": SYSTEM_PROMPT_DIAGNOSIS},
+                {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
+            ],
+            text_format=DiagnosisLLMOutput,
+            max_output_tokens=240,
+        )
+        parsed: DiagnosisLLMOutput = resp.output_parsed
+        diagnosis_text = (parsed.diagnosis or "").strip() or "(no diagnosis)"
+        risk_code = parsed.risk_code or RiskCode.not_classified
+        return diagnosis_text, risk_code
+    except Exception:
+        # Fallback: keep diagnosis, but do not guess risk
+        resp = client.responses.create(
+            model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+            input=[
+                {"role": "system", "content": "Write a concise English diagnosis in 2-3 sentences. Return plain text only."},
+                {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
+            ],
+            max_output_tokens=180,
+        )
+        return resp.output_text.strip(), RiskCode.not_classified
 
 
 # -----------------------------
@@ -580,8 +617,8 @@ def diagnosis(req: DiagnosisRequest) -> DiagnosisResponse:
         "image_descriptions": image_descriptions,
     }
 
-    diagnosis_text = generate_diagnosis(context=context)
-    return DiagnosisResponse(diagnosis=diagnosis_text)
+    diagnosis_text, risk_code = generate_diagnosis(context=context)
+    return DiagnosisResponse(diagnosis=diagnosis_text, risk_code=risk_code)
 
 
 @app.post("/api/run", response_model=RunResponse)
