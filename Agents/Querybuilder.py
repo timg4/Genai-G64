@@ -335,8 +335,13 @@ def build_query_pack(
     )
 
 def compose_query_pack(payload: Dict[str, Any], model: Optional[str] = None) -> Dict[str, Any]:
-    if not os.environ.get("OPENAI_API_KEY"):
+    if model is None:
         return _fallback_query_pack(payload)
+
+    if not os.environ.get("OPENAI_API_KEY"):
+        raise RuntimeError(
+            "OPENAI_API_KEY is not set. Please set OPENAI_API_KEY (see README.md in the repository root)."
+        )
 
     try:
         qp = build_query_pack(

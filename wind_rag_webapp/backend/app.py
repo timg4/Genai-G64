@@ -18,7 +18,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-# OpenAI is optional: the app runs without it (fallback mode).
+# OpenAI is optional at import-time, but LLM-backed endpoints require OPENAI_API_KEY.
 try:
     from openai import OpenAI  # type: ignore
 except Exception:  # pragma: no cover
@@ -61,6 +61,32 @@ CLASS_DISPLAY_NAMES = {
 }
 
 TOKEN_RE = re.compile(r"[A-Za-z0-9_]+")
+
+# -----------------------------
+# OpenAI key checks
+# -----------------------------
+
+def _missing_openai_key_detail() -> str:
+    return "Kein OPENAI_API_KEY gesetzt. Bitte setze OPENAI_API_KEY (siehe README.md im Repo-Root)."
+
+
+def _require_openai_api_key() -> str:
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise HTTPException(status_code=503, detail=_missing_openai_key_detail())
+    if OpenAI is None:
+        raise HTTPException(
+            status_code=500,
+            detail="Python package 'openai' is not available. Install requirements (siehe README.md im Repo-Root).",
+        )
+    return api_key
+
+
+if not os.environ.get("OPENAI_API_KEY"):
+    print(
+        "[WARN] Kein OPENAI_API_KEY gesetzt. LLM-Endpunkte liefern einen Fehler. Siehe README.md im Repo-Root.",
+        file=sys.stderr,
+    )
 
 # Querybuilder integration (optional)
 QUERY_BUILDER_ERROR: Optional[str] = None
@@ -200,21 +226,8 @@ def _load_json(path: Path) -> Any:
 
 
 def recommend_actions(context: Dict[str, Any], retrieved: List[Dict[str, Any]]) -> str:
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key or OpenAI is None:
-        # Simple offline summary
-        lines = [
-            "**(Offline Modus)** Kein OPENAI_API_KEY gesetzt.\n",
-            "**Kontext:**",
-            f"- SCADA: {context.get('scada_case', {}).get('summary', '')}",
-            f"- Notizen: {context.get('mechanic_notes', '')}",
-            f"- Bilder: {context.get('fault_images_description', '')}",
-            "\n**Gefundene Manual-Stellen:**",
-        ]
-        for c in retrieved[:5]:
-            lines.append(f"- {c.get('source')} p{c.get('page')}-{c.get('page_end')}: {c.get('section')}")
-        return "\n".join(lines)
-
+    if OpenAI is None:
+        raise RuntimeError("openai package is not installed")
     client = OpenAI()
 
     chunk_blocks = []
@@ -268,52 +281,14 @@ def _extract_scada_summary(scada_case: Optional[Dict[str, Any]]) -> str:
     return ""
 
 
-def _ensure_sentence(text: str) -> str:
-    text = (text or "").strip()
-    if not text:
-        return ""
-    if text[-1] in ".!?":
-        return text
-    return f"{text}."
-
-
-def _diagnosis_offline(context: Dict[str, Any]) -> str:
-    sentences: List[str] = []
-    scada_summary = str(context.get("scada_summary") or "").strip()
-    scada_id = str(context.get("scada_id") or "").strip()
-    if scada_summary:
-        sentences.append(_ensure_sentence(f"SCADA summary: {scada_summary}"))
-    elif scada_id:
-        sentences.append(_ensure_sentence(f"SCADA source: {scada_id}"))
-
-    notes = str(context.get("mechanic_notes") or "").strip()
-    if notes:
-        sentences.append(_ensure_sentence(f"Mechanic notes report: {notes}"))
-
-    images = context.get("image_descriptions") or []
-    if isinstance(images, list):
-        cleaned = [str(x).strip() for x in images if isinstance(x, str) and str(x).strip()]
-        if cleaned:
-            joined = "; ".join(cleaned)
-            sentences.append(_ensure_sentence(f"Image observations include {joined}"))
-
-    if not sentences:
-        sentences = ["No diagnostic input was provided."]
-    if len(sentences) < 2:
-        sentences.append("Available information is limited, so this summary is tentative.")
-    return " ".join(sentences[:3]).strip()
-
-
 class DiagnosisLLMOutput(BaseModel):
     diagnosis: str
     risk_code: RiskCode = RiskCode.not_classified
 
 
 def generate_diagnosis(context: Dict[str, Any]) -> Tuple[str, RiskCode]:
-    api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key or OpenAI is None:
-        return _diagnosis_offline(context), RiskCode.not_classified
-
+    if OpenAI is None:
+        raise RuntimeError("openai package is not installed")
     client = OpenAI()
     try:
         resp = client.responses.parse(
@@ -410,8 +385,10 @@ def _save_upload(data_url: str, filename: str) -> Path:
 
 def describe_faulty_image(image_path: Path) -> Optional[str]:
     api_key = os.environ.get("OPENAI_API_KEY")
-    if not api_key or OpenAI is None:
-        return None
+    if not api_key:
+        raise RuntimeError(_missing_openai_key_detail())
+    if OpenAI is None:
+        raise RuntimeError("openai package is not installed")
     if FAULTY_IMPORT_ERROR or not FAULTY_EXAMPLES_PATH.exists():
         return None
 
@@ -497,6 +474,22 @@ app.mount("/static", StaticFiles(directory=str(APP_DIR / "static")), name="stati
 def index() -> HTMLResponse:
     html = (APP_DIR / "static" / "index.html").read_text(encoding="utf-8")
     return HTMLResponse(content=html)
+
+
+@app.get("/api/status")
+def api_status() -> Dict[str, Any]:
+    key_set = bool(os.environ.get("OPENAI_API_KEY"))
+    openai_available = OpenAI is not None
+    warning = None
+    if not key_set:
+        warning = _missing_openai_key_detail()
+    elif not openai_available:
+        warning = "Python package 'openai' is not available (siehe README.md im Repo-Root)."
+    return {
+        "openai_api_key_set": key_set,
+        "openai_available": openai_available,
+        "warning": warning,
+    }
 
 
 @app.get("/api/scada/options")
@@ -621,6 +614,7 @@ def retrieve(
 
 @app.post("/api/diagnosis", response_model=DiagnosisResponse)
 def diagnosis(req: DiagnosisRequest) -> DiagnosisResponse:
+    _require_openai_api_key()
     scada_case: Dict[str, Any] = {}
     if req.scada_case:
         scada_case = req.scada_case
@@ -653,6 +647,7 @@ def diagnosis(req: DiagnosisRequest) -> DiagnosisResponse:
 
 @app.post("/api/run", response_model=RunResponse)
 def run(req: RunRequest) -> RunResponse:
+    _require_openai_api_key()
     # 1) assemble context
     scada_case: Dict[str, Any] = {}
     
@@ -693,7 +688,7 @@ def run(req: RunRequest) -> RunResponse:
         "mechanic_notes": req.mechanic_notes,
     }
 
-    # 2) QueryComposer (LLM or fallback)
+    # 2) QueryComposer (LLM)
     if QUERY_BUILDER_ERROR or compose_query_pack is None:
         raise HTTPException(status_code=500, detail=f"Querybuilder import failed: {QUERY_BUILDER_ERROR}")
     qp = compose_query_pack(context, model=os.environ.get("OPENAI_MODEL", "gpt-5.2"))
@@ -718,7 +713,7 @@ def run(req: RunRequest) -> RunResponse:
             )
         )
 
-    # 4) Recommendation (LLM or offline)
+    # 4) Recommendation (LLM)
     recommendation = recommend_actions(context=context, retrieved=retrieved_raw)
 
     return RunResponse(
@@ -730,6 +725,7 @@ def run(req: RunRequest) -> RunResponse:
 
 @app.post("/api/faulty-describe", response_model=DescribeResponse)
 def faulty_describe(req: DescribeRequest) -> DescribeResponse:
+    _require_openai_api_key()
     if not req.image_files:
         return DescribeResponse(descriptions=[])
 

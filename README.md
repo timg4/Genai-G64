@@ -38,6 +38,18 @@ pip install -r requirements.txt
 
 Optional (better embeddings): install PyTorch + OpenCLIP and ensure weights are cached locally.
 
+## OpenAI API key (for LLM features)
+
+Some parts of this repo (e.g. `wind_rag_webapp/` and `manuals/rag_cli.py --generate`) call the OpenAI API. Set `OPENAI_API_KEY` in your environment before using them.
+
+PowerShell:
+
+```powershell
+$env:OPENAI_API_KEY = "YOUR_KEY_HERE"
+```
+
+If `OPENAI_API_KEY` is not set, LLM-backed features return an explicit error (no fallback).
+
 ## Populate few-shot bank
 
 Use `fewshot_bank/metadata.jsonl` (JSONL, one object per line). See `fewshot_bank/README.md` for schema.

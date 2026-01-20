@@ -579,6 +579,17 @@
     td { font-size: 13px; }
     .snippet { color: var(--muted); font-size: 12px; }
     .warn { color: var(--danger); font-size: 12px; }
+    .warn-box {
+      margin: 12px 0 16px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.10);
+      color: #fecaca;
+      font-size: 13px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
 
     .table-controls {
       display: flex;
@@ -862,6 +873,8 @@
       </span>
     </div>
 
+    <div id="warnBox" class="warn-box" role="alert" style="display:none"></div>
+
     <div class="grid">
       <!-- INPUTS -->
       <div class="card">
@@ -1039,6 +1052,7 @@
     lastDiagnosisRiskCode: null,
     lastDiagnosisMessage: null,
     runToken: 0,
+    apiKeyWarning: "",
   };
 
   function el(id){ return document.getElementById(id); }
@@ -1096,8 +1110,31 @@
     if (!box) {
       return;
     }
-    box.style.display = msg ? 'block' : 'none';
-    box.textContent = msg || '';
+    const text = msg || state.apiKeyWarning || '';
+    box.style.display = text ? 'block' : 'none';
+    box.textContent = text;
+  }
+
+  async function checkApiKeyStatus(){
+    try {
+      const resp = await fetch('/api/status');
+      if (!resp.ok) {
+        return;
+      }
+      const data = await resp.json();
+      const hasKey = !!data?.openai_api_key_set;
+      state.apiKeyWarning = hasKey ? "" : String(data?.warning || "Kein OPENAI_API_KEY gesetzt. Siehe README.md im Repo-Root.");
+
+      const runBtn = el('runBtn');
+      if (runBtn) {
+        runBtn.disabled = !hasKey;
+        runBtn.title = hasKey ? '' : state.apiKeyWarning;
+      }
+
+      showWarn('');
+    } catch (e) {
+      return;
+    }
   }
 
   function setCurrentInput(text){
@@ -2182,6 +2219,7 @@
     setupControls();
     updateChatMetrics();
     window.addEventListener('resize', updateChatMetrics);
+    await checkApiKeyStatus();
     try {
       await loadScadaOptions();
     } catch (e) {

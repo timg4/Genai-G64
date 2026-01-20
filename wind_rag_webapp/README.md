@@ -27,7 +27,7 @@ python app.py
 Then open: http://127.0.0.1:8000
 
 ### Notes
-- If `OPENAI_API_KEY` is not set, the app still runs (fallback query + heuristic recommendation).
+- If `OPENAI_API_KEY` is not set, the server still starts, but LLM endpoints return an error. See `README.md` in the repo root.
 - Replace `backend/data/scada_samples.json` with your own predefined time windows.
 - Replace `backend/data/chunks.json` with your own chunk export.
 

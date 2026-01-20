@@ -262,18 +262,18 @@ def main():
 
         if args.generate:
             api_key = os.getenv("OPENAI_API_KEY")
-            if api_key:
-                report = generate_grounded_report(
-                    query_text=args.query,
-                    retrieved_chunks=results,
-                    model_name=args.openai_model,
-                    api_key=api_key,
-                    timeout=args.timeout,
+            if not api_key:
+                raise ValueError(
+                    "OPENAI_API_KEY is not set. Please set OPENAI_API_KEY (see README.md in the repository root)."
                 )
-                output["report"] = report
-            else:
-                output["report"] = None
-                output["warning"] = "OPENAI_API_KEY not set; skipping generation."
+            report = generate_grounded_report(
+                query_text=args.query,
+                retrieved_chunks=results,
+                model_name=args.openai_model,
+                api_key=api_key,
+                timeout=args.timeout,
+            )
+            output["report"] = report
 
         print(json.dumps(output, ensure_ascii=True, indent=2))
         return
