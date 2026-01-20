@@ -472,6 +472,43 @@
       border-color: rgba(239,68,68,.4);
       background: rgba(239,68,68,.12);
     }
+
+    .risk-pill {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      border: 1px solid transparent;
+      background: rgba(0,0,0,.15);
+      text-transform: none;
+      letter-spacing: normal;
+      white-space: nowrap;
+    }
+    .risk-pill.high_risk {
+      color: var(--danger);
+      border-color: rgba(239,68,68,.4);
+      background: rgba(239,68,68,.12);
+    }
+    .risk-pill.medium_risk {
+      color: #f59e0b;
+      border-color: rgba(245,158,11,.45);
+      background: rgba(245,158,11,.12);
+    }
+    .risk-pill.low_risk {
+      color: var(--accent-2);
+      border-color: rgba(56,189,248,.35);
+      background: rgba(56,189,248,.12);
+    }
+    .risk-pill.no_risk {
+      color: var(--accent);
+      border-color: rgba(34,197,94,.35);
+      background: rgba(34,197,94,.12);
+    }
+    .risk-pill.not_classified {
+      color: var(--muted);
+      border-color: rgba(159,176,195,.35);
+      background: rgba(159,176,195,.12);
+    }
     .image-review {
       display: grid;
       gap: 12px;
@@ -982,6 +1019,7 @@
     incidentCounter: 0,
     inspectingImageId: null,
     lastDiagnosisHtml: "",
+    lastDiagnosisRiskCode: null,
     lastDiagnosisMessage: null,
     runToken: 0,
   };
@@ -1129,7 +1167,8 @@
       parts.push(`<strong>Incident input</strong><br>${inputHtml}`);
     }
     if (diagHtml) {
-      parts.push(`<strong>Diagnosis</strong><br>${diagHtml}`);
+      const riskHtml = renderRiskPillHtml(state.lastDiagnosisRiskCode);
+      parts.push(`<strong>Diagnosis</strong><br>${riskHtml}<br>${diagHtml}`);
     }
     if (recoHtml) {
       parts.push(`<strong>Recommendation</strong><br>${recoHtml}`);
@@ -1147,6 +1186,7 @@
       btn.setAttribute("aria-label", "Expand");
     }
     state.lastDiagnosisHtml = "";
+    state.lastDiagnosisRiskCode = null;
     if (state.lastDiagnosisMessage && state.lastDiagnosisMessage.isConnected) {
       state.lastDiagnosisMessage.remove();
     }
@@ -1420,6 +1460,63 @@
       .replaceAll("'", '&#039;');
   }
 
+  const RISK_LABELS = {
+    high_risk: "High risk",
+    medium_risk: "Medium risk",
+    low_risk: "Low risk",
+    no_risk: "No risk",
+    not_classified: "Not classified",
+  };
+  const VALID_RISK_CODES = new Set(Object.keys(RISK_LABELS));
+
+  function normalizeRiskCode(code){
+    const raw = String(code || "").trim();
+    if (!raw) {
+      return "not_classified";
+    }
+    if (VALID_RISK_CODES.has(raw)) {
+      return raw;
+    }
+    const normalized = raw.toLowerCase().replace(/\s+/g, "_");
+    if (VALID_RISK_CODES.has(normalized)) {
+      return normalized;
+    }
+    return "not_classified";
+  }
+
+  function renderRiskPillHtml(code){
+    const safeCode = normalizeRiskCode(code);
+    const label = RISK_LABELS[safeCode] || RISK_LABELS.not_classified;
+    return `<span class="risk-pill ${safeCode}">${escapeHtml(label)}</span>`;
+  }
+
+  function setMessageRiskPill(messageWrap, code){
+    if (!messageWrap) {
+      return;
+    }
+    const safeCode = normalizeRiskCode(code);
+    const label = RISK_LABELS[safeCode] || RISK_LABELS.not_classified;
+
+    const right = messageWrap.querySelector(".m-h .right");
+    if (!right) {
+      return;
+    }
+    const rolePill = right.querySelector(".pill");
+
+    let pill = messageWrap.querySelector(".risk-pill");
+    if (!pill) {
+      pill = document.createElement("span");
+      pill.className = "risk-pill";
+      if (rolePill) {
+        right.insertBefore(pill, rolePill);
+      } else {
+        right.appendChild(pill);
+      }
+    }
+    pill.className = `risk-pill ${safeCode}`;
+    pill.textContent = label;
+  }
+
   function renderMarkdownSimple(text){
     const lines = (text || "").split(/\r?\n/);
     let html = "";
@@ -1679,6 +1776,8 @@
       "<span class=\"spinner\"></span> Generating diagnosis..."
     );
     state.lastDiagnosisMessage = wrap;
+    state.lastDiagnosisRiskCode = null;
+    setMessageRiskPill(wrap, "not_classified");
     moveInputToTop();
     const body = wrap.querySelector(".m-b");
     try {
@@ -1692,17 +1791,22 @@
         throw new Error(data?.detail || 'Diagnosis failed');
       }
       const text = data?.diagnosis || '(no diagnosis)';
+      const riskCode = normalizeRiskCode(data?.risk_code);
       const safe = escapeHtml(text).replace(/\n/g, '<br>');
       if (body) {
         body.innerHTML = safe;
       }
       state.lastDiagnosisHtml = safe;
+      state.lastDiagnosisRiskCode = riskCode;
+      setMessageRiskPill(wrap, riskCode);
     } catch (e) {
       const safe = escapeHtml(`Diagnosis error: ${e.message}`);
       if (body) {
         body.innerHTML = safe;
       }
       state.lastDiagnosisHtml = safe;
+      state.lastDiagnosisRiskCode = "not_classified";
+      setMessageRiskPill(wrap, "not_classified");
     } finally {
       updateChatMetrics();
     }
