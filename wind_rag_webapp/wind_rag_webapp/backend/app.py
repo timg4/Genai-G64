@@ -186,16 +186,22 @@ def recommend_actions(context: Dict[str, Any], retrieved: List[Dict[str, Any]]) 
 
 RAG_INIT_ERROR: Optional[str] = None
 RETRIEVER = None
-FIXED_KIND_BOOST = {
-    "procedure": 1.3,
-    "checklist": 1.3,
-    "troubleshooting": 1.3,
-    "safety": 1.2,
-    "inspection": 1.1,
-    "training_admin": 0.7,
-    "definition": 0.5,
-    "changelog": 0.5,
+ALLOWED_KINDS = {
+    "procedure",
+    "troubleshooting",
+    "checklist",
+    "safety",
+    "inspection",
+    "other",
 }
+KIND_BOOST = {
+    "procedure": 1.35,
+    "troubleshooting": 1.25,
+    "checklist": 1.15,
+    "safety": 1.10,
+    "inspection": 1.05,
+}
+DEFAULT_CANDIDATE_MULTIPLIER = 8
 if MANUALS_DIR.exists():
     sys.path.insert(0, str(REPO_ROOT))
     try:
@@ -209,7 +215,9 @@ if MANUALS_DIR.exists():
                 model_name=os.environ.get("RAG_MODEL"),
                 alpha=float(os.environ.get("RAG_ALPHA", "0.7")),
                 synthetic_weight=1.0,
-                kind_boost=FIXED_KIND_BOOST,
+                candidate_multiplier=int(os.environ.get("RAG_CANDIDATE_MULTIPLIER", str(DEFAULT_CANDIDATE_MULTIPLIER))),
+                kind_boost=KIND_BOOST,
+                allowed_kinds=ALLOWED_KINDS,
             )
         except Exception as exc:
             RAG_INIT_ERROR = f"Failed to initialize Retriever: {exc}"
@@ -433,7 +441,16 @@ def retrieve(
     ]
 
     query_text = " ".join([q] + must + should).strip()
-    results = RETRIEVER.search(query_text, top_k=top_k)
+    results = RETRIEVER.search(
+        query_text,
+        top_k=top_k,
+        allowed_kinds=ALLOWED_KINDS,
+        kind_boost=KIND_BOOST,
+        candidate_multiplier=int(os.environ.get("RAG_CANDIDATE_MULTIPLIER", str(DEFAULT_CANDIDATE_MULTIPLIER))),
+        must_terms=must,
+        should_terms=should,
+        exclude_terms=exclude,
+    )
 
     if not (must or exclude):
         return results

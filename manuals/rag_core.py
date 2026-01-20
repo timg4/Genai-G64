@@ -801,7 +801,10 @@ def build_index(
     if not all_chunks:
         raise ValueError("No chunks created. Check your manual paths or file types.")
 
-    texts = [chunk["text"] for chunk in all_chunks]
+    texts = [
+        ((chunk.get("section", "") or "") + " " + (chunk.get("text", "") or "")).strip()
+        for chunk in all_chunks
+    ]
     embeddings = embed_texts(texts, model_name=model_name, batch_size=batch_size)
     if embeddings.ndim != 2:
         raise ValueError("Embeddings must be a 2D array.")
@@ -851,7 +854,12 @@ class Retriever:
         self.synthetic_weight = synthetic_weight
         self.kind_boost = kind_boost or {}
         self.allowed_kinds = set(allowed_kinds) if allowed_kinds else None
-        self.bm25 = BM25Index([item.get("text", "") for item in self.metadata])
+        self.bm25 = BM25Index(
+            [
+                ((item.get("section", "") or "") + " " + (item.get("text", "") or "")).strip()
+                for item in self.metadata
+            ]
+        )
 
     def source_weight(self, source_name):
         if not source_name:
@@ -869,6 +877,9 @@ class Retriever:
         kind_boost=None,
         allowed_kinds=None,
         candidate_multiplier=None,
+        must_terms=None,
+        should_terms=None,
+        exclude_terms=None,
     ):
         if not self.metadata:
             return []
@@ -912,6 +923,10 @@ class Retriever:
         max_emb = max(emb_scores.values()) if emb_scores else 0.0
         max_bm25 = float(bm25_scores.max()) if bm25_scores.size else 0.0
 
+        must_terms_l = [t.lower().strip() for t in (must_terms or []) if t and str(t).strip()]
+        should_terms_l = [t.lower().strip() for t in (should_terms or []) if t and str(t).strip()]
+        exclude_terms_l = [t.lower().strip() for t in (exclude_terms or []) if t and str(t).strip()]
+
         combined = []
         for idx in candidates:
             if idx < 0 or idx >= len(self.metadata):
@@ -920,19 +935,27 @@ class Retriever:
             bm25_norm = (
                 float(bm25_scores[idx]) / max_bm25 if max_bm25 > 0 else 0.0
             )
-            kind = self.metadata[idx].get("chunk_kind")
+            meta = self.metadata[idx]
+            kind = meta.get("chunk_kind")
             if effective_allowed_kinds and kind not in effective_allowed_kinds:
+                continue
+            text_l = ((meta.get("section") or "") + " " + (meta.get("text") or "")).lower()
+            if exclude_terms_l and any(term in text_l for term in exclude_terms_l):
                 continue
             base_score = (effective_alpha * emb_norm) + (
                 (1.0 - effective_alpha) * bm25_norm
             )
-            source = self.metadata[idx].get("source")
+            source = meta.get("source")
             score = base_score * (
                 effective_synthetic_weight
                 if source and "synthetic" in source.lower()
                 else 1.0
             )
             score *= effective_kind_boost.get(kind, 1.0)
+            if must_terms_l or should_terms_l:
+                must_hits = sum(1 for t in must_terms_l if t in text_l)
+                should_hits = sum(1 for t in should_terms_l if t in text_l)
+                score += (0.06 * must_hits) + (0.02 * should_hits)
             combined.append((score, idx))
 
         combined.sort(key=lambda item: item[0], reverse=True)
