@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 72,
     "asset_id": 21,
-    "event_id": 72,
-    "event_label": "anomaly",
-    "event_description": "Gearbox failure",
     "window_end": "2023-10-15 19:00:00"
   },
   "window": {
@@ -35,9 +32,16 @@
   "derived": {
     "power_residual_mean": -0.1117,
     "power_residual_std": 0.0507,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
@@ -45,5 +49,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the six-hour window wind conditions were steady around 15.7 with low variability but included a brief high spike to 36.8; power output, however, was essentially constant at ~0.9755 with negligible variability while power residuals averaged about -0.11, indicating a consistent shortfall versus expected. Rotor speed showed no variability while generator speed varied slightly; pitch averaged ~10.7 and yaw misalignment ~1.6\u00b0, system status was non-normal for the entire window, and temperatures were elevated (~67\u00b0C)."
+  "summary": "Over this 6\u2011hour window the turbine spent all 37 ten\u2011minute intervals in **Downtime**, with **near\u2011zero and extremely steady power output** (power_mean \u2248 0.9755, power_std \u2248 0.0002) and **no rotor speed variation** (rotor_rpm_std = 0.0) while generator speed showed only minor variability. Environmental and operating indicators show **high and variable wind** (wind_speed_mean \u2248 15.74 with a max of 36.8), **persistent negative power residuals** (mean \u2248 \u22120.1117), and **elevated temperatures** (temp_mean \u2248 67.0), with moderate pitch (~10.65) and low average yaw misalignment (~1.58)."
 }

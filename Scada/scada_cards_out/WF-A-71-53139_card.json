@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 71,
     "asset_id": 0,
-    "event_id": 71,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-01-06 20:40:00"
   },
   "window": {
@@ -35,11 +32,18 @@
   "derived": {
     "power_residual_mean": -0.0842,
     "power_residual_std": 0.0339,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [],
-  "summary": "Over the six-hour window conditions were generally moderate (average wind about 5.4 m/s) but included an isolated strong gust up to 21.3 m/s; average power stayed low and relatively steady with modest short-term variability. Rotor speed was stable while generator-side rotational variability was noticeably higher; pitch was slightly below neutral, yaw misalignment remained consistently around 9.8\u00b0, power residuals were slightly negative on average, no abnormal status events were recorded, and temperatures were moderate (\u224846\u00b0C)."
+  "summary": "Over the 6\u2011hour window the turbine stayed in **Normal Operation** throughout (37 ten\u2011minute intervals) with generally **steady production**: low average power (mean 0.1545) and moderate variability (power std 0.0794), consistent with modest winds (wind speed mean 5.42 m/s, std 1.10). Wind conditions were mostly stable but included an **isolated high wind-speed outlier** (max 21.3 m/s) relative to the mean.\n\nOperational indicators were largely stable (rotor RPM std 0.68, generator RPM std 76.55) with **average pitch near -1.2** and a **non-zero mean yaw misalignment** (~9.78). The **power residual was consistently negative on average** (mean -0.0842), indicating production tended to run below the reference expectation during this period, while temperatures were steady around **46.35**."
 }

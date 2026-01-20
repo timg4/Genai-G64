@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 22,
     "asset_id": 21,
-    "event_id": 22,
-    "event_label": "anomaly",
-    "event_description": "Hydraulic group",
     "window_end": "2023-08-12 18:00:00"
   },
   "window": {
@@ -35,14 +32,21 @@
   "derived": {
     "power_residual_mean": -0.1226,
     "power_residual_std": 0.0752,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind",
     "power_deficit"
   ],
-  "summary": "Over the six-hour window wind conditions were strong and steady (mean ~15.9 with low variability) but included a large peak to 44.3, while ambient temperature averaged ~68.6. Power output was very stable (mean ~0.974, std ~0.0044) yet consistently below expectations (mean residual \u2248 -0.123); rotor speed showed no variability, generator speed only minor fluctuation, pitch averaged ~10.5\u00b0, yaw misalignment ~9.6\u00b0, and status indicators remained outside normal range for the entire period."
+  "summary": "Across this 6\u2011hour window the turbine is predominantly in **Downtime** (37 ten\u2011minute intervals), with generation effectively flat near rated when present (power_mean **0.974** with very low variability **0.0044**). Wind conditions are generally steady (mean **15.9 m/s**, std **1.16**) but include an extreme peak (**44.3 m/s**, tagged **high_wind**).\n\nOperationally, rotor speed shows no variability (rotor_rpm_std **0.0**) while generator speed varies modestly (std **0.67**), alongside average pitch around **10.53\u00b0** and notable mean yaw misalignment (**9.58\u00b0**). A consistent negative power residual (mean **-0.1226**, tagged **power_deficit**) indicates measured power trending below the reference expectation during the window; average temperature is **68.6**."
 }

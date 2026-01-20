@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 69,
     "asset_id": 11,
-    "event_id": 69,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-09-13 19:20:00"
   },
   "window": {
@@ -35,14 +32,21 @@
   "derived": {
     "power_residual_mean": 0.1249,
     "power_residual_std": 0.0385,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window winds averaged about 12.65 m/s with a peak gust to 30.2 m/s, while electrical output stayed high and stable (power mean \u22480.95, std \u22480.022) with a modest positive residual (~0.125). Rotational and control signals show atypical behavior: rotor speed recorded no variability while generator speed had small fluctuations, pitch averaged ~3.54 and yaw misalignment ~2.48; temperatures were elevated (mean \u224873.97). Overall operational status flags remained normal throughout the window despite the noted gust and the lack of rotor speed variation."
+  "summary": "Across the 6-hour window (37\u00d710\u2011min intervals), the turbine remained in Normal Operation with generally steady production: mean power 0.9529 with low variability (std 0.0218) alongside relatively stable wind (mean 12.6514, std 0.644). A notable anomaly is the single high-wind extreme (wind_speed_max 30.2) occurring within an otherwise consistent wind regime, and the period is tagged for elevated temperatures (temp_mean 73.973) with a modest positive power residual on average (power_residual_mean 0.1249). Rotor speed appears unusually constant (rotor_rpm_std 0.0) while generator speed shows slight variation (generator_rpm_std 0.6399), with average pitch 3.5432 and small mean yaw misalignment (2.4838)."
 }

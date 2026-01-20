@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 40,
     "asset_id": 10,
-    "event_id": 40,
-    "event_label": "anomaly",
-    "event_description": "Generator bearing failure",
     "window_end": "2023-01-21 12:50:00"
   },
   "window": {
@@ -35,11 +32,18 @@
   "derived": {
     "power_residual_mean": 0.0126,
     "power_residual_std": 0.0277,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [],
-  "summary": "Over the 6-hour window winds were mostly light (mean \u2248 2.83 m/s, std \u2248 0.76 m/s) with a brief gust to 11 m/s; power output remained essentially zero (mean \u2248 -0.0012, very low variability) while generator speed showed moderate variability despite a perfectly steady rotor speed. Blade pitch stayed near full feather (~89.4\u00b0) and the nacelle was substantially misaligned from the wind (~71.6\u00b0), with a small positive power residual and average component temperature around 62\u00b0C; all timestamps in this period reported a persistent non-standard operational state."
+  "summary": "Over this 6\u2011hour window the turbine remained in **Downtime** for all **37** ten\u2011minute intervals, with **near\u2011zero average power** (power_mean \u2248 \u20110.0012, very low variability) despite generally low winds on average (wind_speed_mean \u2248 2.83, but with a brief spike up to 11.0). Operational signals were largely static, including **zero rotor speed variability** (rotor_rpm_std = 0) and **high mean pitch** (~89.4), while **yaw misalignment** stayed high on average (~71.6) and generator speed showed some variation (generator_rpm_std \u2248 4.89). The **power residual** was modestly positive on average (~0.0126) and temperatures averaged ~62.4."
 }

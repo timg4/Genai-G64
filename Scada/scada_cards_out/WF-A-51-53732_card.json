@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 51,
     "asset_id": 21,
-    "event_id": 51,
-    "event_label": "anomaly",
-    "event_description": "Gearbox bearings damaged",
     "window_end": "2023-10-15 19:00:00"
   },
   "window": {
@@ -35,9 +32,16 @@
   "derived": {
     "power_residual_mean": -0.1117,
     "power_residual_std": 0.0507,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
@@ -45,5 +49,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Wind was generally steady around 15.7 m/s (SD 0.72) with a pronounced spike to 36.8 m/s. Power and rotational metrics were unusually flat\u2014power ~0.975 with almost no variability, rotor speed stable, and generator speed barely varying\u2014while pitch and yaw held near 10.65\u00b0 and 1.58\u00b0. Key anomalies are a sustained negative power residual (~ -0.11), elevated machine temperature (~67\u00b0C), and the system remaining in a non-standard operational state for the entire window."
+  "summary": "Over this 6\u2011hour window, the turbine spent all 37 ten\u2011minute intervals in a Downtime state, with power essentially flat and near rated (mean 0.9755, extremely low variability) despite steady mean winds (15.74 m/s). Operational signals show limited mechanical variation (rotor RPM std 0.0; generator RPM low std 0.31) with moderate pitch (mean 10.65\u00b0) and low yaw misalignment (mean 1.58\u00b0), while anomalies include a large wind-speed spike (max 36.8 m/s), persistent negative power residual (mean \u22120.1117; power_deficit tag), and elevated temperature levels (mean 67.03; elevated_temps tag) alongside high_wind conditions."
 }

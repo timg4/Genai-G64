@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 3,
     "asset_id": 10,
-    "event_id": 3,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-05-16 19:30:00"
   },
   "window": {
@@ -35,14 +32,21 @@
   "derived": {
     "power_residual_mean": -0.0836,
     "power_residual_std": 0.058,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the 6-hour window winds were consistently strong (mean ~15.0 m/s, std ~0.82) with a short peak to 28.1 m/s; power output was very steady (mean ~0.973, std ~0.0059) and rotor speed showed minimal variability while generator speed was comparatively more variable. Persistent operational characteristics include a mean pitch around 9.5\u00b0 and a yaw misalignment near 9\u00b0, a slightly negative power residual (~-0.084) indicating marginally lower-than-expected output, elevated temperatures (~65.2\u00b0C), and no non-normal status flags."
+  "summary": "Across the 6\u2011hour window the turbine stayed in Normal Operation for all 37 ten\u2011minute intervals, producing near-rated power (mean 0.9726) with very low variability (power_std 0.0059) under generally strong winds (wind_speed_mean 14.96, std 0.82), with at least one brief extreme wind event (wind_speed_max 28.1; high_wind tag). Operational variability was low overall (rotor_rpm_std 0.0315; generator_rpm_std 1.0482) with steady average pitch (9.53) and a persistent nonzero yaw misalignment (mean 8.93). Notable anomalies/patterns include a consistently negative power residual (mean \u22120.0836) and elevated temperatures (temp_mean 65.23; elevated_temps tag)."
 }

@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 42,
     "asset_id": 10,
-    "event_id": 42,
-    "event_label": "anomaly",
-    "event_description": "Hydraulic group",
     "window_end": "2023-09-16 08:30:00"
   },
   "window": {
@@ -35,11 +32,18 @@
   "derived": {
     "power_residual_mean": 0.0038,
     "power_residual_std": 0.0665,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [],
-  "summary": "Over the 6\u2011hour window wind conditions were generally light (mean ~2.7 m/s) with a brief peak to 10 m/s, and mean electrical output remained essentially zero. Mechanical/controls signals show near\u2011constant high pitch (~88\u00b0) and substantial yaw offset (~29\u00b0), with low rotor speed variability but unusually large generator speed variability; the system also reported an atypical operational state for the entire period and ambient temperature was ~30\u00b0C."
+  "summary": "Across this 6\u2011hour window the turbine spent all 37 ten\u2011minute intervals in **Downtime**, with **near\u2011zero power** output (power_mean \u22120.0042, very low variability). Ambient conditions were generally **low wind** on average (2.68 m/s) with intermittent higher gusts (max 10 m/s), but there was no corresponding production response; pitch remained very high on average (~88\u00b0) and yaw misalignment averaged ~29\u00b0. Residual power was slightly positive (0.0038) while temperatures were stable around ~30\u00b0C, and rotor/generator speed variability was limited to modest fluctuations."
 }

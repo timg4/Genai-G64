@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 3,
     "asset_id": 10,
-    "event_id": 3,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-05-16 19:30:00"
   },
   "window": {
@@ -35,14 +32,21 @@
   "derived": {
     "power_residual_mean": -0.0836,
     "power_residual_std": 0.058,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the six-hour window the machine ran in sustained, relatively high winds (mean \u224815 m/s, low variability) with occasional strong gusts up to 28 m/s; electrical power stayed consistently near full output with very low variation. Control parameters were mostly stable (very low rotor speed and pitch variability) though the electrical-side speed showed more fluctuation, average yaw misalignment was about 9\u00b0, temperatures were elevated (~65\u00b0C), and power was on average slightly below model expectation (small negative residual) while all operational statuses remained normal."
+  "summary": "Over this 6\u2011hour window the turbine operated continuously in Normal Operation across all 37 ten\u2011minute intervals, delivering very stable, near\u2011rated power (power_mean 0.9726 with low variability) alongside low rotor and generator speed variability. Wind conditions were generally steady (mean ~15 m/s, low std) with at least one brief higher\u2011wind episode (max 28.1 m/s), while average pitch (~9.53) and yaw misalignment (~8.93) stayed elevated. Operationally, the period is characterized by persistently elevated temperatures (temp_mean ~65.23) and a consistently negative power residual (mean \u22120.0836), indicating power was below expectation on average for the observed conditions."
 }

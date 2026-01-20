@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 38,
     "asset_id": 13,
-    "event_id": 38,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-07-08 17:00:00"
   },
   "window": {
@@ -35,11 +32,18 @@
   "derived": {
     "power_residual_mean": -0.0774,
     "power_residual_std": 0.0133,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [],
-  "summary": "Over the six-hour window winds were steady around 5.7 m/s with low variability but included a brief extreme gust to 25.8 m/s; mean power output was low (~0.16) with modest variability. Rotor speed variability was low while generator speed showed large fluctuations (std \u2248 59.7), blade pitch averaged slightly negative (~\u22121.45\u00b0) and yaw misalignment was consistently high (~12.6\u00b0); power residuals were persistently negative (~\u22120.077). Temperature averaged about 50\u00b0C and the monitored status remained normal throughout."
+  "summary": "Over this 6\u2011hour window the turbine stayed in Normal Operation for all 37 ten\u2011minute intervals, with relatively steady production (power_mean 0.159, power_std 0.057) under generally moderate winds (wind_speed_mean 5.72, wind_speed_std 0.67). Operationally, rotor and generator speeds were fairly stable (rotor_rpm_std 0.53; generator_rpm_std 59.68) with a consistent average pitch setting (pitch_mean \u22121.45) and a notable average yaw misalignment of 12.6\u00b0. Anomalies are limited to a single extreme wind_speed_max of 25.8 and a sustained negative power residual on average (\u22120.077), while temperature remained steady around 50.0."
 }

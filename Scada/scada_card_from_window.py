@@ -37,6 +37,15 @@ TEMP_COLS = ["sensor_11_avg", "sensor_12_avg", "sensor_13_avg", "sensor_14_avg"]
 
 BASE_DIR = Path(__file__).resolve().parent
 
+STATUS_LEGEND = {
+    "0": "Normal Operation - The turbine is in normal power production mode",
+    "1": "Derated Operation - Derated power generation with a power restriction",
+    "2": "Idling - Asset is idling and waits to operate again",
+    "3": "Service - Asset is in service mode / service team is at the site",
+    "4": "Downtime - Asset is down due a fault or other reasons",
+    "5": "Other - Other operational states",
+}
+
 ANOMALY_FEATURES = [
     "wind_speed_3_avg",
     "wind_speed_3_std",
@@ -65,7 +74,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-path", default=None)
     parser.add_argument("--baseline-hours", type=int, default=None)
     parser.add_argument("--window-hours", type=int, default=None)
-    parser.add_argument("--model", default="gpt-5-mini")
+    parser.add_argument("--model", default="gpt-5.2")
     parser.add_argument("--no-llm", action="store_true")
     return parser.parse_args()
 
@@ -154,9 +163,24 @@ def build_card(
     )
     tags = build_tags(metrics["z"])
 
+    # Filter out event fields from meta (keep only in manifest)
+    meta = dict(payload.get("meta", {}))  # type: ignore[arg-type]
+    source_info = {
+        k: v for k, v in meta.items()
+        if k not in ("event_id", "event_label", "event_description")
+    }
+
+    # Build derived info: rename status_counts, add legend, filter out status_non_normal_ratio
+    derived_info = {
+        "power_residual_mean": metrics["derived"]["power_residual_mean"],
+        "power_residual_std": metrics["derived"]["power_residual_std"],
+        "status_10min_interval_counts": metrics["derived"]["status_counts"],
+        "status_legend": STATUS_LEGEND,
+    }
+
     card = {
         "window_id": payload.get("window_id", ""),
-        "source": payload.get("meta", {}),
+        "source": source_info,
         "window": {
             "end_time": str(end_time),
             "start_time": str(window_df["time_stamp"].iloc[0]),
@@ -165,7 +189,7 @@ def build_card(
             "window_hours": int(window_hours),
         },
         "stats": metrics["stats"],
-        "derived": metrics["derived"],
+        "derived": derived_info,
         "tags": tags,
     }
 
