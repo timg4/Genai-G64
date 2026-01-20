@@ -134,7 +134,7 @@ class RunResponse(BaseModel):
 # -----------------------------
 # Query composer + recommender
 # -----------------------------
-SYSTEM_PROMPT_RECOMMEND = """
+SYSTEM_PROMPT_RECOMMEND_OLD = """
 
 You will receive:
 1) incident context (SCADA summary + optional notes)
@@ -145,8 +145,38 @@ Task:
 - Use short numbered steps.
 - Try to reference from chunks, cite the manual name and pages, e.g. [ManualName pX-Y].
 - If the chunks are irrelevant or only training/admin, say so and ask for the right manual.
-- Prioritize safety: if there are any safety warnings, mentiom them early. First priority is safety for technician.
+- Prioritize safety: if there are any safety warnings, mention them early. First priority is safety for technician.
 - If there is no issue indicated, start by saying everything is ok, then add optional maintenance steps (e.g., "Everything is OK, but for maintenance you can still do: ...").
+"""
+
+SYSTEM_PROMPT_RECOMMEND = """
+System: # Role and Objective
+Give concise, actionable recommendations for technicians, using incident context and manual content. Prioritize safety and relevance.
+
+# Instructions
+- Input: 
+  1. Incident context (SCADA summary and/or Technician notes and/or image descriptions).
+  2. Top manual chunks (source, page range, section, and text).
+
+- Task:
+  - Recommend practical actions for the technician.
+  - Use short, numbered steps.
+  - Reference manual chunks with full manual source name and page numbers (e.g., `[manual-01 pX-Y]`).
+  - If the chunks are irrelevant or only training/admin, say so and ask for the right manual.
+  - If there are any, list safety warnings first.
+  - If no issue is found, state that all is OK, then suggest optional maintenance steps (e.g., "Everything is OK, but maintenance could include: ...").
+
+# Output Format
+- Numbered, concise action steps.
+- Include manual citations where relevant.
+- Address safety at the start of each recommendation.
+
+# Verbosity
+- Remain concise and direct.
+- Number each step.
+
+# Stop Conditions
+- End output after detailing action steps, safety notices, and (if needed) maintenance suggestions.
 """
 
 SYSTEM_PROMPT_DIAGNOSIS = """
@@ -205,7 +235,7 @@ def recommend_actions(context: Dict[str, Any], retrieved: List[Dict[str, Any]]) 
     }
 
     resp = client.responses.create(
-        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+        model=os.environ.get("OPENAI_MODEL", "gpt-5.2"),
         input=[
             {"role": "system", "content": SYSTEM_PROMPT_RECOMMEND},
             {"role": "user", "content": json.dumps(user_msg, ensure_ascii=False)},
@@ -287,7 +317,7 @@ def generate_diagnosis(context: Dict[str, Any]) -> Tuple[str, RiskCode]:
     client = OpenAI()
     try:
         resp = client.responses.parse(
-            model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+            model=os.environ.get("OPENAI_MODEL", "gpt-5.2"),
             input=[
                 {"role": "system", "content": SYSTEM_PROMPT_DIAGNOSIS},
                 {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
@@ -302,7 +332,7 @@ def generate_diagnosis(context: Dict[str, Any]) -> Tuple[str, RiskCode]:
     except Exception:
         # Fallback: keep diagnosis, but do not guess risk
         resp = client.responses.create(
-            model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+            model=os.environ.get("OPENAI_MODEL", "gpt-5.2"),
             input=[
                 {"role": "system", "content": "Write a concise English diagnosis in 2-3 sentences. Return plain text only."},
                 {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
@@ -666,7 +696,7 @@ def run(req: RunRequest) -> RunResponse:
     # 2) QueryComposer (LLM or fallback)
     if QUERY_BUILDER_ERROR or compose_query_pack is None:
         raise HTTPException(status_code=500, detail=f"Querybuilder import failed: {QUERY_BUILDER_ERROR}")
-    qp = compose_query_pack(context, model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"))
+    qp = compose_query_pack(context, model=os.environ.get("OPENAI_MODEL", "gpt-5.2"))
 
     # 3) Retrieve top-k chunks
     top_k = max(3, min(30, int(req.top_k or 10)))

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -21,6 +22,87 @@ from Agents.Querybuilder import compose_query_pack
 from manuals.rag_core import Retriever
 
 
+# ---------------------------------------------------------------------------
+# Metric computation functions
+# ---------------------------------------------------------------------------
+
+
+def compute_recall(retrieved_ids: List[str], gold_ids: List[str]) -> float:
+    """Compute Recall: |retrieved ∩ gold| / |gold|."""
+    if not gold_ids:
+        return 0.0
+    retrieved_set = set(retrieved_ids)
+    gold_set = set(gold_ids)
+    return len(retrieved_set & gold_set) / len(gold_set)
+
+
+def compute_precision(retrieved_ids: List[str], gold_ids: List[str]) -> float:
+    """Compute Precision: |retrieved ∩ gold| / |retrieved|."""
+    if not retrieved_ids:
+        return 0.0
+    retrieved_set = set(retrieved_ids)
+    gold_set = set(gold_ids)
+    return len(retrieved_set & gold_set) / len(retrieved_set)
+
+
+def compute_mrr(retrieved_ids: List[str], gold_ids: List[str]) -> float:
+    """Compute Mean Reciprocal Rank: 1/rank of first gold hit."""
+    gold_set = set(gold_ids)
+    for rank, chunk_id in enumerate(retrieved_ids, start=1):
+        if chunk_id in gold_set:
+            return 1.0 / rank
+    return 0.0
+
+
+def compute_hit(retrieved_ids: List[str], gold_ids: List[str]) -> float:
+    """Compute Hit: 1 if any gold in retrieved, else 0."""
+    retrieved_set = set(retrieved_ids)
+    gold_set = set(gold_ids)
+    return 1.0 if retrieved_set & gold_set else 0.0
+
+
+def compute_ndcg(retrieved_ids: List[str], gold_ids: List[str]) -> float:
+    """
+    Compute NDCG using gold list order as relevance grades.
+    First gold chunk gets relevance n, second gets n-1, etc.
+    """
+    if not gold_ids:
+        return 0.0
+
+    # Build relevance map: first gold = len(gold_ids), second = len(gold_ids)-1, ...
+    relevance = {chunk_id: len(gold_ids) - i for i, chunk_id in enumerate(gold_ids)}
+
+    # Compute DCG
+    dcg = 0.0
+    for rank, chunk_id in enumerate(retrieved_ids, start=1):
+        rel = relevance.get(chunk_id, 0)
+        if rel > 0:
+            dcg += rel / math.log2(rank + 1)
+
+    # Compute ideal DCG (gold chunks in perfect order)
+    ideal_rels = sorted(relevance.values(), reverse=True)
+    idcg = 0.0
+    for rank, rel in enumerate(ideal_rels, start=1):
+        idcg += rel / math.log2(rank + 1)
+
+    if idcg == 0:
+        return 0.0
+    return dcg / idcg
+
+
+def compute_all_metrics(
+    retrieved_ids: List[str], gold_ids: List[str]
+) -> Dict[str, float]:
+    """Compute all metrics for a single case."""
+    return {
+        "recall": compute_recall(retrieved_ids, gold_ids),
+        "precision": compute_precision(retrieved_ids, gold_ids),
+        "mrr": compute_mrr(retrieved_ids, gold_ids),
+        "hit": compute_hit(retrieved_ids, gold_ids),
+        "ndcg": compute_ndcg(retrieved_ids, gold_ids),
+    }
+
+
 def load_test_cases(path: str) -> List[Dict[str, Any]]:
     """Load test cases from JSON file."""
     with open(path, encoding="utf-8") as f:
@@ -32,7 +114,7 @@ def run_retrieval(
     retriever: Retriever,
     top_k: int = 10,
     use_llm: bool = True,
-    model: str = "gpt-4o-mini",
+    model: str = "gpt-5.2",
 ) -> Dict[str, Any]:
     """
     Run retrieval for a single test case.
@@ -45,7 +127,8 @@ def run_retrieval(
         model: OpenAI model for query composition
 
     Returns:
-        Dict with case_id, class_label, inputs, query_pack, retrieved_chunks
+        Dict with case_id, class_label, inputs, query_pack, retrieved_chunks,
+        gold_chunk_ids, and metrics
     """
     # Build context matching webapp format
     # Note: Querybuilder expects fault_images_description as a string, not a list
@@ -75,15 +158,22 @@ def run_retrieval(
     for i, chunk in enumerate(results, start=1):
         chunk["rank"] = i
 
+    # Extract gold chunk IDs and compute metrics
+    gold_chunk_ids = case.get("gold_chunk_ids", [])
+    retrieved_ids = [chunk.get("chunk_id", "") for chunk in results]
+    metrics = compute_all_metrics(retrieved_ids, gold_chunk_ids)
+
     return {
         "case_id": case.get("id", ""),
-        "class_label": case.get("class_label", ""),
+        "class_label": case.get("scada_case", {}).get("class_label", ""),
         "inputs": {
             "mechanic_notes": case.get("mechanic_notes", ""),
             "fault_images_description": case.get("fault_images_description", ""),
         },
         "query_pack": query_pack,
         "retrieved_chunks": results,
+        "gold_chunk_ids": gold_chunk_ids,
+        "metrics": metrics,
     }
 
 
@@ -92,7 +182,7 @@ def evaluate_all(
     index_dir: str,
     top_k: int = 10,
     use_llm: bool = True,
-    model: str = "gpt-4o-mini",
+    model: str = "gpt-5.2",
     output_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
@@ -130,10 +220,35 @@ def evaluate_all(
             print(f"  ERROR: {e}")
             results.append({
                 "case_id": case_id,
-                "class_label": case.get("class_label", ""),
+                "class_label": case.get("scada_case", {}).get("class_label", ""),
                 "error": str(e),
                 "retrieved_chunks": [],
+                "gold_chunk_ids": case.get("gold_chunk_ids", []),
+                "metrics": None,
             })
+
+    # Compute aggregate metrics (skip cases with empty gold or errors)
+    valid_results = [
+        r for r in results
+        if r.get("metrics") is not None and r.get("gold_chunk_ids")
+    ]
+
+    aggregate_metrics = {}
+    if valid_results:
+        metric_names = ["recall", "precision", "mrr", "hit", "ndcg"]
+        for metric in metric_names:
+            values = [r["metrics"][metric] for r in valid_results]
+            aggregate_metrics[metric] = sum(values) / len(values)
+        aggregate_metrics["num_evaluated"] = len(valid_results)
+    else:
+        aggregate_metrics = {
+            "recall": 0.0,
+            "precision": 0.0,
+            "mrr": 0.0,
+            "hit": 0.0,
+            "ndcg": 0.0,
+            "num_evaluated": 0,
+        }
 
     output = {
         "config": {
@@ -143,6 +258,7 @@ def evaluate_all(
             "num_cases": len(cases),
             "index_dir": index_dir,
         },
+        "aggregate_metrics": aggregate_metrics,
         "results": results,
     }
 
@@ -150,6 +266,18 @@ def evaluate_all(
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
         Path(output_path).write_text(json.dumps(output, indent=2, ensure_ascii=False))
         print(f"\nSaved results to {output_path}")
+
+    # Print summary table
+    print("\n" + "=" * 60)
+    print("AGGREGATE METRICS")
+    print("=" * 60)
+    print(f"  Evaluated cases: {aggregate_metrics['num_evaluated']} / {len(cases)}")
+    print(f"  Recall@{top_k}:    {aggregate_metrics['recall']:.4f}")
+    print(f"  Precision@{top_k}: {aggregate_metrics['precision']:.4f}")
+    print(f"  MRR:              {aggregate_metrics['mrr']:.4f}")
+    print(f"  Hit@{top_k}:       {aggregate_metrics['hit']:.4f}")
+    print(f"  NDCG@{top_k}:      {aggregate_metrics['ndcg']:.4f}")
+    print("=" * 60)
 
     return output
 
@@ -160,8 +288,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--cases",
-        default=str(PROJECT_ROOT / "evalution" / "cases.json"),
-        help="Path to test cases JSON",
+        default=str(PROJECT_ROOT / "evalution" / "cases_with_gold.json"),
+        help="Path to test cases JSON with gold_chunk_ids",
     )
     parser.add_argument(
         "--index-dir",
@@ -181,8 +309,8 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--model",
-        default="gpt-4o-mini",
-        help="OpenAI model for query composition (default: gpt-4o-mini)",
+        default="gpt-5.2",
+        help="OpenAI model for query composition (default: gpt-5.2)",
     )
     parser.add_argument(
         "--output",

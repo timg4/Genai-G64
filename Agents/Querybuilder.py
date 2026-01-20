@@ -274,7 +274,7 @@ def build_query_pack(
     scada_case: Dict[str, Any],
     fault_images_description: Optional[str] = None,
     mechanic_notes: Optional[str] = None,
-    model: str = "gpt-4o-mini",
+    model: str = "gpt-5.2",
 ) -> QueryPack:
     client = OpenAI()
 
@@ -343,7 +343,7 @@ def compose_query_pack(payload: Dict[str, Any], model: Optional[str] = None) -> 
             scada_case=payload.get("scada_case") or {},
             fault_images_description=payload.get("fault_images_description"),
             mechanic_notes=payload.get("mechanic_notes"),
-            model=model or "gpt-4o-mini",
+            model=model or "gpt-5.2",
         )
         return qp.model_dump()
     except Exception as e:
