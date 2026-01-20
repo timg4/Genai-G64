@@ -856,6 +856,13 @@
           </div>
           <div id="currentInputBody" class="panel-body"></div>
         </div>
+        <div class="current-query" id="currentQuery" style="display:none;">
+          <div class="panel-h">
+            <div class="label">Query</div>
+            <button class="collapse-btn" type="button" data-target="currentQueryBody" aria-label="Collapse"></button>
+          </div>
+          <div id="currentQueryBody" class="panel-body mono"></div>
+        </div>
         <div class="current-reco" id="currentReco" style="display:none;">
           <div class="panel-h">
             <div class="label">Recommendation</div>
@@ -941,6 +948,23 @@
       return;
     }
     const safe = escapeHtml(text || '').replace(/\n/g, '<br>');
+    if (!safe.trim()) {
+      wrap.style.display = 'none';
+      body.innerHTML = '';
+      return;
+    }
+    wrap.style.display = 'block';
+    body.innerHTML = safe;
+    body.classList.remove("collapsed");
+  }
+
+  function setCurrentQuery(text){
+    const wrap = el('currentQuery');
+    const body = el('currentQueryBody');
+    if (!wrap || !body) {
+      return;
+    }
+    const safe = escapeHtml(text || '');
     if (!safe.trim()) {
       wrap.style.display = 'none';
       body.innerHTML = '';
@@ -1560,6 +1584,9 @@
 
       if(data.query_pack && data.query_pack.query){
         el('modelPill').textContent = `query ready`;
+        setCurrentQuery(data.query_pack.query);
+      } else {
+        setCurrentQuery('');
       }
 
       renderResultsTable(data.retrieved || []);
