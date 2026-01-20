@@ -26,10 +26,7 @@
     body {
       margin: 0;
       font-family: var(--sans);
-      background:
-        radial-gradient(900px 420px at 10% -10%, rgba(56,189,248,.18) 0%, transparent 60%),
-        radial-gradient(1000px 520px at 90% 0%, rgba(34,197,94,.12) 0%, transparent 65%),
-        linear-gradient(180deg, #0c1420 0%, var(--bg) 55%);
+      background: var(--bg);
       color: var(--text);
     }
     a { color: inherit; }
@@ -58,28 +55,43 @@
       align-items: center;
       justify-content: center;
     }
+    .logo-wrap.logo-right {
+      margin-left: auto;
+      justify-content: flex-end;
+    }
     .logo {
-      width: 58px;
-      height: 58px;
+      width: 141px;
+      height: 141px;
       object-fit: contain;
-      border-radius: 12px;
+      border-radius: 11px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
-      padding: 6px;
+      padding: 1px;
+    }
+    .logo.logo-plain {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      width: 1260px;
+      height: 190px;
+      object-position: right center;
     }
     .logo.is-spinning {
       animation: logo-spin 1.2s ease-in-out;
     }
     .title h1 {
       margin: 0;
-      font-size: 22px;
+      font-size: 40px;
       letter-spacing: .2px;
       font-family: var(--display);
+      white-space: nowrap;
     }
     .subtitle {
-      font-size: 13px;
+      font-size: 21px;
       color: var(--muted);
       margin-top: 2px;
+      text-indent: 20px;
     }
     .pill {
       font-size: 12px;
@@ -835,14 +847,16 @@
     <div class="header">
       <div class="title">
         <span class="logo-wrap">
-          <img class="logo is-spinning" src="/static/Windradsvg.svg" alt="Wind turbine logo" />
+          <img class="logo is-spinning" src="/static/logo.png" alt="Wind turbine logo" />
         </span>
       <div>
         <h1>Wind Turbine Inspection Assistant</h1>
-        <div class="subtitle">Manual RAG with SCADA context (vision input WIP)</div>
+        <div class="subtitle">Let's inspect wind turbines, but smart!</div>
       </div>
     </div>
-      <span class="pill">MVP</span>
+      <span class="logo-wrap logo-right">
+        <img class="logo logo-plain" src="/static/logo%204.png" alt="Logo 4" />
+      </span>
     </div>
 
     <div class="grid">
