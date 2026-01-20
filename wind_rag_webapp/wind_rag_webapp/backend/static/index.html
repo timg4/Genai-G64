@@ -232,11 +232,71 @@
     }
 
     /* Chat area */
-    .chat {
-      min-height: 560px;
+    .chat-wrap {
       display: flex;
       flex-direction: column;
       gap: 12px;
+      min-height: 560px;
+      height: 70vh;
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+    .current-input {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .current-input .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      margin-bottom: 6px;
+    }
+    .panel-h {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .panel-h .label {
+      margin: 0;
+    }
+    .panel-body.collapsed {
+      display: none;
+    }
+    .current-reco {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .current-reco .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      margin-bottom: 6px;
+    }
+    .processing-hint {
+      display: none !important;
+    }
+    .chat {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: none;
+      overflow: visible;
+      flex: 1;
     }
     .msg {
       border: 1px solid var(--border);
@@ -256,6 +316,37 @@
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: .3px;
+    }
+    .msg .m-h .left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .collapse-btn {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius: 999px;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: normal;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .collapse-btn::before {
+      content: "▾";
+      line-height: 1;
+    }
+    .collapse-btn.is-collapsed::before {
+      content: "▸";
+    }
+    .msg.collapsed .m-b {
+      display: none;
     }
     .msg .m-b {
       padding: 14px;
@@ -289,21 +380,6 @@
       border-radius: 999px;
       animation: spin 1s linear infinite;
       vertical-align: -2px;
-    }
-    .processing-hint {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 12px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: rgba(34,197,94,.10);
-      color: var(--text);
-      font-size: 13px;
-    }
-    body.is-running .processing-hint {
-      display: flex;
     }
     .inspect-inline {
       margin-top: 10px;
@@ -646,11 +722,11 @@
         <span class="logo-wrap">
           <img class="logo" src="/static/logo.png" alt="Project logo" />
         </span>
-        <div>
-          <h1>Wind Turbine Inspection Assistant</h1>
-          <div class="subtitle">Manual RAG with SCADA context (vision input WIP)</div>
-        </div>
+      <div>
+        <h1>Wind Turbine Inspection Assistant</h1>
+        <div class="subtitle">Manual RAG with SCADA context (vision input WIP)</div>
       </div>
+    </div>
       <span class="pill">MVP</span>
     </div>
 
@@ -743,42 +819,57 @@
       <!-- OUTPUTS -->
       <div class="card">
       <div class="card-h"><h2>Conversation</h2><span class="pill" id="modelPill">model: auto</span></div>
-      <div class="card-b">
+      <div class="card-b chat-wrap">
         <div class="processing-hint" id="processingHint" aria-live="polite">
           <span class="spinner"></span>
           Processing request…
         </div>
+        <div class="current-input" id="currentInput" style="display:none;">
+          <div class="panel-h">
+            <div class="label">Incident input</div>
+            <button class="collapse-btn" type="button" data-target="currentInputBody" aria-label="Collapse"></button>
+          </div>
+          <div id="currentInputBody" class="panel-body"></div>
+        </div>
+        <div class="current-reco" id="currentReco" style="display:none;">
+          <div class="panel-h">
+            <div class="label">Recommendation</div>
+            <button class="collapse-btn" type="button" data-target="currentRecoBody" aria-label="Collapse"></button>
+          </div>
+          <div id="currentRecoBody" class="panel-body"></div>
+        </div>
         <div class="chat" id="chat"></div>
 
-          <div style="height: 14px;"></div>
+        <div style="height: 14px;"></div>
 
-          <div class="card" style="box-shadow:none;">
-            <div class="card-h">
-              <h2>Top retrieved manual chunks</h2>
-              <div class="table-controls">
-                <div class="left">
-                  <span class="small">Show</span>
-                  <input class="range" id="rangeRows" type="range" min="3" max="30" value="10" />
-                  <span class="pill" id="rangeLabel">10</span>
-                </div>
+        <div class="card" style="box-shadow:none;">
+          <div class="card-h">
+            <h2>Top retrieved manual chunks</h2>
+            <button class="collapse-btn" type="button" data-target="retrievalBody" aria-label="Collapse"></button>
+            <div class="table-controls">
+              <div class="left">
+                <span class="small">Show</span>
+                <input class="range" id="rangeRows" type="range" min="3" max="30" value="10" />
+                <span class="pill" id="rangeLabel">10</span>
               </div>
             </div>
-            <div class="card-b" style="padding:0;">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Score</th>
-                    <th>Source</th>
-                    <th>Pages</th>
-                    <th>Section</th>
-                    <th>Snippet</th>
-                  </tr>
-                </thead>
-                <tbody id="resultsBody"></tbody>
-              </table>
-            </div>
           </div>
+          <div class="card-b panel-body" id="retrievalBody" style="padding:0;">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Score</th>
+                  <th>Source</th>
+                  <th>Pages</th>
+                  <th>Section</th>
+                  <th>Snippet</th>
+                </tr>
+              </thead>
+              <tbody id="resultsBody"></tbody>
+            </table>
+          </div>
+        </div>
 
         </div>
       </div>
@@ -818,15 +909,62 @@
     box.textContent = msg || '';
   }
 
+  function setCurrentInput(text){
+    const wrap = el('currentInput');
+    const body = el('currentInputBody');
+    if (!wrap || !body) {
+      return;
+    }
+    const safe = escapeHtml(text || '').replace(/\n/g, '<br>');
+    if (!safe.trim()) {
+      wrap.style.display = 'none';
+      body.innerHTML = '';
+      return;
+    }
+    wrap.style.display = 'block';
+    body.innerHTML = safe;
+    body.classList.remove("collapsed");
+  }
+
+  function setCurrentRecommendation(htmlText, isLoading){
+    const wrap = el("currentReco");
+    const body = el("currentRecoBody");
+    if (!wrap || !body) {
+      return;
+    }
+    if (!htmlText) {
+      wrap.style.display = "none";
+      body.innerHTML = "";
+      return;
+    }
+    wrap.style.display = "block";
+    body.innerHTML = isLoading ? `<span class="spinner"></span> ${htmlText}` : htmlText;
+    body.classList.remove("collapsed");
+  }
+
   function addChatMessage(role, title, body){
     const chat = el('chat');
     const wrap = document.createElement('div');
     wrap.className = 'msg';
     wrap.innerHTML = `
-      <div class="m-h"><span>${title}</span><span class="pill">${role}</span></div>
+      <div class="m-h">
+        <div class="left">
+          <button class="collapse-btn" type="button">Collapse</button>
+          <span>${title}</span>
+        </div>
+        <span class="pill">${role}</span>
+      </div>
       <div class="m-b" id="msg_${Date.now()}">${body}</div>
     `;
-    chat.prepend(wrap);
+    chat.appendChild(wrap);
+    const btn = wrap.querySelector(".collapse-btn");
+    if (btn) {
+      btn.onclick = () => {
+        wrap.classList.toggle("collapsed");
+        btn.textContent = wrap.classList.contains("collapsed") ? "Expand" : "Collapse";
+      };
+    }
+    chat.scrollTop = chat.scrollHeight;
     return wrap;
   }
 
@@ -1316,13 +1454,9 @@
         imageDescriptions.length && `Images: ${imageDescriptions.join(' | ')}`,
       ].filter(Boolean).join('\n');
 
-      addChatMessage('user', 'Incident input', escapeHtml(userSummary || '(empty)'));
+      setCurrentInput(userSummary || '');
 
-      placeholder = addChatMessage(
-        "assistant",
-        "Recommendation",
-        "<span class=\"spinner\"></span> thinking..."
-      );
+      setCurrentRecommendation("Thinking...", true);
 
       // Get SCADA case data from filtered cards (only if enabled)
       const selectedCard = scadaEnabled ? state.filteredScadaCards.find(c => c.id === scadaId) : null;
@@ -1346,7 +1480,7 @@
       }
 
       const rec = data.recommendation_markdown || '(no recommendation)';
-      placeholder.querySelector('.m-b').innerHTML = renderMarkdownSimple(rec);
+      setCurrentRecommendation(renderMarkdownSimple(rec), false);
 
       if(data.query_pack && data.query_pack.query){
         el('modelPill').textContent = `query ready`;
@@ -1356,11 +1490,7 @@
 
     } catch (e) {
       const msg = `Error: ${e.message}`;
-      if (placeholder) {
-        placeholder.querySelector('.m-b').textContent = msg;
-      } else {
-        addChatMessage('assistant', 'Error', escapeHtml(msg));
-      }
+      setCurrentRecommendation(escapeHtml(msg), false);
       showWarn(e.message);
     } finally {
       setStatus(state.awaitingConfirm ? 'confirm' : 'idle');
@@ -1515,6 +1645,23 @@
       el('showRows').value = range.value;
       renderResultsTable(state.lastResults);
     };
+
+    document.querySelectorAll(".collapse-btn").forEach((btn) => {
+      const targetId = btn.getAttribute("data-target");
+      if (!targetId) {
+        return;
+      }
+      btn.onclick = () => {
+        const panel = el(targetId);
+        if (!panel) {
+          return;
+        }
+        panel.classList.toggle("collapsed");
+        const isCollapsed = panel.classList.contains("collapsed");
+        btn.classList.toggle("is-collapsed", isCollapsed);
+        btn.setAttribute("aria-label", isCollapsed ? "Expand" : "Collapse");
+      };
+    });
   }
 
   (async function init(){
