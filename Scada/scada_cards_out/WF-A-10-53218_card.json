@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 10,
     "asset_id": 10,
-    "event_id": 10,
-    "event_label": "anomaly",
-    "event_description": "Gearbox failure",
     "window_end": "2023-10-15 18:30:00"
   },
   "window": {
@@ -35,14 +32,21 @@
   "derived": {
     "power_residual_mean": 0.0995,
     "power_residual_std": 0.0859,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window winds were strong and steady (mean ~14.24, std ~1.46) with intermittent gusts to 27.4, and temperatures remained elevated (mean ~67.6). Power stayed consistently high (mean ~0.96) with low variability and a persistent positive residual (~0.10); rotor speed was tightly held (very low std) while generator speed showed noticeably more fluctuation. Pitch averaged about 8\u00b0 and average yaw misalignment was ~2.2\u00b0, and the operational status was non\u2011normal for the entire period."
+  "summary": "Over this 6\u2011hour window, the turbine spent all 37 ten\u2011minute intervals in **Downtime**, with **no power production** despite generally strong and variable winds (mean 14.24 m/s, std 1.46, peak 27.4) and a **high_wind** tag. Operational signals showed relatively steady pitch (mean 7.98) and low yaw misalignment on average (2.2), while temperatures were elevated (mean 67.62) consistent with the **elevated_temps** tag.\n\nThe key anomaly is the persistent downtime concurrent with high wind conditions, alongside a non\u2011zero power residual (mean 0.0995) and low variability in rotor speed (std 0.0229) relative to generator speed (std 0.7666)."
 }

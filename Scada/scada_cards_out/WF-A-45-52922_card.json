@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 45,
     "asset_id": 13,
-    "event_id": 45,
-    "event_label": "anomaly",
-    "event_description": "Hydraulic group",
     "window_end": "2023-04-21 02:00:00"
   },
   "window": {
@@ -35,14 +32,21 @@
   "derived": {
     "power_residual_mean": -0.1151,
     "power_residual_std": 0.0793,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind",
     "power_deficit"
   ],
-  "summary": "Over the 6\u2011hour window wind speeds were consistently high (mean \u2248 18.4, std \u2248 1.05) with low short\u2011term variability but occasional peaks up to 43.9. Power stayed close to its mean (\u2248 0.962, std \u2248 0.050) despite a persistent negative power residual (\u2248 -0.115); rotor speed was very stable (std \u2248 0.52) while generator speed showed large variability (std \u2248 56.85). Pitch averaged \u2248 16.35, yaw misalignment \u2248 7.88, temperature \u2248 64.8, and status indicators were non\u2011normal for the entire period, indicating a sustained anomalous operational state."
+  "summary": "Over this 6\u2011hour window the turbine was predominantly not generating: 37 consecutive 10\u2011minute intervals were in \u201cDowntime,\u201d despite generally steady winds on average (mean 18.43 m/s, low variability) with an isolated extreme gust to 43.9 m/s. Measured power stayed low and tight (mean 0.962, std 0.050) and the negative mean power residual (-0.115) indicates sustained underperformance versus expectation, consistent with the \u201cpower_deficit\u201d tag. Operating conditions included relatively high average pitch (16.35\u00b0), moderate mean yaw misalignment (7.88\u00b0), and a warm average temperature (64.81), with comparatively higher variability on the generator side (generator rpm std 56.85)."
 }

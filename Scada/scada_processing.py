@@ -254,16 +254,26 @@ def build_summary_prompt(card: Dict[str, object]) -> str:
     stats = card["stats"]
     derived = card["derived"]
     tags = ", ".join(card.get("tags", [])) or "none"
+
+    # Build status summary with legend
+    status_counts = derived.get("status_10min_interval_counts", {}) if isinstance(derived, dict) else {}
+    status_legend = derived.get("status_legend", {}) if isinstance(derived, dict) else {}
+    status_parts = []
+    for code, count in status_counts.items():
+        label = status_legend.get(code, f"Status {code}")
+        status_parts.append(f"{count} intervals: {label}")
+    status_summary = "; ".join(status_parts) if status_parts else "no status data"
+
     prompt = (
         "Summarize this 6h SCADA window in 2-3 sentences. "
         "Focus on operational patterns and anomalies. "
-        "Do not diagnose faults or reference labels. "
+        "Do not diagnose faults. "
         "Stats: wind_speed_mean={wind_speed_mean}, wind_speed_std={wind_speed_std}, "
         "wind_speed_max={wind_speed_max}, power_mean={power_mean}, power_std={power_std}, "
         "rotor_rpm_std={rotor_rpm_std}, generator_rpm_std={generator_rpm_std}, "
         "pitch_mean={pitch_mean}, yaw_misalignment_mean={yaw_misalignment_mean}, "
-        "power_residual_mean={power_residual_mean}, status_non_normal_ratio={status_non_normal_ratio}, "
-        "temp_mean={temp_mean}. Tags: {tags}."
+        "power_residual_mean={power_residual_mean}, temp_mean={temp_mean}. "
+        "Turbine status (10-min intervals): {status_summary}. Tags: {tags}."
     )
     return prompt.format(
         wind_speed_mean=stats["wind_speed_mean"],
@@ -276,8 +286,8 @@ def build_summary_prompt(card: Dict[str, object]) -> str:
         pitch_mean=stats["pitch_mean"],
         yaw_misalignment_mean=stats["yaw_misalignment_mean"],
         power_residual_mean=derived["power_residual_mean"],
-        status_non_normal_ratio=derived["status_non_normal_ratio"],
         temp_mean=stats["temp_mean"],
+        status_summary=status_summary,
         tags=tags,
     )
 

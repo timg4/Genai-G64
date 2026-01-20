@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 68,
     "asset_id": 11,
-    "event_id": 68,
-    "event_label": "anomaly",
-    "event_description": "Transformer failure",
     "window_end": "2023-08-11 13:10:00"
   },
   "window": {
@@ -35,14 +32,21 @@
   "derived": {
     "power_residual_mean": 0.0631,
     "power_residual_std": 0.0923,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind",
     "elevated_temps"
   ],
-  "summary": "Over the 6-hour window mean wind was about 13.2 m/s with modest variability (std 1.54) and a peak gust to 31 m/s; mean power stayed roughly constant at ~0.935 with low variability (std 0.041) and a small positive power residual (~0.063). Rotor speed was very stable while generator speed showed moderate scatter (std ~2.82), pitch averaged ~4.55\u00b0, yaw misalignment averaged ~9.32\u00b0, and temperatures were elevated (mean ~67.8), so overall operation was steady but featured a pronounced high-wind spike and sustained higher temperatures."
+  "summary": "Over this 6\u2011hour window the turbine was predominantly unavailable, with 37 consecutive 10\u2011minute intervals in a downtime state, so operational output was limited and relatively steady when present (power_mean \u22480.935 with low variability). Ambient conditions were generally high wind (wind_speed_mean \u224813.2, \u03c3\u22481.5) with at least one extreme gust (wind_speed_max 31) and tags indicating elevated temperatures (temp_mean \u224867.8). Control/operational indicators show moderate average pitch (\u22484.55), notable mean yaw misalignment (\u22489.32), and a positive mean power residual (\u22480.063), suggesting output tended to run above the modeled expectation during the periods with data."
 }

@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 38,
     "asset_id": 13,
-    "event_id": 38,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-07-03 17:30:00"
   },
   "window": {
@@ -35,9 +32,16 @@
   "derived": {
     "power_residual_mean": -0.093,
     "power_residual_std": 0.1135,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
@@ -45,5 +49,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the 6-hour window winds were mostly steady (mean ~14.6, std ~1.74) but included a short, strong gust up to 39.1. Power was consistently near 0.955 with low variability yet showed a persistent negative residual (~-0.093), while rotor speed stayed very stable and generator speed was comparatively more variable; pitch averaged ~8.9 and mean yaw misalignment was ~11.9 degrees. Recorded temperatures were elevated (mean ~71.3) and no non-normal status flags were logged."
+  "summary": "Over this 6\u2011hour window the turbine spent all 37 ten\u2011minute intervals in Normal Operation, producing near\u2011rated power on average (power_mean 0.955, low variability power_std 0.028) while wind was generally strong and moderately variable (wind_speed_mean 14.63, std 1.74) with a brief extreme peak (wind_speed_max 39.1). Notable patterns include a consistent power shortfall versus expectation (power_residual_mean \u22120.093) alongside sustained yaw misalignment (mean 11.89\u00b0) and elevated temperatures (temp_mean 71.30), with relatively stable rotor speed (rotor_rpm_std 0.0495) but more variable generator speed (generator_rpm_std 4.56). Pitch averaged 8.91\u00b0, consistent with controlled operation under higher winds."
 }

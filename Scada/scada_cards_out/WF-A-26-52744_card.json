@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 26,
     "asset_id": 0,
-    "event_id": 26,
-    "event_label": "anomaly",
-    "event_description": "Hydraulic group",
     "window_end": "2023-10-15 18:50:00"
   },
   "window": {
@@ -35,9 +32,16 @@
   "derived": {
     "power_residual_mean": -0.0853,
     "power_residual_std": 0.08,
-    "status_non_normal_ratio": 1.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "4": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
@@ -45,5 +49,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the 6\u2011hour window wind conditions were steady around 15 m/s with low variability but included a brief gust to 34.7 m/s; rotor speed was essentially constant while generator speed showed only minor fluctuations. Power output remained nearly constant (~0.98) yet averaged about 0.085 below expected values, operational status indicators were non\u2011normal for the entire period, control settings held moderate pitch (~10.5\u00b0) with small yaw misalignment (~1.6\u00b0), and temperatures averaged around 65\u00b0C."
+  "summary": "Over this 6\u2011hour window the turbine is predominantly not operating, with 37 consecutive 10\u2011minute intervals in a Downtime state. Wind conditions are generally steady (mean 15.19 m/s, std 1.01) but include an isolated extreme gust (max 34.7 m/s), while power output is nearly flat (mean 0.9755, very low variability) alongside zero rotor speed variability and some generator speed variation. Operationally, the period is characterized by high-wind conditions coinciding with a persistent power deficit (negative power residual mean \u22120.0853) and elevated temperatures (mean 65.08)."
 }

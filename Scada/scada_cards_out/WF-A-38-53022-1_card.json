@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 38,
     "asset_id": 13,
-    "event_id": 38,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-07-03 17:30:00"
   },
   "window": {
@@ -35,9 +32,16 @@
   "derived": {
     "power_residual_mean": -0.093,
     "power_residual_std": 0.1135,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
@@ -45,5 +49,5 @@
     "power_deficit",
     "elevated_temps"
   ],
-  "summary": "Over the six-hour window winds were consistently high, averaging ~14.6 m/s with gusts up to 39.1 m/s; rotational speeds were steady (very low variability), blade pitch averaged ~9\u00b0, and yaw misalignment averaged ~12\u00b0. Mean power output was about 0.955 p.u. (roughly 9% below expected based on conditions) with low variability, temperatures were elevated (~71), and no non-normal status events were recorded."
+  "summary": "Across the 6\u2011hour window the turbine was in Normal Operation for all 37 ten\u2011minute intervals, with generally steady production (power_mean\u22480.96, low power_std\u22480.028) under moderately variable winds (wind_speed_mean\u224814.6 m/s, std\u22481.74) but with at least one brief extreme wind spike (wind_speed_max=39.1). Operational signals show stable rotor behavior (low rotor_rpm_std\u22480.05) while generator speed varied more (generator_rpm_std\u22484.56), with average pitch around 8.9\u00b0 and a persistent mean yaw misalignment near 11.9\u00b0. Notable anomalies/patterns include a consistent negative power residual (mean\u2248\u22120.093) indicating a sustained power deficit relative to expectation, alongside elevated average temperature (~71.3) during this high\u2011wind period."
 }

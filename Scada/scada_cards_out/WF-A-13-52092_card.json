@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 13,
     "asset_id": 21,
-    "event_id": 13,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-05-12 02:50:00"
   },
   "window": {
@@ -35,11 +32,18 @@
   "derived": {
     "power_residual_mean": -0.0598,
     "power_residual_std": 0.0116,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [],
-  "summary": "Over the 6-hour window wind was steady at low-to-moderate speed (mean \u2248 5.9 m/s, std \u2248 0.55) with a single peak to 13.9 m/s; power stayed low and relatively stable (mean \u2248 0.18, std \u2248 0.054) with a small negative residual (~-0.06). Rotor speed variability was minimal while generator speed variability was markedly higher (std \u2248 56 vs \u2248 0.5), pitch averaged about \u22121.65\u00b0, yaw misalignment averaged ~8.16\u00b0, temperature was \u224847.5\u00b0C, and no status changes were recorded."
+  "summary": "Over this 6\u2011hour window the turbine remained in **Normal Operation** for all 37 ten\u2011minute intervals, with relatively steady conditions (wind speed mean **5.89** with low variability, and correspondingly stable power output mean **0.183** with modest scatter). Rotational behavior was generally stable, with low rotor RPM variability (**0.50**) but higher generator RPM variability (**56.4**) consistent with normal operating modulation. Notable patterns include a **positive average yaw misalignment (~8.16)** and a **negative mean power residual (\u20110.0598)**, indicating output tended to run below the reference on average despite otherwise steady operation."
 }

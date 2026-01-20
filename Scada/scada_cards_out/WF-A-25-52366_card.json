@@ -4,9 +4,6 @@
     "source": "Wind Farm A",
     "dataset_id": 25,
     "asset_id": 11,
-    "event_id": 25,
-    "event_label": "normal",
-    "event_description": "nan",
     "window_end": "2023-05-23 19:40:00"
   },
   "window": {
@@ -35,13 +32,20 @@
   "derived": {
     "power_residual_mean": -0.1071,
     "power_residual_std": 0.0543,
-    "status_non_normal_ratio": 0.0,
-    "status_counts": {
+    "status_10min_interval_counts": {
       "0": 37
+    },
+    "status_legend": {
+      "0": "Normal Operation - The turbine is in normal power production mode",
+      "1": "Derated Operation - Derated power generation with a power restriction",
+      "2": "Idling - Asset is idling and waits to operate again",
+      "3": "Service - Asset is in service mode / service team is at the site",
+      "4": "Downtime - Asset is down due a fault or other reasons",
+      "5": "Other - Other operational states"
     }
   },
   "tags": [
     "high_wind"
   ],
-  "summary": "Over the six-hour window wind conditions were strong and steady (mean ~18.0 m/s, std ~1.0 m/s) with a short peak to 33.9 m/s, while electrical power remained extremely stable (mean ~0.9755, std ~0.0002) and status indicators stayed normal. Operational patterns show essentially zero rotor-speed variability, modest generator-speed variability, an average pitch around 14.8\u00b0, a persistent yaw offset near 8.1\u00b0, and a small negative mean power residual (~-0.107), indicating slight systematic underperformance versus the reference."
+  "summary": "Over this 6\u2011hour window the turbine remained in Normal Operation for all 37 ten\u2011minute intervals, producing very steady power (mean ~0.975 with negligible variability) despite elevated and variable winds (mean ~18.0, max 33.9; tagged high_wind). Operationally, pitch averaged ~14.84 with modest yaw misalignment (~8.15), while rotor speed showed no variability and generator speed varied slightly. Anomalies/patterns to note are the consistently negative power residual (mean \u22120.107) and the combination of high wind variability with essentially flat power output."
 }
