@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import math
 import os
 import re
 import sys
+import time
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -25,6 +27,7 @@ APP_DIR = Path(__file__).resolve().parent
 DATA_DIR = APP_DIR / "data"
 SCADA_SAMPLES_PATH = DATA_DIR / "scada_samples.json"
 UPLOADS_DIR = DATA_DIR / "uploads"
+FAULTY_RUNS_DIR = DATA_DIR / "faulty_runs"
 
 # SCADA cards paths (for new all-cards endpoint)
 def _find_repo_root(start: Path) -> Path:
@@ -218,6 +221,7 @@ else:
 
 FAULTY_IMPORT_ERROR: Optional[str] = None
 FAULTY_EXAMPLES_PATH = REPO_ROOT / "Faulty_Image_Describtion" / "examples.json"
+FAULTY_MODEL_FIXED = "gpt-5.2"
 try:
     from Faulty_Image_Describtion.io_utils import read_examples as read_faulty_examples  # type: ignore
     from Faulty_Image_Describtion.openai_adapter import run_openai_vision as run_faulty_openai  # type: ignore
@@ -255,17 +259,65 @@ def describe_faulty_image(image_path: Path) -> Optional[str]:
         max_examples=max_examples,
         base_dir=REPO_ROOT,
     )
+    run_dir = _create_faulty_run_dir()
+    if run_dir:
+        (run_dir / "prompt.txt").write_text(prompt, encoding="utf-8-sig")
+        (run_dir / "attachments.json").write_text(
+            json.dumps({"attachments": attachments}, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        _write_upload_debug(run_dir, image_path)
     result = run_faulty_openai(
         prompt,
         attachments,
-        model=os.environ.get("FAULTY_MODEL", os.environ.get("OPENAI_MODEL", "gpt-5-mini")),
+        model=FAULTY_MODEL_FIXED,
         api_key=api_key,
     )
+    if run_dir:
+        raw_path = run_dir / "model_output_raw.json"
+        raw_path.write_text(
+            json.dumps(result, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        parsed = result.get("parsed_json") or {}
+        if parsed:
+            (run_dir / "model_output.json").write_text(
+                json.dumps(parsed, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
     parsed = result.get("parsed_json") or {}
     if isinstance(parsed, dict) and parsed.get("description"):
         return str(parsed["description"])
     raw = str(result.get("raw_text", "")).strip()
     return raw or None
+
+
+def _create_faulty_run_dir() -> Optional[Path]:
+    try:
+        FAULTY_RUNS_DIR.mkdir(parents=True, exist_ok=True)
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        run_dir = FAULTY_RUNS_DIR / f"run_{ts}_{uuid.uuid4().hex[:6]}"
+        run_dir.mkdir(parents=True, exist_ok=True)
+        return run_dir
+    except Exception:
+        return None
+
+
+def _write_upload_debug(run_dir: Path, image_path: Path) -> None:
+    try:
+        data = image_path.read_bytes()
+        info = {
+            "saved_path": str(image_path),
+            "size_bytes": len(data),
+            "sha256": hashlib.sha256(data).hexdigest(),
+        }
+        (run_dir / f"query_image{image_path.suffix}").write_bytes(data)
+        (run_dir / "upload_info.json").write_text(
+            json.dumps(info, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+    except Exception:
+        return
 
 
 # -----------------------------
