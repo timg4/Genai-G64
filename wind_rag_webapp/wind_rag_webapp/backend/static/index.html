@@ -67,6 +67,9 @@
       background: rgba(255,255,255,.04);
       padding: 6px;
     }
+    .logo.is-spinning {
+      animation: logo-spin 1.2s ease-in-out;
+    }
     .title h1 {
       margin: 0;
       font-size: 22px;
@@ -436,6 +439,7 @@
       align-items: center;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes logo-spin { to { transform: rotate(360deg); } }
 
     /* Table */
     table { width: 100%; border-collapse: collapse; }
@@ -720,7 +724,7 @@
     <div class="header">
       <div class="title">
         <span class="logo-wrap">
-          <img class="logo" src="/static/logo.png" alt="Project logo" />
+          <img class="logo is-spinning" src="/static/Windradsvg.svg" alt="Wind turbine logo" />
         </span>
       <div>
         <h1>Wind Turbine Inspection Assistant</h1>
