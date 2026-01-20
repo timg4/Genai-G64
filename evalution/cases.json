@@ -1,0 +1,1435 @@
+[
+  {
+    "id": "EVAL-001",
+    "scada_case": {
+      "window_id": "WF-A-0-53522",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 0,
+        "asset_id": 0,
+        "window_end": "2023-08-13 19:20:00"
+      },
+      "window": {
+        "end_time": "2023-08-13 19:20:00",
+        "start_time": "2023-08-13 13:20:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 13.7216,
+        "wind_speed_std": 1.4924,
+        "wind_speed_max": 43.7,
+        "power_mean": 0.9257,
+        "power_std": 0.1174,
+        "rotor_rpm_mean": 14.5162,
+        "rotor_rpm_std": 1.6244,
+        "generator_rpm_mean": 1638.5541,
+        "generator_rpm_std": 179.3927,
+        "pitch_mean": 8.2081,
+        "pitch_std": 9.5955,
+        "yaw_misalignment_mean": 8.6189,
+        "yaw_misalignment_std": 8.5811,
+        "temp_mean": 72.5338
+      },
+      "derived": {
+        "power_residual_mean": 0.0103,
+        "power_residual_std": 0.1648,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "power_variability"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine spent most of the time in a downtime state (37 ten\u2011minute intervals), with only limited periods contributing to power production; when producing, output was fairly steady around 0.93 (std 0.12) despite moderate wind variability (mean 13.7 m/s, std 1.49). Operational signals show notable variability in rotating speeds (rotor rpm std 1.62; generator rpm std 179) alongside moderate average pitch (~8.2) and yaw misalignment (~8.6). Anomalies include an extreme wind speed maximum of 43.7 m/s and flagged power variability, while the average power residual stayed near zero (~0.01) and temperature averaged ~72.5.",
+      "class_label": "LR;DA"
+    },
+    "mechanic_notes": "Possible lightning receptor damage; inspect receptors and conductors.",
+    "fault_images_description": "Lightning receptor tip shows charring and minor burn marks."
+  },
+  {
+    "id": "EVAL-002",
+    "scada_case": {
+      "window_id": "WF-A-10-53218",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 10,
+        "asset_id": 10,
+        "window_end": "2023-10-15 18:30:00"
+      },
+      "window": {
+        "end_time": "2023-10-15 18:30:00",
+        "start_time": "2023-10-15 12:30:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 14.2405,
+        "wind_speed_std": 1.4618,
+        "wind_speed_max": 27.4,
+        "power_mean": 0.9607,
+        "power_std": 0.046,
+        "rotor_rpm_mean": 14.8054,
+        "rotor_rpm_std": 0.0229,
+        "generator_rpm_mean": 1680.9892,
+        "generator_rpm_std": 0.7666,
+        "pitch_mean": 7.9784,
+        "pitch_std": 3.115,
+        "yaw_misalignment_mean": 2.2,
+        "yaw_misalignment_std": 1.6369,
+        "temp_mean": 67.6216
+      },
+      "derived": {
+        "power_residual_mean": 0.0995,
+        "power_residual_std": 0.0859,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "elevated_temps"
+      ],
+      "summary": "Over this 6\u2011hour window, the turbine spent all 37 ten\u2011minute intervals in **Downtime**, with **no power production** despite generally strong and variable winds (mean 14.24 m/s, std 1.46, peak 27.4) and a **high_wind** tag. Operational signals showed relatively steady pitch (mean 7.98) and low yaw misalignment on average (2.2), while temperatures were elevated (mean 67.62) consistent with the **elevated_temps** tag.\n\nThe key anomaly is the persistent downtime concurrent with high wind conditions, alongside a non\u2011zero power residual (mean 0.0995) and low variability in rotor speed (std 0.0229) relative to generator speed (std 0.7666).",
+      "class_label": "LE;CR"
+    },
+    "mechanic_notes": "Potential leading edge crack; verify crack length and severity.",
+    "fault_images_description": "Hairline crack near leading edge, extending a few centimeters."
+  },
+  {
+    "id": "EVAL-003",
+    "scada_case": {
+      "window_id": "WF-A-13-52092",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 13,
+        "asset_id": 21,
+        "window_end": "2023-05-12 02:50:00"
+      },
+      "window": {
+        "end_time": "2023-05-12 02:50:00",
+        "start_time": "2023-05-11 20:50:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 5.8892,
+        "wind_speed_std": 0.5527,
+        "wind_speed_max": 13.9,
+        "power_mean": 0.1828,
+        "power_std": 0.0539,
+        "rotor_rpm_mean": 11.8676,
+        "rotor_rpm_std": 0.4956,
+        "generator_rpm_mean": 1339.8973,
+        "generator_rpm_std": 56.385,
+        "pitch_mean": -1.6514,
+        "pitch_std": 0.3124,
+        "yaw_misalignment_mean": 8.1595,
+        "yaw_misalignment_std": 6.2912,
+        "temp_mean": 47.5203
+      },
+      "derived": {
+        "power_residual_mean": -0.0598,
+        "power_residual_std": 0.0116,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [],
+      "summary": "Over this 6\u2011hour window the turbine remained in **Normal Operation** for all 37 ten\u2011minute intervals, with relatively steady conditions (wind speed mean **5.89** with low variability, and correspondingly stable power output mean **0.183** with modest scatter). Rotational behavior was generally stable, with low rotor RPM variability (**0.50**) but higher generator RPM variability (**56.4**) consistent with normal operating modulation. Notable patterns include a **positive average yaw misalignment (~8.16)** and a **negative mean power residual (\u20110.0598)**, indicating output tended to run below the reference on average despite otherwise steady operation.",
+      "class_label": "Nix"
+    },
+    "mechanic_notes": "Routine inspection requested; no issues reported in SCADA.",
+    "fault_images_description": "No visible damage; blade surface appears clean."
+  },
+  {
+    "id": "EVAL-004",
+    "scada_case": {
+      "window_id": "WF-A-13-53777",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 13,
+        "asset_id": 21,
+        "window_end": "2023-05-23 19:40:00"
+      },
+      "window": {
+        "end_time": "2023-05-23 19:40:00",
+        "start_time": "2023-05-23 13:40:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 18.1919,
+        "wind_speed_std": 1.1351,
+        "wind_speed_max": 33.6,
+        "power_mean": 0.9755,
+        "power_std": 0.0002,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1680.6703,
+        "generator_rpm_std": 0.672,
+        "pitch_mean": 15.4568,
+        "pitch_std": 1.7694,
+        "yaw_misalignment_mean": 9.3973,
+        "yaw_misalignment_std": 7.4791,
+        "temp_mean": 70.5878
+      },
+      "derived": {
+        "power_residual_mean": -0.1401,
+        "power_residual_std": 0.0589,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "elevated_temps"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine stayed in Normal Operation for all 37 ten\u2011minute intervals, with very stable power output near rated (power_mean 0.9755, power_std 0.0002) despite moderate variability in wind (mean 18.19, std 1.14) and at least one high\u2011wind spike (max 33.6). Rotor speed was essentially constant (rotor_rpm_std 0.0) while generator speed showed small variation (std 0.672), alongside a relatively high average pitch setting (15.46) and a persistent yaw misalignment around 9.40\u00b0. Anomalies/pattern flags during this period were high wind, elevated temperatures (temp_mean 70.59), and a consistently negative power residual on average (-0.1401).",
+      "class_label": "LE;CR"
+    },
+    "mechanic_notes": "Potential leading edge crack; verify crack length and severity.",
+    "fault_images_description": "Hairline crack near leading edge, extending a few centimeters."
+  },
+  {
+    "id": "EVAL-005",
+    "scada_case": {
+      "window_id": "WF-A-14-53434",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 14,
+        "asset_id": 13,
+        "window_end": "2023-03-11 11:40:00"
+      },
+      "window": {
+        "end_time": "2023-03-11 11:40:00",
+        "start_time": "2023-03-11 05:40:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 1.6378,
+        "wind_speed_std": 0.5737,
+        "wind_speed_max": 17.2,
+        "power_mean": -0.0024,
+        "power_std": 0.0009,
+        "rotor_rpm_mean": 0.4027,
+        "rotor_rpm_std": 0.6362,
+        "generator_rpm_mean": 74.5162,
+        "generator_rpm_std": 83.3295,
+        "pitch_mean": 24.0,
+        "pitch_std": 0.0,
+        "yaw_misalignment_mean": 67.6054,
+        "yaw_misalignment_std": 54.7647,
+        "temp_mean": 34.9662
+      },
+      "derived": {
+        "power_residual_mean": 0.1147,
+        "power_residual_std": 0.0516,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "yaw_misalignment"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine remained in **Normal Operation** for all 37 ten\u2011minute intervals, with consistently **near\u2011zero and very stable power output** (power_mean \u22120.0024, low power_std 0.0009) alongside a relatively **high average pitch angle** (pitch_mean 24.0). Wind conditions were generally low on average (wind_speed_mean 1.64, std 0.57) but included an **isolated high wind-speed spike** (wind_speed_max 17.2) that does not coincide with a notable change in mean power behavior. A persistent operational pattern is **large yaw misalignment on average** (yaw_misalignment_mean 67.6; tagged), with moderate variability in rotor speed (rotor_rpm_std 0.64) and higher variability at the generator (generator_rpm_std 83.3), while temperatures were steady around 35.0\u00b0C and the power residual stayed positively biased (mean 0.1147).",
+      "class_label": "VG;MT"
+    },
+    "mechanic_notes": "Check vortex generators for missing teeth or detachment; output appears affected.",
+    "fault_images_description": "Vortex generator strip shows missing teeth and partial detachment along mid-span."
+  },
+  {
+    "id": "EVAL-006",
+    "scada_case": {
+      "window_id": "WF-A-17-54009",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 17,
+        "asset_id": 10,
+        "window_end": "2023-11-12 12:30:00"
+      },
+      "window": {
+        "end_time": "2023-11-12 12:30:00",
+        "start_time": "2023-11-12 06:30:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 1.4784,
+        "wind_speed_std": 0.7169,
+        "wind_speed_max": 8.0,
+        "power_mean": -0.0025,
+        "power_std": 0.0011,
+        "rotor_rpm_mean": 0.6405,
+        "rotor_rpm_std": 1.9305,
+        "generator_rpm_mean": 75.5784,
+        "generator_rpm_std": 220.8882,
+        "pitch_mean": 23.6865,
+        "pitch_std": 5.1395,
+        "yaw_misalignment_mean": 103.1946,
+        "yaw_misalignment_std": 46.372,
+        "temp_mean": 26.0811
+      },
+      "derived": {
+        "power_residual_mean": 0.081,
+        "power_residual_std": 0.0483,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "yaw_misalignment"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine remained in **Normal Operation** for all 37 ten\u2011minute intervals, with **very low and steady power output** (power_mean \u2248 \u20110.0025, power_std \u2248 0.0011) under generally **low wind conditions** (wind_speed_mean \u2248 1.48, std \u2248 0.72), despite a brief wind spike to 8.0. Operationally, pitch averaged **~23.7\u00b0**, while drivetrain speed variability was modest at the rotor and higher at the generator (rotor_rpm_std \u2248 1.93; generator_rpm_std \u2248 220.9). The notable anomaly is a **persistently large yaw misalignment** (mean \u2248 103.2; tagged) alongside a **positive mean power residual** (~0.081).",
+      "class_label": "SF;PO"
+    },
+    "mechanic_notes": "Surface paint loss observed; plan surface repair and protection.",
+    "fault_images_description": "Paint-off areas with exposed composite on the blade surface."
+  },
+  {
+    "id": "EVAL-007",
+    "scada_case": {
+      "window_id": "WF-A-22-51937",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 22,
+        "asset_id": 21,
+        "window_end": "2023-08-12 18:00:00"
+      },
+      "window": {
+        "end_time": "2023-08-12 18:00:00",
+        "start_time": "2023-08-12 12:00:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 15.9,
+        "wind_speed_std": 1.1614,
+        "wind_speed_max": 44.3,
+        "power_mean": 0.9741,
+        "power_std": 0.0044,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1680.9297,
+        "generator_rpm_std": 0.6666,
+        "pitch_mean": 10.5297,
+        "pitch_std": 2.1402,
+        "yaw_misalignment_mean": 9.5838,
+        "yaw_misalignment_std": 9.1624,
+        "temp_mean": 68.6081
+      },
+      "derived": {
+        "power_residual_mean": -0.1226,
+        "power_residual_std": 0.0752,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "power_deficit"
+      ],
+      "summary": "Across this 6\u2011hour window the turbine is predominantly in **Downtime** (37 ten\u2011minute intervals), with generation effectively flat near rated when present (power_mean **0.974** with very low variability **0.0044**). Wind conditions are generally steady (mean **15.9 m/s**, std **1.16**) but include an extreme peak (**44.3 m/s**, tagged **high_wind**).\n\nOperationally, rotor speed shows no variability (rotor_rpm_std **0.0**) while generator speed varies modestly (std **0.67**), alongside average pitch around **10.53\u00b0** and notable mean yaw misalignment (**9.58\u00b0**). A consistent negative power residual (mean **-0.1226**, tagged **power_deficit**) indicates measured power trending below the reference expectation during the window; average temperature is **68.6**.",
+      "class_label": "LE;CR"
+    },
+    "mechanic_notes": "Potential leading edge crack; verify crack length and severity.",
+    "fault_images_description": "Hairline crack near leading edge, extending a few centimeters."
+  },
+  {
+    "id": "EVAL-008",
+    "scada_case": {
+      "window_id": "WF-A-24-53477",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 24,
+        "asset_id": 0,
+        "window_end": "2023-05-02 21:10:00"
+      },
+      "window": {
+        "end_time": "2023-05-02 21:10:00",
+        "start_time": "2023-05-02 15:10:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 14.2459,
+        "wind_speed_std": 0.863,
+        "wind_speed_max": 43.7,
+        "power_mean": 0.9749,
+        "power_std": 0.0013,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1680.8027,
+        "generator_rpm_std": 0.4133,
+        "pitch_mean": 9.0135,
+        "pitch_std": 1.8145,
+        "yaw_misalignment_mean": 9.5432,
+        "yaw_misalignment_std": 6.4051,
+        "temp_mean": 66.7162
+      },
+      "derived": {
+        "power_residual_mean": -0.0956,
+        "power_residual_std": 0.0693,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "power_deficit",
+        "elevated_temps"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine remained in **Normal Operation** for all 37 ten\u2011minute intervals, with **steady power output** (power_mean \u2248 0.975, very low power_std) under generally **high average winds** (wind_speed_mean \u2248 14.25 m/s, low std) but with an **isolated extreme wind spike** (wind_speed_max 43.7). Operationally, rotor speed appears **unchanging** (rotor_rpm_std = 0) while generator speed shows only **minor variation**, with **moderate pitch** (mean \u2248 9\u00b0) and **persistent yaw misalignment** (mean \u2248 9.54\u00b0). Notable anomalies include a **consistent negative power residual** (mean \u2248 \u22120.096) aligning with the **power_deficit** tag and **elevated temperatures** (temp_mean \u2248 66.7).",
+      "class_label": "LE;CR"
+    },
+    "mechanic_notes": "Potential leading edge crack; verify crack length and severity.",
+    "fault_images_description": "Hairline crack near leading edge, extending a few centimeters."
+  },
+  {
+    "id": "EVAL-009",
+    "scada_case": {
+      "window_id": "WF-A-25-52366-1",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 25,
+        "asset_id": 11,
+        "window_end": "2023-05-23 19:40:00"
+      },
+      "window": {
+        "end_time": "2023-05-23 19:40:00",
+        "start_time": "2023-05-23 13:40:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 18.0027,
+        "wind_speed_std": 0.9708,
+        "wind_speed_max": 33.9,
+        "power_mean": 0.9755,
+        "power_std": 0.0002,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1680.7595,
+        "generator_rpm_std": 0.6085,
+        "pitch_mean": 14.8432,
+        "pitch_std": 1.5493,
+        "yaw_misalignment_mean": 8.1486,
+        "yaw_misalignment_std": 7.0751,
+        "temp_mean": 67.4257
+      },
+      "derived": {
+        "power_residual_mean": -0.1071,
+        "power_residual_std": 0.0543,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine remained in Normal Operation for all 37 ten\u2011minute intervals and produced very steady near\u2011rated power (power_mean\u22480.9755 with extremely low variability), consistent with the high\u2011wind tag. Wind speed was generally strong and fairly stable on average (mean\u224818.0, std\u22481.0) but included at least one brief spike to 33.9.\n\nNotable patterns/anomalies in the statistics include zero variability in rotor RPM (rotor_rpm_std=0.0) alongside some generator RPM variability (std\u22480.61), a persistent positive yaw misalignment on average (~8.15), and a consistently negative power residual (mean\u2248\u20110.107). Pitch and temperature were stable around 14.84 and 67.43, respectively.",
+      "class_label": "SF;PO"
+    },
+    "mechanic_notes": "Surface paint loss observed; plan surface repair and protection.",
+    "fault_images_description": "Paint-off areas with exposed composite on the blade surface."
+  },
+  {
+    "id": "EVAL-010",
+    "scada_case": {
+      "window_id": "WF-A-25-52366",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 25,
+        "asset_id": 11,
+        "window_end": "2023-05-23 19:40:00"
+      },
+      "window": {
+        "end_time": "2023-05-23 19:40:00",
+        "start_time": "2023-05-23 13:40:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 18.0027,
+        "wind_speed_std": 0.9708,
+        "wind_speed_max": 33.9,
+        "power_mean": 0.9755,
+        "power_std": 0.0002,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1680.7595,
+        "generator_rpm_std": 0.6085,
+        "pitch_mean": 14.8432,
+        "pitch_std": 1.5493,
+        "yaw_misalignment_mean": 8.1486,
+        "yaw_misalignment_std": 7.0751,
+        "temp_mean": 67.4257
+      },
+      "derived": {
+        "power_residual_mean": -0.1071,
+        "power_residual_std": 0.0543,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine remained in Normal Operation for all 37 ten\u2011minute intervals, producing very steady power (mean ~0.975 with negligible variability) despite elevated and variable winds (mean ~18.0, max 33.9; tagged high_wind). Operationally, pitch averaged ~14.84 with modest yaw misalignment (~8.15), while rotor speed showed no variability and generator speed varied slightly. Anomalies/patterns to note are the consistently negative power residual (mean \u22120.107) and the combination of high wind variability with essentially flat power output.",
+      "class_label": "VG;MT"
+    },
+    "mechanic_notes": "Check vortex generators for missing teeth or detachment; output appears affected.",
+    "fault_images_description": "Vortex generator strip shows missing teeth and partial detachment along mid-span."
+  },
+  {
+    "id": "EVAL-011",
+    "scada_case": {
+      "window_id": "WF-A-25-53089",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 25,
+        "asset_id": 11,
+        "window_end": "2023-05-28 20:10:00"
+      },
+      "window": {
+        "end_time": "2023-05-28 20:10:00",
+        "start_time": "2023-05-28 14:10:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 5.6108,
+        "wind_speed_std": 0.6411,
+        "wind_speed_max": 36.9,
+        "power_mean": 0.1338,
+        "power_std": 0.0514,
+        "rotor_rpm_mean": 11.7324,
+        "rotor_rpm_std": 0.495,
+        "generator_rpm_mean": 1324.7946,
+        "generator_rpm_std": 55.8676,
+        "pitch_mean": -1.4405,
+        "pitch_std": 0.4186,
+        "yaw_misalignment_mean": 11.9081,
+        "yaw_misalignment_std": 9.7973,
+        "temp_mean": 48.1824
+      },
+      "derived": {
+        "power_residual_mean": -0.0895,
+        "power_residual_std": 0.0095,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [],
+      "summary": "Over this 6\u2011hour window the turbine remained in Normal Operation for all 37 ten\u2011minute intervals, with fairly steady production (power mean 0.1338, std 0.0514) under moderate winds (wind speed mean 5.61 m/s, std 0.64). Rotor and generator speeds were generally stable (rotor rpm std 0.495; generator rpm std 55.87) with a consistent average pitch of about -1.44 and mean temperature around 48.18.\n\nNotable anomalies in the window-level stats include an extreme wind speed maximum of 36.9 relative to the mean, a persistent positive yaw misalignment average (~11.9), and a negative mean power residual (-0.0895), indicating production tended to be below the reference expectation on average.",
+      "class_label": "Nix"
+    },
+    "mechanic_notes": "Routine inspection requested; no issues reported in SCADA.",
+    "fault_images_description": "No visible damage; blade surface appears clean."
+  },
+  {
+    "id": "EVAL-012",
+    "scada_case": {
+      "window_id": "WF-A-26-52744",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 26,
+        "asset_id": 0,
+        "window_end": "2023-10-15 18:50:00"
+      },
+      "window": {
+        "end_time": "2023-10-15 18:50:00",
+        "start_time": "2023-10-15 12:50:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 15.1919,
+        "wind_speed_std": 1.0123,
+        "wind_speed_max": 34.7,
+        "power_mean": 0.9755,
+        "power_std": 0.0002,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1680.8054,
+        "generator_rpm_std": 0.4281,
+        "pitch_mean": 10.5351,
+        "pitch_std": 1.8013,
+        "yaw_misalignment_mean": 1.6135,
+        "yaw_misalignment_std": 1.2067,
+        "temp_mean": 65.0811
+      },
+      "derived": {
+        "power_residual_mean": -0.0853,
+        "power_residual_std": 0.08,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "power_deficit",
+        "elevated_temps"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine is predominantly not operating, with 37 consecutive 10\u2011minute intervals in a Downtime state. Wind conditions are generally steady (mean 15.19 m/s, std 1.01) but include an isolated extreme gust (max 34.7 m/s), while power output is nearly flat (mean 0.9755, very low variability) alongside zero rotor speed variability and some generator speed variation. Operationally, the period is characterized by high-wind conditions coinciding with a persistent power deficit (negative power residual mean \u22120.0853) and elevated temperatures (mean 65.08).",
+      "class_label": "LR;DA"
+    },
+    "mechanic_notes": "Possible lightning receptor damage; inspect receptors and conductors.",
+    "fault_images_description": "Lightning receptor tip shows charring and minor burn marks."
+  },
+  {
+    "id": "EVAL-013",
+    "scada_case": {
+      "window_id": "WF-A-3-55020-1",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 3,
+        "asset_id": 10,
+        "window_end": "2023-05-16 19:30:00"
+      },
+      "window": {
+        "end_time": "2023-05-16 19:30:00",
+        "start_time": "2023-05-16 13:30:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 14.9595,
+        "wind_speed_std": 0.8221,
+        "wind_speed_max": 28.1,
+        "power_mean": 0.9726,
+        "power_std": 0.0059,
+        "rotor_rpm_mean": 14.8108,
+        "rotor_rpm_std": 0.0315,
+        "generator_rpm_mean": 1680.8486,
+        "generator_rpm_std": 1.0482,
+        "pitch_mean": 9.5297,
+        "pitch_std": 1.625,
+        "yaw_misalignment_mean": 8.927,
+        "yaw_misalignment_std": 6.8137,
+        "temp_mean": 65.2297
+      },
+      "derived": {
+        "power_residual_mean": -0.0836,
+        "power_residual_std": 0.058,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "elevated_temps"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine operated continuously in Normal Operation across all 37 ten\u2011minute intervals, delivering very stable, near\u2011rated power (power_mean 0.9726 with low variability) alongside low rotor and generator speed variability. Wind conditions were generally steady (mean ~15 m/s, low std) with at least one brief higher\u2011wind episode (max 28.1 m/s), while average pitch (~9.53) and yaw misalignment (~8.93) stayed elevated. Operationally, the period is characterized by persistently elevated temperatures (temp_mean ~65.23) and a consistently negative power residual (mean \u22120.0836), indicating power was below expectation on average for the observed conditions.",
+      "class_label": "SF;PO"
+    },
+    "mechanic_notes": "Surface paint loss observed; plan surface repair and protection.",
+    "fault_images_description": "Paint-off areas with exposed composite on the blade surface."
+  },
+  {
+    "id": "EVAL-014",
+    "scada_case": {
+      "window_id": "WF-A-3-55020",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 3,
+        "asset_id": 10,
+        "window_end": "2023-05-16 19:30:00"
+      },
+      "window": {
+        "end_time": "2023-05-16 19:30:00",
+        "start_time": "2023-05-16 13:30:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 14.9595,
+        "wind_speed_std": 0.8221,
+        "wind_speed_max": 28.1,
+        "power_mean": 0.9726,
+        "power_std": 0.0059,
+        "rotor_rpm_mean": 14.8108,
+        "rotor_rpm_std": 0.0315,
+        "generator_rpm_mean": 1680.8486,
+        "generator_rpm_std": 1.0482,
+        "pitch_mean": 9.5297,
+        "pitch_std": 1.625,
+        "yaw_misalignment_mean": 8.927,
+        "yaw_misalignment_std": 6.8137,
+        "temp_mean": 65.2297
+      },
+      "derived": {
+        "power_residual_mean": -0.0836,
+        "power_residual_std": 0.058,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "elevated_temps"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine stayed in Normal Operation for all 37 ten\u2011minute intervals, producing near-rated power (mean 0.9726) with very low variability (power_std 0.0059) under generally strong winds (wind_speed_mean 14.96, std 0.82), with at least one brief extreme wind event (wind_speed_max 28.1; high_wind tag). Operational variability was low overall (rotor_rpm_std 0.0315; generator_rpm_std 1.0482) with steady average pitch (9.53) and a persistent nonzero yaw misalignment (mean 8.93). Notable anomalies/patterns include a consistently negative power residual (mean \u22120.0836) and elevated temperatures (temp_mean 65.23; elevated_temps tag).",
+      "class_label": "LE;CR"
+    },
+    "mechanic_notes": "Potential leading edge crack; verify crack length and severity.",
+    "fault_images_description": "Hairline crack near leading edge, extending a few centimeters."
+  },
+  {
+    "id": "EVAL-015",
+    "scada_case": {
+      "window_id": "WF-A-38-53022-1",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 38,
+        "asset_id": 13,
+        "window_end": "2023-07-03 17:30:00"
+      },
+      "window": {
+        "end_time": "2023-07-03 17:30:00",
+        "start_time": "2023-07-03 11:30:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 14.627,
+        "wind_speed_std": 1.7435,
+        "wind_speed_max": 39.1,
+        "power_mean": 0.9551,
+        "power_std": 0.028,
+        "rotor_rpm_mean": 14.8757,
+        "rotor_rpm_std": 0.0495,
+        "generator_rpm_mean": 1678.2568,
+        "generator_rpm_std": 4.5564,
+        "pitch_mean": 8.9054,
+        "pitch_std": 3.5191,
+        "yaw_misalignment_mean": 11.8892,
+        "yaw_misalignment_std": 9.9987,
+        "temp_mean": 71.3041
+      },
+      "derived": {
+        "power_residual_mean": -0.093,
+        "power_residual_std": 0.1135,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "power_deficit",
+        "elevated_temps"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine was in Normal Operation for all 37 ten\u2011minute intervals, with generally steady production (power_mean\u22480.96, low power_std\u22480.028) under moderately variable winds (wind_speed_mean\u224814.6 m/s, std\u22481.74) but with at least one brief extreme wind spike (wind_speed_max=39.1). Operational signals show stable rotor behavior (low rotor_rpm_std\u22480.05) while generator speed varied more (generator_rpm_std\u22484.56), with average pitch around 8.9\u00b0 and a persistent mean yaw misalignment near 11.9\u00b0. Notable anomalies/patterns include a consistent negative power residual (mean\u2248\u22120.093) indicating a sustained power deficit relative to expectation, alongside elevated average temperature (~71.3) during this high\u2011wind period.",
+      "class_label": "SF;PO"
+    },
+    "mechanic_notes": "Surface paint loss observed; plan surface repair and protection.",
+    "fault_images_description": "Paint-off areas with exposed composite on the blade surface."
+  },
+  {
+    "id": "EVAL-016",
+    "scada_case": {
+      "window_id": "WF-A-38-53022",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 38,
+        "asset_id": 13,
+        "window_end": "2023-07-03 17:30:00"
+      },
+      "window": {
+        "end_time": "2023-07-03 17:30:00",
+        "start_time": "2023-07-03 11:30:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 14.627,
+        "wind_speed_std": 1.7435,
+        "wind_speed_max": 39.1,
+        "power_mean": 0.9551,
+        "power_std": 0.028,
+        "rotor_rpm_mean": 14.8757,
+        "rotor_rpm_std": 0.0495,
+        "generator_rpm_mean": 1678.2568,
+        "generator_rpm_std": 4.5564,
+        "pitch_mean": 8.9054,
+        "pitch_std": 3.5191,
+        "yaw_misalignment_mean": 11.8892,
+        "yaw_misalignment_std": 9.9987,
+        "temp_mean": 71.3041
+      },
+      "derived": {
+        "power_residual_mean": -0.093,
+        "power_residual_std": 0.1135,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "power_deficit",
+        "elevated_temps"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine spent all 37 ten\u2011minute intervals in Normal Operation, producing near\u2011rated power on average (power_mean 0.955, low variability power_std 0.028) while wind was generally strong and moderately variable (wind_speed_mean 14.63, std 1.74) with a brief extreme peak (wind_speed_max 39.1). Notable patterns include a consistent power shortfall versus expectation (power_residual_mean \u22120.093) alongside sustained yaw misalignment (mean 11.89\u00b0) and elevated temperatures (temp_mean 71.30), with relatively stable rotor speed (rotor_rpm_std 0.0495) but more variable generator speed (generator_rpm_std 4.56). Pitch averaged 8.91\u00b0, consistent with controlled operation under higher winds.",
+      "class_label": "VG;MT"
+    },
+    "mechanic_notes": "Check vortex generators for missing teeth or detachment; output appears affected.",
+    "fault_images_description": "Vortex generator strip shows missing teeth and partial detachment along mid-span."
+  },
+  {
+    "id": "EVAL-017",
+    "scada_case": {
+      "window_id": "WF-A-38-53594",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 38,
+        "asset_id": 13,
+        "window_end": "2023-07-08 17:00:00"
+      },
+      "window": {
+        "end_time": "2023-07-08 17:00:00",
+        "start_time": "2023-07-08 11:00:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 5.7243,
+        "wind_speed_std": 0.6743,
+        "wind_speed_max": 25.8,
+        "power_mean": 0.1592,
+        "power_std": 0.0569,
+        "rotor_rpm_mean": 11.9216,
+        "rotor_rpm_std": 0.5329,
+        "generator_rpm_mean": 1345.7189,
+        "generator_rpm_std": 59.6803,
+        "pitch_mean": -1.4541,
+        "pitch_std": 0.412,
+        "yaw_misalignment_mean": 12.6,
+        "yaw_misalignment_std": 8.4688,
+        "temp_mean": 50.0135
+      },
+      "derived": {
+        "power_residual_mean": -0.0774,
+        "power_residual_std": 0.0133,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [],
+      "summary": "Over this 6\u2011hour window the turbine stayed in Normal Operation for all 37 ten\u2011minute intervals, with relatively steady production (power_mean 0.159, power_std 0.057) under generally moderate winds (wind_speed_mean 5.72, wind_speed_std 0.67). Operationally, rotor and generator speeds were fairly stable (rotor_rpm_std 0.53; generator_rpm_std 59.68) with a consistent average pitch setting (pitch_mean \u22121.45) and a notable average yaw misalignment of 12.6\u00b0. Anomalies are limited to a single extreme wind_speed_max of 25.8 and a sustained negative power residual on average (\u22120.077), while temperature remained steady around 50.0.",
+      "class_label": "Nix"
+    },
+    "mechanic_notes": "Routine inspection requested; no issues reported in SCADA.",
+    "fault_images_description": "No visible damage; blade surface appears clean."
+  },
+  {
+    "id": "EVAL-018",
+    "scada_case": {
+      "window_id": "WF-A-40-55180",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 40,
+        "asset_id": 10,
+        "window_end": "2023-01-21 12:50:00"
+      },
+      "window": {
+        "end_time": "2023-01-21 12:50:00",
+        "start_time": "2023-01-21 06:50:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 2.8297,
+        "wind_speed_std": 0.7604,
+        "wind_speed_max": 11.0,
+        "power_mean": -0.0012,
+        "power_std": 0.0004,
+        "rotor_rpm_mean": 0.0,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 5.4378,
+        "generator_rpm_std": 4.8945,
+        "pitch_mean": 89.4,
+        "pitch_std": 0.0,
+        "yaw_misalignment_mean": 71.5541,
+        "yaw_misalignment_std": 19.5788,
+        "temp_mean": 62.3784
+      },
+      "derived": {
+        "power_residual_mean": 0.0126,
+        "power_residual_std": 0.0277,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [],
+      "summary": "Over this 6\u2011hour window the turbine remained in **Downtime** for all **37** ten\u2011minute intervals, with **near\u2011zero average power** (power_mean \u2248 \u20110.0012, very low variability) despite generally low winds on average (wind_speed_mean \u2248 2.83, but with a brief spike up to 11.0). Operational signals were largely static, including **zero rotor speed variability** (rotor_rpm_std = 0) and **high mean pitch** (~89.4), while **yaw misalignment** stayed high on average (~71.6) and generator speed showed some variation (generator_rpm_std \u2248 4.89). The **power residual** was modestly positive on average (~0.0126) and temperatures averaged ~62.4.",
+      "class_label": "LE;ER"
+    },
+    "mechanic_notes": "Suspected leading edge erosion; performance drop in higher wind.",
+    "fault_images_description": "Leading edge shows erosion bands and surface roughness along the span."
+  },
+  {
+    "id": "EVAL-019",
+    "scada_case": {
+      "window_id": "WF-A-42-53265",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 42,
+        "asset_id": 10,
+        "window_end": "2023-09-16 08:30:00"
+      },
+      "window": {
+        "end_time": "2023-09-16 08:30:00",
+        "start_time": "2023-09-16 02:30:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 2.6757,
+        "wind_speed_std": 1.0377,
+        "wind_speed_max": 10.0,
+        "power_mean": -0.0042,
+        "power_std": 0.0002,
+        "rotor_rpm_mean": 0.0351,
+        "rotor_rpm_std": 0.2137,
+        "generator_rpm_mean": 7.1568,
+        "generator_rpm_std": 27.8152,
+        "pitch_mean": 88.1108,
+        "pitch_std": 8.0889,
+        "yaw_misalignment_mean": 29.1946,
+        "yaw_misalignment_std": 37.4673,
+        "temp_mean": 29.9595
+      },
+      "derived": {
+        "power_residual_mean": 0.0038,
+        "power_residual_std": 0.0665,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [],
+      "summary": "Across this 6\u2011hour window the turbine spent all 37 ten\u2011minute intervals in **Downtime**, with **near\u2011zero power** output (power_mean \u22120.0042, very low variability). Ambient conditions were generally **low wind** on average (2.68 m/s) with intermittent higher gusts (max 10 m/s), but there was no corresponding production response; pitch remained very high on average (~88\u00b0) and yaw misalignment averaged ~29\u00b0. Residual power was slightly positive (0.0038) while temperatures were stable around ~30\u00b0C, and rotor/generator speed variability was limited to modest fluctuations.",
+      "class_label": "LE;ER"
+    },
+    "mechanic_notes": "Suspected leading edge erosion; performance drop in higher wind.",
+    "fault_images_description": "Leading edge shows erosion bands and surface roughness along the span."
+  },
+  {
+    "id": "EVAL-020",
+    "scada_case": {
+      "window_id": "WF-A-45-52922",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 45,
+        "asset_id": 13,
+        "window_end": "2023-04-21 02:00:00"
+      },
+      "window": {
+        "end_time": "2023-04-21 02:00:00",
+        "start_time": "2023-04-20 20:00:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 18.427,
+        "wind_speed_std": 1.045,
+        "wind_speed_max": 43.9,
+        "power_mean": 0.9622,
+        "power_std": 0.0501,
+        "rotor_rpm_mean": 14.7784,
+        "rotor_rpm_std": 0.5159,
+        "generator_rpm_mean": 1667.6541,
+        "generator_rpm_std": 56.8487,
+        "pitch_mean": 16.3486,
+        "pitch_std": 3.0602,
+        "yaw_misalignment_mean": 7.8784,
+        "yaw_misalignment_std": 6.6931,
+        "temp_mean": 64.8108
+      },
+      "derived": {
+        "power_residual_mean": -0.1151,
+        "power_residual_std": 0.0793,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "power_deficit"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine was predominantly not generating: 37 consecutive 10\u2011minute intervals were in \u201cDowntime,\u201d despite generally steady winds on average (mean 18.43 m/s, low variability) with an isolated extreme gust to 43.9 m/s. Measured power stayed low and tight (mean 0.962, std 0.050) and the negative mean power residual (-0.115) indicates sustained underperformance versus expectation, consistent with the \u201cpower_deficit\u201d tag. Operating conditions included relatively high average pitch (16.35\u00b0), moderate mean yaw misalignment (7.88\u00b0), and a warm average temperature (64.81), with comparatively higher variability on the generator side (generator rpm std 56.85).",
+      "class_label": "LE;ER"
+    },
+    "mechanic_notes": "Suspected leading edge erosion; performance drop in higher wind.",
+    "fault_images_description": "Leading edge shows erosion bands and surface roughness along the span."
+  },
+  {
+    "id": "EVAL-021",
+    "scada_case": {
+      "window_id": "WF-A-51-53732",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 51,
+        "asset_id": 21,
+        "window_end": "2023-10-15 19:00:00"
+      },
+      "window": {
+        "end_time": "2023-10-15 19:00:00",
+        "start_time": "2023-10-15 13:00:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 15.7378,
+        "wind_speed_std": 0.7158,
+        "wind_speed_max": 36.8,
+        "power_mean": 0.9755,
+        "power_std": 0.0002,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1680.8568,
+        "generator_rpm_std": 0.3105,
+        "pitch_mean": 10.6514,
+        "pitch_std": 1.2308,
+        "yaw_misalignment_mean": 1.5838,
+        "yaw_misalignment_std": 1.2547,
+        "temp_mean": 67.027
+      },
+      "derived": {
+        "power_residual_mean": -0.1117,
+        "power_residual_std": 0.0507,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "power_deficit",
+        "elevated_temps"
+      ],
+      "summary": "Over this 6\u2011hour window, the turbine spent all 37 ten\u2011minute intervals in a Downtime state, with power essentially flat and near rated (mean 0.9755, extremely low variability) despite steady mean winds (15.74 m/s). Operational signals show limited mechanical variation (rotor RPM std 0.0; generator RPM low std 0.31) with moderate pitch (mean 10.65\u00b0) and low yaw misalignment (mean 1.58\u00b0), while anomalies include a large wind-speed spike (max 36.8 m/s), persistent negative power residual (mean \u22120.1117; power_deficit tag), and elevated temperature levels (mean 67.03; elevated_temps tag) alongside high_wind conditions.",
+      "class_label": "LR;DA"
+    },
+    "mechanic_notes": "Possible lightning receptor damage; inspect receptors and conductors.",
+    "fault_images_description": "Lightning receptor tip shows charring and minor burn marks."
+  },
+  {
+    "id": "EVAL-022",
+    "scada_case": {
+      "window_id": "WF-A-68-54076",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 68,
+        "asset_id": 11,
+        "window_end": "2023-08-11 13:10:00"
+      },
+      "window": {
+        "end_time": "2023-08-11 13:10:00",
+        "start_time": "2023-08-11 07:10:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 13.2243,
+        "wind_speed_std": 1.5354,
+        "wind_speed_max": 31.0,
+        "power_mean": 0.9348,
+        "power_std": 0.0413,
+        "rotor_rpm_mean": 14.8811,
+        "rotor_rpm_std": 0.0397,
+        "generator_rpm_mean": 1679.1973,
+        "generator_rpm_std": 2.8237,
+        "pitch_mean": 4.5541,
+        "pitch_std": 3.4989,
+        "yaw_misalignment_mean": 9.3243,
+        "yaw_misalignment_std": 7.4233,
+        "temp_mean": 67.8041
+      },
+      "derived": {
+        "power_residual_mean": 0.0631,
+        "power_residual_std": 0.0923,
+        "status_10min_interval_counts": {
+          "4": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "elevated_temps"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine was predominantly unavailable, with 37 consecutive 10\u2011minute intervals in a downtime state, so operational output was limited and relatively steady when present (power_mean \u22480.935 with low variability). Ambient conditions were generally high wind (wind_speed_mean \u224813.2, \u03c3\u22481.5) with at least one extreme gust (wind_speed_max 31) and tags indicating elevated temperatures (temp_mean \u224867.8). Control/operational indicators show moderate average pitch (\u22484.55), notable mean yaw misalignment (\u22489.32), and a positive mean power residual (\u22480.063), suggesting output tended to run above the modeled expectation during the periods with data.",
+      "class_label": "LR;DA"
+    },
+    "mechanic_notes": "Possible lightning receptor damage; inspect receptors and conductors.",
+    "fault_images_description": "Lightning receptor tip shows charring and minor burn marks."
+  },
+  {
+    "id": "EVAL-023",
+    "scada_case": {
+      "window_id": "WF-A-69-53771",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 69,
+        "asset_id": 11,
+        "window_end": "2023-09-13 19:20:00"
+      },
+      "window": {
+        "end_time": "2023-09-13 19:20:00",
+        "start_time": "2023-09-13 13:20:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 12.6514,
+        "wind_speed_std": 0.644,
+        "wind_speed_max": 30.2,
+        "power_mean": 0.9529,
+        "power_std": 0.0218,
+        "rotor_rpm_mean": 14.9,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 1681.7784,
+        "generator_rpm_std": 0.6399,
+        "pitch_mean": 3.5432,
+        "pitch_std": 1.6912,
+        "yaw_misalignment_mean": 2.4838,
+        "yaw_misalignment_std": 1.2558,
+        "temp_mean": 73.973
+      },
+      "derived": {
+        "power_residual_mean": 0.1249,
+        "power_residual_std": 0.0385,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "high_wind",
+        "elevated_temps"
+      ],
+      "summary": "Across the 6-hour window (37\u00d710\u2011min intervals), the turbine remained in Normal Operation with generally steady production: mean power 0.9529 with low variability (std 0.0218) alongside relatively stable wind (mean 12.6514, std 0.644). A notable anomaly is the single high-wind extreme (wind_speed_max 30.2) occurring within an otherwise consistent wind regime, and the period is tagged for elevated temperatures (temp_mean 73.973) with a modest positive power residual on average (power_residual_mean 0.1249). Rotor speed appears unusually constant (rotor_rpm_std 0.0) while generator speed shows slight variation (generator_rpm_std 0.6399), with average pitch 3.5432 and small mean yaw misalignment (2.4838).",
+      "class_label": "VG;MT"
+    },
+    "mechanic_notes": "Check vortex generators for missing teeth or detachment; output appears affected.",
+    "fault_images_description": "Vortex generator strip shows missing teeth and partial detachment along mid-span."
+  },
+  {
+    "id": "EVAL-024",
+    "scada_case": {
+      "window_id": "WF-A-69-54346",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 69,
+        "asset_id": 11,
+        "window_end": "2023-09-17 19:10:00"
+      },
+      "window": {
+        "end_time": "2023-09-17 19:10:00",
+        "start_time": "2023-09-17 13:10:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 5.0378,
+        "wind_speed_std": 0.5019,
+        "wind_speed_max": 28.1,
+        "power_mean": 0.0921,
+        "power_std": 0.0313,
+        "rotor_rpm_mean": 11.2622,
+        "rotor_rpm_std": 0.1831,
+        "generator_rpm_mean": 1271.2784,
+        "generator_rpm_std": 22.2012,
+        "pitch_mean": -1.1081,
+        "pitch_std": 0.4368,
+        "yaw_misalignment_mean": 2.0676,
+        "yaw_misalignment_std": 1.7893,
+        "temp_mean": 47.0743
+      },
+      "derived": {
+        "power_residual_mean": -0.0941,
+        "power_residual_std": 0.0122,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "power_deficit"
+      ],
+      "summary": "Over this 6\u2011hour window the turbine spent all 37 ten\u2011minute intervals in Normal Operation, with generally steady winds (mean 5.04 m/s, std 0.50) and low, relatively stable power output (mean 0.092, std 0.031). Operational indicators were mostly steady (small rotor RPM variability, modest yaw misalignment ~2.07\u00b0, pitch mean \u22121.11), but the window is characterized by a consistent negative power residual (mean \u22120.094) aligned with the \u201cpower_deficit\u201d tag. One notable anomaly in the summary stats is a very high reported wind speed maximum (28.1) relative to the otherwise tight wind distribution.",
+      "class_label": "Nix"
+    },
+    "mechanic_notes": "Routine inspection requested; no issues reported in SCADA.",
+    "fault_images_description": "No visible damage; blade surface appears clean."
+  },
+  {
+    "id": "EVAL-025",
+    "scada_case": {
+      "window_id": "WF-A-71-52941",
+      "source": {
+        "source": "Wind Farm A",
+        "dataset_id": 71,
+        "asset_id": 0,
+        "window_end": "2023-01-05 11:40:00"
+      },
+      "window": {
+        "end_time": "2023-01-05 11:40:00",
+        "start_time": "2023-01-05 05:40:00",
+        "row_count": 37,
+        "baseline_hours": 168,
+        "window_hours": 6
+      },
+      "stats": {
+        "wind_speed_mean": 1.2108,
+        "wind_speed_std": 0.3871,
+        "wind_speed_max": 5.2,
+        "power_mean": -0.0015,
+        "power_std": 0.0003,
+        "rotor_rpm_mean": 0.0,
+        "rotor_rpm_std": 0.0,
+        "generator_rpm_mean": 5.973,
+        "generator_rpm_std": 13.1906,
+        "pitch_mean": 24.0,
+        "pitch_std": 0.0,
+        "yaw_misalignment_mean": 76.6081,
+        "yaw_misalignment_std": 47.4456,
+        "temp_mean": 24.4392
+      },
+      "derived": {
+        "power_residual_mean": 0.1677,
+        "power_residual_std": 0.038,
+        "status_10min_interval_counts": {
+          "0": 37
+        },
+        "status_legend": {
+          "0": "Normal Operation - The turbine is in normal power production mode",
+          "1": "Derated Operation - Derated power generation with a power restriction",
+          "2": "Idling - Asset is idling and waits to operate again",
+          "3": "Service - Asset is in service mode / service team is at the site",
+          "4": "Downtime - Asset is down due a fault or other reasons",
+          "5": "Other - Other operational states"
+        }
+      },
+      "tags": [
+        "yaw_misalignment"
+      ],
+      "summary": "Across the 6\u2011hour window the turbine remained in **Normal Operation** for all 37 ten\u2011minute intervals, with generally **low and steady wind** (mean 1.21 m/s, std 0.39; max 5.2). **Power output stayed near zero and stable** (mean \u22120.0015, std 0.0003) while **rotor RPM showed no variability** (std 0.0) despite some **generator RPM variability** (std 13.19). A notable operational pattern is the **high average yaw misalignment** (mean 76.6) alongside a **positive mean power residual** (0.1677).",
+      "class_label": "SF;PO"
+    },
+    "mechanic_notes": "Surface paint loss observed; plan surface repair and protection.",
+    "fault_images_description": "Paint-off areas with exposed composite on the blade surface."
+  }
+]

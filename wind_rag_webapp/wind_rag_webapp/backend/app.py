@@ -48,6 +48,7 @@ RAG_INDEX_DIR = Path(
 SCADA_CARDS_DIR = REPO_ROOT / "Scada" / "scada_cards_out"
 SCADA_WINDOWS_META_DIR = REPO_ROOT / "Scada" / "scada_windows_meta"
 SCADA_BY_CLASS_PATH = SCADA_WINDOWS_META_DIR / "scada_windows_by_class.json"
+EVAL_CASES_PATH = REPO_ROOT / "evalution" / "cases.json"
 
 # Class code to display name mapping
 CLASS_DISPLAY_NAMES = {
@@ -545,6 +546,13 @@ def get_all_scada_cards() -> Dict[str, Any]:
             for code, name in CLASS_DISPLAY_NAMES.items()
         ],
     }
+
+
+@app.get("/api/eval/cases")
+def get_eval_cases() -> List[Dict[str, Any]]:
+    if not EVAL_CASES_PATH.exists():
+        raise HTTPException(status_code=404, detail="Eval cases not found")
+    return _load_json(EVAL_CASES_PATH)
 
 
 def retrieve(
