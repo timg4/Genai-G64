@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Wind Turbine Inspection Assistant</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/logo_tab.png" id="appFavicon" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/logo_tab_2.png" id="appFavicon" />
   <style>
     :root {
       --bg: #0c131c;
@@ -2202,7 +2202,7 @@
   function ensureFaviconImage(){
     if (!faviconState.img) {
       const img = new Image();
-      img.src = "/static/logo_tab.png";
+      img.src = "/static/logo_tab_2.png";
       faviconState.img = img;
     }
     return faviconState.img;
@@ -2267,7 +2267,7 @@
       return;
     }
     img.addEventListener("load", startTimer, { once: true });
-    img.addEventListener("error", () => setFaviconHref("/static/logo_tab.png"), { once: true });
+    img.addEventListener("error", () => setFaviconHref("/static/logo_tab_2.png"), { once: true });
   }
 
   function stopFaviconSpin(){
