@@ -1,146 +1,81 @@
-# Wind Turbine Inspection Assistant
+﻿# Wind Turbine Inspection Assistant
 
-Prototype pipeline + web UI for wind turbine blade inspection support:
-- manual retrieval (RAG) over maintenance manuals
-- SCADA case selection
-- (optional) image description + defect prompting
-- one-click run in a FastAPI-backed webapp
+A lightweight end-to-end prototype that turns a turbine incident (notes + optional image descriptions + SCADA case) into:
+- a composed retrieval query (LLM-assisted)
+- Top-K retrieved manual chunks (local FAISS + BM25 hybrid)
+- a short diagnosis + recommendation (LLM)
 
 ## Quickstart (Webapp)
 
-Windows (PowerShell) from the repo root:
+Prerequisites: Python 3.10+ and an OpenAI API key.
+
+PowerShell (from the repo root):
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 
-# Required for LLM-backed endpoints (no fallback)
 $env:OPENAI_API_KEY = "YOUR_KEY_HERE"
-
 python apps/wind_rag_webapp/backend/app.py
 ```
 
-Then open: http://127.0.0.1:8000
+Open: http://127.0.0.1:8000
 
-If `OPENAI_API_KEY` is not set, the server still starts, but LLM endpoints return an explicit error and the web UI shows a warning.
+Notes:
+- If `OPENAI_API_KEY` is not set, the server still starts, but LLM endpoints return a clear error and the UI shows a warning.
 
-## Repo layout
+## Repository Layout
 
-- `apps/wind_rag_webapp/` — FastAPI backend + static UI
-- `packages/manuals/` — manual indexing + retrieval baseline (RAG)
-- `packages/Agents/` — query builder (LLM-backed)
-- `packages/Scada/` — SCADA processing + generated cards
-- `packages/Faulty_Image_Describtion/` — optional vision prompting helpers
-- `experiments/` — evaluation + scripts (not required for running the webapp)
-- `docs/` — project docs
+- `apps/wind_rag_webapp/` – FastAPI backend + static UI (`apps/wind_rag_webapp/backend/static/index.html`)
+- `packages/manuals/` – manual indexing and retrieval (FAISS + BM25)
+- `packages/Agents/` – query builder (LLM-assisted term extraction + query pack)
+- `packages/Scada/` – SCADA processing and generated cards
+- `packages/Faulty_Image_Describtion/` – optional image description / prompting helpers
+- `experiments/` – evaluation and dataset utilities (not required to run the webapp)
+- `docs/` – project docs
 
-## Configuration
+## Manual Retrieval (RAG)
 
-The webapp backend supports overriding paths via env vars:
-- `RAG_INDEX_DIR`, `MANUALS_DIR`, `SCADA_DIR`, `FAULTY_DIR`, `EVAL_DIR`
+The webapp reads the index from `packages/manuals/manuals_index/` by default.
 
----
-
-## Legacy: Wind Turbine Blade Few-Shot Pipeline
-
-Local, offline-friendly few-shot prompting workflow for wind turbine blade defect checks with retrieval-based example selection.
-
-## Project layout
-
-```
-.
-├─ main.py
-├─ wind_fewshot/
-│  ├─ __init__.py
-│  ├─ config.py
-│  ├─ embedding.py
-│  ├─ indexer.py
-│  ├─ prompt.py
-│  ├─ retrieval.py
-│  ├─ schema.py
-│  ├─ tiling.py
-│  └─ utils.py
-├─ fewshot_bank/
-│  ├─ README.md
-│  └─ metadata.jsonl
-├─ indices/
-│  └─ .gitkeep
-└─ runs/
-   └─ .gitkeep
-```
-
-## Installation
-
-Create a virtual environment and install requirements:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-Optional (better embeddings): install PyTorch + OpenCLIP and ensure weights are cached locally.
-
-## OpenAI API key (for LLM features)
-
-Some parts of this repo (e.g. `apps/wind_rag_webapp/` and `packages/manuals/rag_cli.py --generate`) call the OpenAI API. Set `OPENAI_API_KEY` in your environment before using them.
-
-PowerShell:
+Build / rebuild the index:
 
 ```powershell
-$env:OPENAI_API_KEY = "YOUR_KEY_HERE"
+python packages/manuals/rag_cli.py build --manuals-dir "packages/manuals/manuals_text" --index-dir "packages/manuals/manuals_index" --section-chunks
 ```
 
-If `OPENAI_API_KEY` is not set, LLM-backed features return an explicit error (no fallback).
+Optional: export PDFs to text first (recommended):
 
-## Populate few-shot bank
-
-Use `fewshot_bank/metadata.jsonl` (JSONL, one object per line). See `fewshot_bank/README.md` for schema.
-
-Recommended:
-- Provide `path_full` and optionally `path_crop`.
-- Provide `gold_json` as the expected output for that example.
-- Include some `no_damage`, `look_alike`, and `uncertain` examples.
-
-## Build index
-
-```bash
-python main.py build-index --metadata fewshot_bank/metadata.jsonl --index-dir indices
+```powershell
+python packages/manuals/rag_cli.py export-txt --manuals-dir "packages/manuals/manuals_files" --out-dir "packages/manuals/manuals_text"
 ```
 
-Backends:
-- `auto` (default): tries OpenCLIP, falls back to histogram.
-- `open_clip`: use OpenCLIP only (requires local weights).
-- `histogram`: lightweight fallback.
+Quick query test:
 
-## Prepare a run
-
-```bash
-python main.py prepare-run --query path/to/query.jpg --metadata fewshot_bank/metadata.jsonl --index-dir indices --runs-dir runs
+```powershell
+python packages/manuals/rag_cli.py query --index-dir "packages/manuals/manuals_index" --query "Leading edge erosion inspection" --top-k 5
 ```
 
-Artifacts under `runs/run_YYYYMMDD_HHMMSS/`:
-- `prompt.txt`
-- `attachments.json`
-- `retrieval.json`
-- `query_tiles/`
+## SCADA Data
 
-## Model invocation
+The webapp prefers generated cards under:
+- `packages/Scada/scada_cards_out/`
+- `packages/Scada/scada_windows_meta/`
 
-Use `prompt.txt` and `attachments.json` with your vision model of choice.
-The prompt enforces JSON-only output and includes few-shot examples.
+If those are missing, it falls back to sample windows in `apps/wind_rag_webapp/backend/data/scada_samples.json`.
 
-## Validate output
+## Configuration (env vars)
 
-```bash
-python main.py validate-output --run runs/run_YYYYMMDD_HHMMSS --json path/to/model_output.json
-```
+- `OPENAI_API_KEY` – required for LLM endpoints
+- `PORT` – default `8000`
+- `RAG_INDEX_DIR` – default `packages/manuals/manuals_index`
+- `MANUALS_DIR`, `SCADA_DIR`, `FAULTY_DIR`, `EVAL_DIR` – override package locations
+- `RAG_MODEL` – sentence-transformers model (optional)
+- `RAG_ALPHA` – blend weight between embeddings and BM25 (default `0.7`)
 
-Produces `validation_report.txt`.
+## Troubleshooting
 
-## Notes
-
-- The schema requires `damage_present=false` to have empty findings.
-- If the image is ambiguous, the model must output `damage_present="uncertain"`.
-- Retrieval enforces diversity and minimum counts for no-damage and uncertain examples (if available).
+- `OPENAI_API_KEY is not set`: set the env var before starting the app.
+- `manuals directory not found` / `Missing index file`: (re)build the manual index and/or set `RAG_INDEX_DIR`.
+- If imports fail after moving folders: run from the repo root and keep the `packages/` folder intact.
