@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Wind Turbine Inspection Assistant</title>
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/logo.png" id="appFavicon" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/logo_tab.png" id="appFavicon" />
   <style>
     :root {
       --bg: #0c131c;
@@ -2164,9 +2164,12 @@
     img: null,
     canvas: null,
     ctx: null,
+    rafId: null,
+    lastTs: 0,
   };
   const FAVICON_SIZE = 64;
-  const FAVICON_SCALE = 2.6;
+  const FAVICON_SCALE = 1;
+  const FAVICON_SPIN_RATE = Math.PI * 2 * 0.9;
 
   function ensureFaviconLink(){
     let link = document.getElementById("appFavicon");
@@ -2199,7 +2202,7 @@
   function ensureFaviconImage(){
     if (!faviconState.img) {
       const img = new Image();
-      img.src = "/static/logo.png";
+      img.src = "/static/logo_tab.png";
       faviconState.img = img;
     }
     return faviconState.img;
@@ -2233,22 +2236,30 @@
   }
 
   function startFaviconSpin(){
-    if (faviconState.timer) {
+    if (faviconState.timer || faviconState.rafId) {
       return;
     }
     const img = ensureFaviconImage();
     const startTimer = () => {
-      if (faviconState.timer) {
+      if (faviconState.rafId) {
         return;
       }
       const { canvas, ctx } = ensureFaviconCanvas();
-      faviconState.timer = window.setInterval(() => {
+      const tick = (ts) => {
         if (!ctx || !canvas) {
+          faviconState.rafId = null;
           return;
         }
-        faviconState.angle = (faviconState.angle + 0.38) % (Math.PI * 2);
+        if (!faviconState.lastTs) {
+          faviconState.lastTs = ts;
+        }
+        const delta = (ts - faviconState.lastTs) / 1000;
+        faviconState.lastTs = ts;
+        faviconState.angle = (faviconState.angle + FAVICON_SPIN_RATE * delta) % (Math.PI * 2);
         drawFaviconFrame(faviconState.angle);
-      }, 50);
+        faviconState.rafId = window.requestAnimationFrame(tick);
+      };
+      faviconState.rafId = window.requestAnimationFrame(tick);
     };
 
     if (img.complete && img.naturalWidth > 0) {
@@ -2256,7 +2267,7 @@
       return;
     }
     img.addEventListener("load", startTimer, { once: true });
-    img.addEventListener("error", () => setFaviconHref("/static/logo.png"), { once: true });
+    img.addEventListener("error", () => setFaviconHref("/static/logo_tab.png"), { once: true });
   }
 
   function stopFaviconSpin(){
@@ -2264,6 +2275,11 @@
       clearInterval(faviconState.timer);
       faviconState.timer = null;
     }
+    if (faviconState.rafId) {
+      cancelAnimationFrame(faviconState.rafId);
+      faviconState.rafId = null;
+    }
+    faviconState.lastTs = 0;
     faviconState.angle = 0;
     renderFaviconStatic();
   }
