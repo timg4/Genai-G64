@@ -20,6 +20,8 @@
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: "Trebuchet MS", "Segoe UI", sans-serif;
       --display: "Trebuchet MS", "Segoe UI", sans-serif;
+      --panel-body-vh: 70vh;
+      --panel-offset: 260px;
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
@@ -34,7 +36,7 @@
     .app {
       max-width: 100%;
       margin: 0 auto;
-      padding: 16px 16px 60px;
+      padding: 16px 16px 16px;
     }
 
     .header {
@@ -259,9 +261,8 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      min-height: 560px;
-      height: 70vh;
-      max-height: 70vh;
+      height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
+      max-height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -269,7 +270,8 @@
       flex-shrink: 0;
     }
     .retrieval-wrap {
-      max-height: 70vh;
+      height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
+      max-height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -699,7 +701,23 @@
       margin: 0;
     }
     .table-controls .left { display: flex; gap: 10px; align-items: center; }
-    .range { width: 220px; }
+    .range { width: clamp(120px, 22vw, 220px); }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px) {
+      :root { --panel-offset: 320px; }
+      .header { flex-wrap: wrap; }
+      .title h1 { white-space: normal; font-size: clamp(26px, 6vw, 40px); }
+      .subtitle { font-size: clamp(14px, 3.5vw, 18px); text-indent: 0; }
+      .logo-wrap.logo-right { width: 100%; max-width: 100%; margin-left: 0; justify-content: flex-start; }
+      .logo.logo-plain { max-width: 100%; max-height: 130px; object-position: left center; }
+    }
+    @media (max-width: 520px) {
+      :root { --panel-offset: 360px; }
+      .app { padding: 12px; }
+      .card .card-h { padding: 12px 12px; }
+      .subtitle { margin-top: 6px; }
+    }
 
     /* Time range buttons */
     .time-range-section {
