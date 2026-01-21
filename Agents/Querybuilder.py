@@ -8,7 +8,7 @@ import os
 import re
 
 # -------------------------
-# PROMPT: EXTRACT TERMS (NOT FINAL QUERY)
+# PROMPT: EXTRACT TERMS (NOT FINAL QUERY )
 # -------------------------
 
 SYSTEM_PROMPT = """You are QueryComposer for a wind-turbine manuals RAG system.
