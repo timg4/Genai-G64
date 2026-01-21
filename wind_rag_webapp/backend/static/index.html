@@ -609,8 +609,9 @@
     }
     .retrieval-list-header {
       display: grid;
-      grid-template-columns: 32px 72px minmax(0, 1.4fr) 72px minmax(0, 1.6fr) 92px;
-      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 10px;
+      align-items: center;
       padding: 9px 20px;
       font-size: 9px;
       color: var(--muted);
@@ -623,6 +624,9 @@
       position: sticky;
       top: 0;
       z-index: 10;
+    }
+    .retrieval-actions-label {
+      text-align: right;
     }
     .retrieval-list {
       display: grid;
@@ -638,19 +642,71 @@
     }
     .retrieval-head {
       display: grid;
-      grid-template-columns: 32px 72px minmax(0, 1.4fr) 72px minmax(0, 1.6fr) 92px;
-      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 12px;
       align-items: start;
     }
     .retrieval-head > div {
       min-width: 0;
     }
+    .retrieval-main {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+    .retrieval-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+    }
+    .retrieval-source-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .retrieval-top-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .retrieval-bottom {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+    .meta-pill {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: inherit;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .retrieval-pages {
+      color: var(--text);
+      font-size: inherit;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
     .retrieval-source {
+      flex: 0 1 auto;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
     .retrieval-section {
+      flex: 1 1 auto;
+      min-width: 0;
       white-space: normal;
       overflow: hidden;
       overflow-wrap: anywhere;
@@ -663,9 +719,9 @@
     .retrieval-actions {
       display: flex;
       gap: 8px;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-end;
-      padding-top: 1px;
+      padding-top: 2px;
     }
     .retrieval-body {
       margin-top: 8px;
@@ -1130,12 +1186,8 @@
         </div>
         <div class="card-b panel-body retrieval-wrap" id="retrievalBody" style="padding:0;">
           <div class="retrieval-list-header">
-            <span>#</span>
-            <span>Score</span>
-            <span>Source</span>
-            <span>Pages</span>
-            <span>Section</span>
-            <span></span>
+            <span>Manual</span>
+            <span class="retrieval-actions-label">Actions</span>
           </div>
           <div class="retrieval-list" id="resultsList"></div>
         </div>
@@ -1916,16 +1968,30 @@
       const sourceRaw = String(it.source || '');
       const sectionRaw = String(it.section || '');
       const snippetRaw = String(it.snippet || '');
+      const rankLabel = `Rank ${i + 1}`;
+      const scoreLabel = `Score ${scoreText}`;
+      const pagesLabel = pages ? `Pages ${pages}` : 'Pages -';
+      const sectionLabel = sectionRaw ? `Section: ${sectionRaw}` : 'Section: -';
 
       const wrap = document.createElement('div');
       wrap.className = 'retrieval-item';
       wrap.innerHTML = `
         <div class="retrieval-head">
-          <div class="mono">${i + 1}</div>
-          <div class="mono">${escapeHtml(scoreText)}</div>
-          <div class="mono retrieval-source" title="${escapeHtml(sourceRaw)}">${escapeHtml(sourceRaw)}</div>
-          <div class="mono">${escapeHtml(pages)}</div>
-          <div class="retrieval-section" title="${escapeHtml(sectionRaw)}">${escapeHtml(sectionRaw)}</div>
+          <div class="retrieval-main">
+            <div class="retrieval-top">
+              <div class="retrieval-source-line">
+                <div class="mono retrieval-source" title="${escapeHtml(sourceRaw)}">${escapeHtml(sourceRaw)}</div>
+                <div class="mono retrieval-pages">${escapeHtml(pagesLabel)}</div>
+              </div>
+              <div class="retrieval-top-meta">
+                <span class="meta-pill mono">${escapeHtml(rankLabel)}</span>
+                <span class="meta-pill mono">${escapeHtml(scoreLabel)}</span>
+              </div>
+            </div>
+            <div class="retrieval-bottom">
+              <div class="retrieval-section" title="${escapeHtml(sectionRaw)}">${escapeHtml(sectionLabel)}</div>
+            </div>
+          </div>
           <div class="retrieval-actions">
             ${chunkId ? `<button type="button" class="btn-mini chunk-toggle">Show text</button>` : ``}
           </div>
