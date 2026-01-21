@@ -300,7 +300,7 @@ def recommend_actions(context: Dict[str, Any], retrieved: List[Dict[str, Any]]) 
             {"role": "system", "content": SYSTEM_PROMPT_RECOMMEND},
             {"role": "user", "content": json.dumps(user_msg, ensure_ascii=False)},
         ],
-        max_output_tokens=700,
+        max_output_tokens=1500,
     )
 
     return resp.output_text.strip()
