@@ -373,6 +373,9 @@
       align-items: center;
       gap: 8px;
     }
+    .msg.diagnosis-card .m-h .right .pill {
+      display: none;
+    }
     .collapse-btn {
       border: 1px solid var(--border);
       background: rgba(255,255,255,.03);
@@ -531,6 +534,30 @@
       display: grid;
       gap: 12px;
     }
+    .archive-image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .archive-image {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+    .archive-image img {
+      width: 100%;
+      height: 140px;
+      object-fit: contain;
+      display: block;
+      background: #0b1118;
+    }
+    .archive-image-name {
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-all;
+    }
     .image-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -609,8 +636,9 @@
     }
     .retrieval-list-header {
       display: grid;
-      grid-template-columns: 32px 72px minmax(0, 1.4fr) 72px minmax(0, 1.6fr) 92px;
-      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 10px;
+      align-items: center;
       padding: 9px 20px;
       font-size: 9px;
       color: var(--muted);
@@ -623,6 +651,9 @@
       position: sticky;
       top: 0;
       z-index: 10;
+    }
+    .retrieval-actions-label {
+      text-align: right;
     }
     .retrieval-list {
       display: grid;
@@ -638,19 +669,71 @@
     }
     .retrieval-head {
       display: grid;
-      grid-template-columns: 32px 72px minmax(0, 1.4fr) 72px minmax(0, 1.6fr) 92px;
-      gap: 8px;
+      grid-template-columns: minmax(0, 1fr) 92px;
+      gap: 12px;
       align-items: start;
     }
     .retrieval-head > div {
       min-width: 0;
     }
+    .retrieval-main {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+    .retrieval-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      min-width: 0;
+    }
+    .retrieval-source-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .retrieval-top-meta {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .retrieval-bottom {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+    .meta-pill {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: inherit;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .retrieval-pages {
+      color: var(--text);
+      font-size: inherit;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
     .retrieval-source {
+      flex: 0 1 auto;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
     .retrieval-section {
+      flex: 1 1 auto;
+      min-width: 0;
       white-space: normal;
       overflow: hidden;
       overflow-wrap: anywhere;
@@ -663,9 +746,9 @@
     .retrieval-actions {
       display: flex;
       gap: 8px;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-end;
-      padding-top: 1px;
+      padding-top: 2px;
     }
     .retrieval-body {
       margin-top: 8px;
@@ -996,7 +1079,7 @@
     <div class="grid">
       <!-- INPUTS -->
       <div class="card">
-        <div class="card-h"><h2>Inputs</h2><span class="pill" id="statusPill">idle</span></div>
+        <div class="card-h"><h2>Inputs</h2></div>
         <div class="card-b">
           <label>Mechanic notes (optional)</label>
           <textarea id="mechanicNotes" placeholder="e.g., customer report, recent maintenance, observed behavior..."></textarea>
@@ -1088,7 +1171,6 @@
             <span class="spinner"></span>
             Inspecting image
           </div>
-          <span class="pill" id="modelPill">model: auto</span>
         </div>
       </div>
       <div class="card-b chat-wrap" id="chatWrap">
@@ -1119,7 +1201,6 @@
       <div class="card">
         <div class="card-h">
           <h2>Top Retrieved Manuals</h2>
-          <button class="collapse-btn" type="button" data-target="retrievalBody" aria-label="Collapse"></button>
           <div class="table-controls">
             <div class="left">
               <span class="small">Show</span>
@@ -1127,15 +1208,12 @@
               <span class="pill" id="rangeLabel">10</span>
             </div>
           </div>
+          <button class="collapse-btn" type="button" data-target="retrievalBody" aria-label="Collapse"></button>
         </div>
         <div class="card-b panel-body retrieval-wrap" id="retrievalBody" style="padding:0;">
           <div class="retrieval-list-header">
-            <span>#</span>
-            <span>Score</span>
-            <span>Source</span>
-            <span>Pages</span>
-            <span>Section</span>
-            <span></span>
+            <span>Manual</span>
+            <span class="retrieval-actions-label">Actions</span>
           </div>
           <div class="retrieval-list" id="resultsList"></div>
         </div>
@@ -1167,7 +1245,11 @@
 
 
   function setStatus(text){
-    el('statusPill').textContent = text;
+    const pill = el('statusPill');
+    if (!pill) {
+      return;
+    }
+    pill.textContent = text;
   }
 
   function setInspecting(isInspecting){
@@ -1309,6 +1391,16 @@
       const riskHtml = renderRiskPillHtml(state.lastDiagnosisRiskCode);
       parts.push(`<strong>Diagnosis</strong><br>${riskHtml}<br>${diagHtml}`);
     }
+    const imageItems = (state.files || []).filter((f) => f && f.data_url);
+    if (imageItems.length) {
+      const imagesHtml = imageItems.map((f) => `
+        <div class="archive-image">
+          <img src="${f.data_url}" alt="${escapeHtml(f.name || "uploaded image")}" />
+          <div class="archive-image-name">${escapeHtml(f.name || "uploaded image")}</div>
+        </div>
+      `).join("");
+      parts.push(`<strong>Uploaded images</strong><br><div class="archive-image-grid">${imagesHtml}</div>`);
+    }
     if (recoHtml) {
       parts.push(`<strong>Recommendation</strong><br>${recoHtml}`);
     }
@@ -1324,6 +1416,7 @@
       btn.classList.add("is-collapsed");
       btn.setAttribute("aria-label", "Expand");
     }
+    document.querySelectorAll(".msg.has-image").forEach((msg) => msg.remove());
     state.lastDiagnosisHtml = "";
     state.lastDiagnosisRiskCode = null;
     if (state.lastDiagnosisMessage && state.lastDiagnosisMessage.isConnected) {
@@ -1344,7 +1437,6 @@
         </div>
         <div class="right">
           <button class="collapse-btn" type="button" aria-label="Collapse"></button>
-          <span class="pill">${role}</span>
         </div>
       </div>
       <div class="m-b" id="msg_${Date.now()}">${body}</div>
@@ -1400,7 +1492,7 @@
     wrap.classList.add("has-image");
     const btn = wrap.querySelector(".inspect-btn");
     if (btn) {
-      btn.onclick = () => inspectSingleImage(item.id);
+      btn.onclick = () => inspectOrEditImage(item.id);
     }
     const acceptBtn = wrap.querySelector(".accept-btn");
     if (acceptBtn) {
@@ -1440,8 +1532,6 @@
           <div class="file-name">${f.name || 'image'}</div>
           <button class="btn-mini" data-idx="${idx}">Remove</button>
         </div>
-        <div style="height:8px;"></div>
-        <input type="text" placeholder="Text description that will be sent" value="${escapeHtml(f.desc || '')}" data-desc-idx="${idx}" />
       `;
       item.querySelector('button').onclick = () => {
         state.files.splice(idx, 1);
@@ -1449,12 +1539,6 @@
         renderFileList();
         updateInspectStatus();
       };
-      item.querySelector('input').oninput = (e) => {
-        state.files[idx].desc = e.target.value;
-      };
-      if (f.use === false) {
-        item.querySelector('input').disabled = true;
-      }
       list.appendChild(item);
     });
   }
@@ -1641,6 +1725,7 @@
       return;
     }
     const rolePill = right.querySelector(".pill");
+    const collapseBtn = right.querySelector(".collapse-btn");
 
     let pill = messageWrap.querySelector(".risk-pill");
     if (!pill) {
@@ -1648,6 +1733,8 @@
       pill.className = "risk-pill";
       if (rolePill) {
         right.insertBefore(pill, rolePill);
+      } else if (collapseBtn) {
+        right.insertBefore(pill, collapseBtn);
       } else {
         right.appendChild(pill);
       }
@@ -1916,16 +2003,30 @@
       const sourceRaw = String(it.source || '');
       const sectionRaw = String(it.section || '');
       const snippetRaw = String(it.snippet || '');
+      const rankLabel = `Rank ${i + 1}`;
+      const scoreLabel = `Score ${scoreText}`;
+      const pagesLabel = pages ? `Pages ${pages}` : 'Pages -';
+      const sectionLabel = sectionRaw ? `Section: ${sectionRaw}` : 'Section: -';
 
       const wrap = document.createElement('div');
       wrap.className = 'retrieval-item';
       wrap.innerHTML = `
         <div class="retrieval-head">
-          <div class="mono">${i + 1}</div>
-          <div class="mono">${escapeHtml(scoreText)}</div>
-          <div class="mono retrieval-source" title="${escapeHtml(sourceRaw)}">${escapeHtml(sourceRaw)}</div>
-          <div class="mono">${escapeHtml(pages)}</div>
-          <div class="retrieval-section" title="${escapeHtml(sectionRaw)}">${escapeHtml(sectionRaw)}</div>
+          <div class="retrieval-main">
+            <div class="retrieval-top">
+              <div class="retrieval-source-line">
+                <div class="mono retrieval-source" title="${escapeHtml(sourceRaw)}">${escapeHtml(sourceRaw)}</div>
+                <div class="mono retrieval-pages">${escapeHtml(pagesLabel)}</div>
+              </div>
+              <div class="retrieval-top-meta">
+                <span class="meta-pill mono">${escapeHtml(rankLabel)}</span>
+                <span class="meta-pill mono">${escapeHtml(scoreLabel)}</span>
+              </div>
+            </div>
+            <div class="retrieval-bottom">
+              <div class="retrieval-section" title="${escapeHtml(sectionRaw)}">${escapeHtml(sectionLabel)}</div>
+            </div>
+          </div>
           <div class="retrieval-actions">
             ${chunkId ? `<button type="button" class="btn-mini chunk-toggle">Show text</button>` : ``}
           </div>
@@ -2013,6 +2114,13 @@
       "Diagnosis",
       "<span class=\"spinner\"></span> Generating diagnosis..."
     );
+    if (wrap) {
+      wrap.classList.add("diagnosis-card");
+      const rolePill = wrap.querySelector(".m-h .right .pill");
+      if (rolePill) {
+        rolePill.remove();
+      }
+    }
     state.lastDiagnosisMessage = wrap;
     state.lastDiagnosisRiskCode = null;
     setMessageRiskPill(wrap, "not_classified");
@@ -2126,10 +2234,6 @@
       const rec = data.recommendation_markdown || '(no recommendation)';
       setCurrentRecommendation(renderMarkdownSimple(rec), false);
 
-      if(data.query_pack && data.query_pack.query){
-        el('modelPill').textContent = `query ready`;
-      }
-
       renderResultsTable(data.retrieved || []);
 
     } catch (e) {
@@ -2205,6 +2309,32 @@
     }
   }
 
+  function inspectOrEditImage(imageId){
+    const target = state.files.find((f) => f.id === imageId);
+    if (!target) {
+      return;
+    }
+    if (target.inspected) {
+      editImageDescription(imageId);
+      return;
+    }
+    inspectSingleImage(imageId);
+  }
+
+  function editImageDescription(imageId){
+    const target = state.files.find((f) => f.id === imageId);
+    if (!target) {
+      return;
+    }
+    const current = target.desc || "";
+    const next = window.prompt("Edit description", current);
+    if (next === null) {
+      return;
+    }
+    target.desc = next.trim();
+    updateInspectStatus();
+  }
+
   function acceptImage(imageId){
     const target = state.files.find((f) => f.id === imageId);
     if (!target) {
@@ -2254,7 +2384,7 @@
     document.querySelectorAll(".inspect-btn").forEach((btn) => {
       const imageId = btn.getAttribute("data-image-id");
       const item = state.files.find((f) => f.id === imageId);
-      const approved = !!item?.approved;
+      const inspected = !!item?.inspected;
       const isLoading = state.inspectingImageId === imageId;
       btn.classList.toggle("is-loading", isLoading);
       if (isLoading) {
@@ -2262,7 +2392,7 @@
         btn.disabled = true;
         return;
       }
-      btn.textContent = approved ? "Re-inspect image" : "Inspect image";
+      btn.textContent = inspected ? "Edit manually" : "Inspect image";
       btn.disabled = false;
     });
     document.querySelectorAll(".accept-btn").forEach((btn) => {
