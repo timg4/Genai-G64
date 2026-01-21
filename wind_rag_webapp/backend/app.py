@@ -67,7 +67,7 @@ TOKEN_RE = re.compile(r"[A-Za-z0-9_]+")
 # -----------------------------
 
 def _missing_openai_key_detail() -> str:
-    return "Kein OPENAI_API_KEY gesetzt. Bitte setze OPENAI_API_KEY (siehe README.md im Repo-Root)."
+    return "OPENAI_API_KEY is not set. Please set OPENAI_API_KEY (see README.md in the repository root)."
 
 
 def _require_openai_api_key() -> str:
@@ -77,14 +77,14 @@ def _require_openai_api_key() -> str:
     if OpenAI is None:
         raise HTTPException(
             status_code=500,
-            detail="Python package 'openai' is not available. Install requirements (siehe README.md im Repo-Root).",
+            detail="Python package 'openai' is not available. Install requirements (see README.md in the repository root).",
         )
     return api_key
 
 
 if not os.environ.get("OPENAI_API_KEY"):
     print(
-        "[WARN] Kein OPENAI_API_KEY gesetzt. LLM-Endpunkte liefern einen Fehler. Siehe README.md im Repo-Root.",
+        "[WARN] OPENAI_API_KEY is not set. LLM endpoints will return an error. See README.md in the repository root.",
         file=sys.stderr,
     )
 
@@ -154,6 +154,16 @@ class RunResponse(BaseModel):
     query_pack: Dict[str, Any]
     recommendation_markdown: str
     retrieved: List[RetrievedChunk]
+
+
+class ChunkDetailResponse(BaseModel):
+    chunk_id: str
+    source: str = ""
+    page: int = 0
+    page_end: int = 0
+    section: Optional[str] = None
+    chunk_kind: Optional[str] = None
+    text: str
 
 
 
@@ -353,6 +363,13 @@ if MANUALS_DIR.exists():
 else:
     RAG_INIT_ERROR = "manuals/ directory not found; cannot load RAG index."
 
+CHUNK_BY_ID: Dict[str, Dict[str, Any]] = {}
+if RETRIEVER is not None and not RAG_INIT_ERROR:
+    for item in getattr(RETRIEVER, "metadata", []) or []:
+        chunk_id = item.get("chunk_id")
+        if chunk_id:
+            CHUNK_BY_ID[str(chunk_id)] = item
+
 
 # -----------------------------
 # Faulty image description integration (optional)
@@ -484,7 +501,7 @@ def api_status() -> Dict[str, Any]:
     if not key_set:
         warning = _missing_openai_key_detail()
     elif not openai_available:
-        warning = "Python package 'openai' is not available (siehe README.md im Repo-Root)."
+        warning = "Python package 'openai' is not available (see README.md in the repository root)."
     return {
         "openai_api_key_set": key_set,
         "openai_available": openai_available,
@@ -576,6 +593,27 @@ def get_eval_cases() -> List[Dict[str, Any]]:
     if not EVAL_CASES_PATH.exists():
         raise HTTPException(status_code=404, detail="Eval cases not found")
     return _load_json(EVAL_CASES_PATH)
+
+
+@app.get("/api/chunk/{chunk_id}", response_model=ChunkDetailResponse)
+def get_chunk(chunk_id: str) -> ChunkDetailResponse:
+    if RAG_INIT_ERROR or RETRIEVER is None:
+        raise HTTPException(status_code=500, detail=RAG_INIT_ERROR or "RAG unavailable")
+    meta = CHUNK_BY_ID.get(chunk_id)
+    if not meta:
+        raise HTTPException(status_code=404, detail="Unknown chunk_id")
+    page = int(meta.get("page") or 0)
+    page_end_raw = meta.get("page_end")
+    page_end = int(page_end_raw) if page_end_raw is not None else page
+    return ChunkDetailResponse(
+        chunk_id=chunk_id,
+        source=str(meta.get("source") or ""),
+        page=page,
+        page_end=page_end,
+        section=meta.get("section"),
+        chunk_kind=meta.get("chunk_kind"),
+        text=str(meta.get("text") or ""),
+    )
 
 
 def retrieve(

@@ -34,7 +34,7 @@
     .app {
       max-width: 100%;
       margin: 0 auto;
-      padding: 24px 24px 60px;
+      padding: 16px 16px 60px;
     }
 
     .header {
@@ -107,7 +107,7 @@
 
     .grid {
       display: grid;
-      grid-template-columns: minmax(280px, 1fr) minmax(360px, 2fr) minmax(320px, 1.2fr);
+      grid-template-columns: minmax(280px, 1fr) minmax(360px, 2.2fr) minmax(340px, 1.5fr);
       gap: 16px;
       align-items: start;
     }
@@ -271,6 +271,7 @@
     .retrieval-wrap {
       max-height: 70vh;
       overflow-y: auto;
+      overflow-x: hidden;
     }
     .current-input {
       border: 1px solid var(--border);
@@ -306,7 +307,7 @@
       padding: 12px;
       background: rgba(0,0,0,.22);
       color: var(--text);
-      font-size: 13px;
+      font-size: 16px;
       line-height: 1.5;
       max-height: none;
       overflow: visible;
@@ -578,6 +579,105 @@
     th { font-size: 12px; color: var(--muted); font-weight: 600; background: rgba(0,0,0,.10); }
     td { font-size: 13px; }
     .snippet { color: var(--muted); font-size: 12px; }
+    .snippet-row { display: flex; gap: 10px; align-items: flex-start; justify-content: space-between; }
+    .chunk-toggle { white-space: nowrap; }
+    .chunk-detail td { padding-top: 0; }
+    .chunk-detail-inner {
+      margin: 8px 0 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,.16);
+    }
+    .chunk-detail-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .chunk-meta { font-size: 11px; color: var(--muted); }
+    .chunk-text {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+    }
+    .retrieval-list-header {
+      display: grid;
+      grid-template-columns: 32px 72px minmax(0, 1.4fr) 72px minmax(0, 1.6fr) 92px;
+      gap: 8px;
+      padding: 9px 20px;
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      box-shadow: 0 8px 20px rgba(0,0,0,.22);
+      backdrop-filter: blur(6px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .retrieval-list {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+    }
+    .retrieval-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,.14);
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+    .retrieval-head {
+      display: grid;
+      grid-template-columns: 32px 72px minmax(0, 1.4fr) 72px minmax(0, 1.6fr) 92px;
+      gap: 8px;
+      align-items: start;
+    }
+    .retrieval-head > div {
+      min-width: 0;
+    }
+    .retrieval-source {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .retrieval-section {
+      white-space: normal;
+      overflow: hidden;
+      overflow-wrap: anywhere;
+      line-height: 1.2;
+      font-size: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .retrieval-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 1px;
+    }
+    .retrieval-body {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      display: grid;
+      gap: 10px;
+    }
+    .retrieval-snippet {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
     .warn { color: var(--danger); font-size: 12px; }
     .warn-box {
       margin: 12px 0 16px;
@@ -596,7 +696,7 @@
       gap: 10px;
       align-items: center;
       justify-content: space-between;
-      margin: 8px 0 0;
+      margin: 0;
     }
     .table-controls .left { display: flex; gap: 10px; align-items: center; }
     .range { width: 220px; }
@@ -985,13 +1085,6 @@
           </div>
           <div id="currentInputBody" class="panel-body"></div>
         </div>
-        <div class="current-query" id="currentQuery" style="display:none;">
-          <div class="panel-h">
-            <div class="label">Query</div>
-            <button class="collapse-btn" type="button" data-target="currentQueryBody" aria-label="Collapse"></button>
-          </div>
-          <div id="currentQueryBody" class="panel-body mono"></div>
-        </div>
         <div class="current-reco" id="currentReco" style="display:none;">
           <div class="panel-h">
             <div class="label">Recommendation</div>
@@ -1007,7 +1100,7 @@
       <!-- RETRIEVAL -->
       <div class="card">
         <div class="card-h">
-          <h2>Top retrieved manual chunks</h2>
+          <h2>Top Retrieved Manuals</h2>
           <button class="collapse-btn" type="button" data-target="retrievalBody" aria-label="Collapse"></button>
           <div class="table-controls">
             <div class="left">
@@ -1018,19 +1111,15 @@
           </div>
         </div>
         <div class="card-b panel-body retrieval-wrap" id="retrievalBody" style="padding:0;">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Score</th>
-                <th>Source</th>
-                <th>Pages</th>
-                <th>Section</th>
-                <th>Snippet</th>
-              </tr>
-            </thead>
-            <tbody id="resultsBody"></tbody>
-          </table>
+          <div class="retrieval-list-header">
+            <span>#</span>
+            <span>Score</span>
+            <span>Source</span>
+            <span>Pages</span>
+            <span>Section</span>
+            <span></span>
+          </div>
+          <div class="retrieval-list" id="resultsList"></div>
         </div>
       </div>
     </div>
@@ -1053,6 +1142,7 @@
     lastDiagnosisMessage: null,
     runToken: 0,
     apiKeyWarning: "",
+    chunkTextCache: {},
   };
 
   function el(id){ return document.getElementById(id); }
@@ -1123,7 +1213,7 @@
       }
       const data = await resp.json();
       const hasKey = !!data?.openai_api_key_set;
-      state.apiKeyWarning = hasKey ? "" : String(data?.warning || "Kein OPENAI_API_KEY gesetzt. Siehe README.md im Repo-Root.");
+      state.apiKeyWarning = hasKey ? "" : String(data?.warning || "OPENAI_API_KEY is not set. See README.md in the repository root.");
 
       const runBtn = el('runBtn');
       if (runBtn) {
@@ -1144,29 +1234,6 @@
       return;
     }
     const safe = escapeHtml(text || '').replace(/\n/g, '<br>');
-    if (!safe.trim()) {
-      wrap.style.display = 'none';
-      body.innerHTML = '';
-      updateChatMetrics();
-      return;
-    }
-    wrap.style.display = 'block';
-    body.innerHTML = safe;
-    body.classList.remove("collapsed");
-    if (wrap.dataset.runToken !== String(state.runToken)) {
-      moveConversationItemToTop(wrap);
-      wrap.dataset.runToken = String(state.runToken);
-    }
-    updateChatMetrics();
-  }
-
-  function setCurrentQuery(text){
-    const wrap = el('currentQuery');
-    const body = el('currentQueryBody');
-    if (!wrap || !body) {
-      return;
-    }
-    const safe = escapeHtml(text || '');
     if (!safe.trim()) {
       wrap.style.display = 'none';
       body.innerHTML = '';
@@ -1806,20 +1873,119 @@
     state.lastResults = items || [];
     const showN = Math.max(1, Math.min(10, parseInt(el('showRows').value || '10', 10)));
 
-    const body = el('resultsBody');
-    body.innerHTML = '';
+    const list = el('resultsList');
+    if (!list) {
+      return;
+    }
+    list.innerHTML = '';
 
-    (state.lastResults.slice(0, showN)).forEach((it, i) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${i+1}</td>
-        <td class="mono">${(it.score ?? 0).toFixed ? it.score.toFixed(3) : it.score}</td>
-        <td class="mono">${escapeHtml(it.source)}</td>
-        <td class="mono">${it.page}-${it.page_end}</td>
-        <td>${escapeHtml(it.section || '')}</td>
-        <td class="snippet">${escapeHtml(it.snippet || '')}</td>
+    const visible = state.lastResults.slice(0, showN);
+    if (!visible.length) {
+      const empty = document.createElement('div');
+      empty.className = 'small';
+      empty.textContent = 'No results yet.';
+      list.appendChild(empty);
+      return;
+    }
+
+    visible.forEach((it, i) => {
+      const chunkId = String(it.chunk_id || '');
+      const scoreNum = Number(it.score);
+      const scoreText = Number.isFinite(scoreNum) ? scoreNum.toFixed(3) : String(it.score ?? '');
+      const page = it.page ?? '';
+      const pageEnd = it.page_end ?? it.page ?? '';
+      const pages = `${page}-${pageEnd}`;
+      const sourceRaw = String(it.source || '');
+      const sectionRaw = String(it.section || '');
+      const snippetRaw = String(it.snippet || '');
+
+      const wrap = document.createElement('div');
+      wrap.className = 'retrieval-item';
+      wrap.innerHTML = `
+        <div class="retrieval-head">
+          <div class="mono">${i + 1}</div>
+          <div class="mono">${escapeHtml(scoreText)}</div>
+          <div class="mono retrieval-source" title="${escapeHtml(sourceRaw)}">${escapeHtml(sourceRaw)}</div>
+          <div class="mono">${escapeHtml(pages)}</div>
+          <div class="retrieval-section" title="${escapeHtml(sectionRaw)}">${escapeHtml(sectionRaw)}</div>
+          <div class="retrieval-actions">
+            ${chunkId ? `<button type="button" class="btn-mini chunk-toggle">Show text</button>` : ``}
+          </div>
+        </div>
+        <div class="retrieval-body">
+          <div class="retrieval-snippet">${escapeHtml(snippetRaw)}</div>
+          ${
+            chunkId
+              ? `<div class="chunk-detail-inner" style="display:none" data-chunk-id="${escapeHtml(chunkId)}">
+                  <div class="chunk-detail-actions">
+                    <span class="chunk-meta mono">${escapeHtml(chunkId)}</span>
+                    <button type="button" class="btn-mini copy-chunk" disabled>Copy</button>
+                  </div>
+                  <pre class="chunk-text">Loading...</pre>
+                </div>`
+              : ``
+          }
+        </div>
       `;
-      body.appendChild(tr);
+
+      list.appendChild(wrap);
+
+      if (!chunkId) {
+        return;
+      }
+
+      const toggleBtn = wrap.querySelector('.chunk-toggle');
+      const detail = wrap.querySelector('.chunk-detail-inner');
+      const pre = wrap.querySelector('.chunk-text');
+      const copyBtn = wrap.querySelector('.copy-chunk');
+      if (!toggleBtn || !detail || !pre || !copyBtn) {
+        return;
+      }
+
+      toggleBtn.onclick = async () => {
+        const isOpen = detail.style.display !== 'none';
+        if (isOpen) {
+          detail.style.display = 'none';
+          toggleBtn.textContent = 'Show text';
+          return;
+        }
+
+        detail.style.display = 'block';
+        toggleBtn.textContent = 'Hide text';
+
+        if (detail.dataset.loaded === 'true') {
+          return;
+        }
+
+        try {
+          let cached = state.chunkTextCache[chunkId];
+          if (!cached) {
+            pre.textContent = 'Loading...';
+            const resp = await fetch(`/api/chunk/${encodeURIComponent(chunkId)}`);
+            const data = await resp.json();
+            if (!resp.ok) {
+              throw new Error(data?.detail || 'Failed to load chunk text');
+            }
+            cached = data;
+            state.chunkTextCache[chunkId] = data;
+          }
+
+          const text = String(cached?.text || '');
+          pre.textContent = text || '(empty)';
+          copyBtn.disabled = !text;
+          copyBtn.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText(text);
+            } catch (e) {
+              return;
+            }
+          };
+          detail.dataset.loaded = 'true';
+        } catch (e) {
+          pre.textContent = `Failed to load text: ${e.message}`;
+          copyBtn.disabled = true;
+        }
+      };
     });
   }
 
@@ -1868,10 +2034,6 @@
 
   async function run(){
     showWarn('');
-    setStatus('running');
-    setRunning(true);
-    el('runBtn').disabled = true;
-    state.runToken += 1;
 
     let mechanicNotes = el('mechanicNotes').value || '';
     const scadaEnabled = el('scadaToggle').checked;
@@ -1886,16 +2048,24 @@
     const imageTargets = state.files
       .filter(f => f.use !== false && !!f.data_url);
 
+    const pending = imageTargets.filter((f) => !f.approved);
+    if (pending.length) {
+      showWarn("Please inspect and accept or reject each image before running.");
+      setStatus("confirm");
+      updateInspectStatus();
+      return;
+    }
+
+    setStatus('running');
+    setRunning(true);
+    el('runBtn').disabled = true;
+    state.runToken += 1;
+
     const imageFiles = imageTargets
       .map(f => ({ name: f.name || 'image', data_url: f.data_url }));
 
     let placeholder = null;
     try {
-      const pending = imageTargets.filter((f) => !f.approved);
-      if (pending.length) {
-        throw new Error("Please inspect and accept each image before running.");
-      }
-
       const userSummary = [
         mechanicNotes && `Mechanic notes: ${mechanicNotes}`,
         scadaId && `SCADA: ${scadaId}`,
@@ -1940,9 +2110,6 @@
 
       if(data.query_pack && data.query_pack.query){
         el('modelPill').textContent = `query ready`;
-        setCurrentQuery(data.query_pack.query);
-      } else {
-        setCurrentQuery('');
       }
 
       renderResultsTable(data.retrieved || []);
@@ -2004,7 +2171,6 @@
       target.approved = false;
       state.reviewTargetId = imageId;
       renderFileList();
-      showWarn("Bitte die Bildbeschreibungen pruefen und bestaetigen.");
       setStatus("confirm");
     } catch (e) {
       showWarn(e.message);
