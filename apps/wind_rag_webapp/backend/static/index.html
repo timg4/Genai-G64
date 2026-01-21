@@ -1383,8 +1383,12 @@
             <div id="imageMockSection" class="scada-section collapsed image-mock-section">
               <label>Image set</label>
               <div class="btn-row">
-                <button type="button" class="btn-secondary active" id="imageSetLabeled">Labeled</button>
-                <button type="button" class="btn-secondary" id="imageSetUnlabeled">Unlabeled</button>
+                <button type="button" class="btn-secondary active" id="imageSetUnlabeled">Unlabeled</button>
+                <button type="button" class="btn-secondary" id="imageSetLabeled">Labeled</button>
+              </div>
+              <div class="small" id="imageLabeledDisclaimer" style="margin-top:6px; display:none;">
+                Labeled data simulates images labeled by a model (e.g., YOLO) after upload. We did not implement this;
+                we use pre-labeled images instead.
               </div>
               <div class="small" id="imageMockCount" style="margin-top:6px;">0 selected</div>
               <div class="mock-image-grid" id="mockImageGrid"></div>
@@ -1465,7 +1469,7 @@
     mockDataPending: false,
     mockImageConfirmed: false,
     mockImagePending: false,
-    mockImageDataset: "labeled",
+    mockImageDataset: "unlabeled",
     mockImageOptions: [],
     mockImageSelected: new Set(),
     hasApiKey: true,
@@ -3154,12 +3158,20 @@
     };
     const setImageDataset = (dataset) => {
       state.mockImageDataset = dataset;
+      const labeledDisclaimer = el('imageLabeledDisclaimer');
+      if (labeledDisclaimer) {
+        labeledDisclaimer.style.display = dataset === 'labeled' ? 'block' : 'none';
+      }
       if (imageSetLabeled && imageSetUnlabeled) {
         imageSetLabeled.classList.toggle('active', dataset === 'labeled');
         imageSetUnlabeled.classList.toggle('active', dataset === 'unlabeled');
       }
       loadMockImages(dataset);
     };
+    const labeledDisclaimer = el('imageLabeledDisclaimer');
+    if (labeledDisclaimer) {
+      labeledDisclaimer.style.display = state.mockImageDataset === 'labeled' ? 'block' : 'none';
+    }
     if (scadaToggle) {
       scadaToggle.checked = false;
     }
