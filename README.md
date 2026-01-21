@@ -1,4 +1,48 @@
-# Wind Turbine Blade Few-Shot Pipeline
+# Wind Turbine Inspection Assistant
+
+Prototype pipeline + web UI for wind turbine blade inspection support:
+- manual retrieval (RAG) over maintenance manuals
+- SCADA case selection
+- (optional) image description + defect prompting
+- one-click run in a FastAPI-backed webapp
+
+## Quickstart (Webapp)
+
+Windows (PowerShell) from the repo root:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+
+# Required for LLM-backed endpoints (no fallback)
+$env:OPENAI_API_KEY = "YOUR_KEY_HERE"
+
+python apps/wind_rag_webapp/backend/app.py
+```
+
+Then open: http://127.0.0.1:8000
+
+If `OPENAI_API_KEY` is not set, the server still starts, but LLM endpoints return an explicit error and the web UI shows a warning.
+
+## Repo layout
+
+- `apps/wind_rag_webapp/` — FastAPI backend + static UI
+- `packages/manuals/` — manual indexing + retrieval baseline (RAG)
+- `packages/Agents/` — query builder (LLM-backed)
+- `packages/Scada/` — SCADA processing + generated cards
+- `packages/Faulty_Image_Describtion/` — optional vision prompting helpers
+- `experiments/` — evaluation + scripts (not required for running the webapp)
+- `docs/` — project docs
+
+## Configuration
+
+The webapp backend supports overriding paths via env vars:
+- `RAG_INDEX_DIR`, `MANUALS_DIR`, `SCADA_DIR`, `FAULTY_DIR`, `EVAL_DIR`
+
+---
+
+## Legacy: Wind Turbine Blade Few-Shot Pipeline
 
 Local, offline-friendly few-shot prompting workflow for wind turbine blade defect checks with retrieval-based example selection.
 
@@ -40,7 +84,7 @@ Optional (better embeddings): install PyTorch + OpenCLIP and ensure weights are 
 
 ## OpenAI API key (for LLM features)
 
-Some parts of this repo (e.g. `wind_rag_webapp/` and `manuals/rag_cli.py --generate`) call the OpenAI API. Set `OPENAI_API_KEY` in your environment before using them.
+Some parts of this repo (e.g. `apps/wind_rag_webapp/` and `packages/manuals/rag_cli.py --generate`) call the OpenAI API. Set `OPENAI_API_KEY` in your environment before using them.
 
 PowerShell:
 

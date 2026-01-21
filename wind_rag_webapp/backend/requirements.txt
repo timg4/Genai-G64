@@ -1,7 +1,0 @@
-faiss-cpu
-numpy
-pandas
-openai
-pypdf
-sentence-transformers
-fastapi

@@ -1,15 +1,16 @@
 # SCADA dataset
-Scada/CARE_To_Compare/
-Scada/data-09-00138-v2.pdf
+packages/Scada/CARE_To_Compare/
+packages/Scada/data-09-00138-v2.pdf
 
 # Image dataset
-Images/DTU - Drone inspection images of wind turbine/
-Images/DTU-annotations/
+experiments/Images/DTU - Drone inspection images of wind turbine/
+experiments/Images/DTU-annotations/
 
 .venv/
 __pycache__/
-wind_rag_webapp/wind_rag_webapp/backend/data/
-wind_rag_webapp/wind_rag_webapp/backend/__pycache__/
-Faulty_Image_Description/__pycache__/
-evalution/runs_eval/DJI_*
-evalution/runs_eval/DJI_*/**
+apps/wind_rag_webapp/backend/data/uploads/
+apps/wind_rag_webapp/backend/data/faulty_runs/
+apps/wind_rag_webapp/backend/__pycache__/
+packages/Faulty_Image_Describtion/__pycache__/
+experiments/evalution/runs_eval/DJI_*
+experiments/evalution/runs_eval/DJI_*/**
