@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple, Optional
 
@@ -73,7 +74,7 @@ def validate_output_file(run_dir: Path, json_path: Path) -> Path:
 
 def default_run_dir(base_dir: Path) -> Path:
     base_dir.mkdir(parents=True, exist_ok=True)
-    ts = time.strftime("%Y%m%d_%H%M%S")
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     candidate = base_dir / f"run_{ts}"
     if not candidate.exists():
         return candidate

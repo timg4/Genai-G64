@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Wind Turbine Inspection Assistant</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/logo.png" id="appFavicon" />
   <style>
     :root {
       --bg: #0c131c;
@@ -22,6 +23,7 @@
       --display: "Trebuchet MS", "Segoe UI", sans-serif;
       --panel-body-vh: 70vh;
       --panel-offset: 260px;
+      --panel-height: auto;
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
@@ -111,7 +113,8 @@
       display: grid;
       grid-template-columns: minmax(280px, 1fr) minmax(360px, 2.2fr) minmax(340px, 1.5fr);
       gap: 16px;
-      align-items: start;
+      align-items: stretch;
+      transition: grid-template-columns .35s ease;
     }
     @media (max-width: 1200px) {
       .grid { grid-template-columns: 1fr; }
@@ -123,6 +126,46 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: var(--panel-height);
+      min-height: 0;
+      transition: transform .35s ease, width .35s ease, box-shadow .35s ease;
+    }
+    .inputs-card { grid-column: 1; z-index: 2; position: relative; }
+    .conversation-card { grid-column: 2; z-index: 1; }
+    .manuals-card { grid-column: 3; z-index: 1; }
+    .scada-overlay.card {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      margin-left: 12px;
+      width: clamp(300px, 28vw, 380px);
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(12px);
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 4;
+    }
+    .scada-overlay.card.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+    @media (max-width: 1200px) {
+      .scada-overlay.card {
+        position: static;
+        width: auto;
+        height: auto;
+        margin-left: 0;
+        opacity: 1;
+        pointer-events: auto;
+        transform: none;
+      }
+      .scada-overlay.card:not(.is-open) {
+        display: none;
+      }
     }
     .card .card-h {
       padding: 14px 16px;
@@ -132,6 +175,7 @@
       justify-content: space-between;
       gap: 10px;
       background: rgba(0,0,0,.12);
+      min-height: var(--card-h-height, 0px);
     }
     .card .card-h h2 {
       margin: 0;
@@ -141,7 +185,29 @@
       letter-spacing: .3px;
       text-transform: uppercase;
     }
-    .card .card-b { padding: 16px; }
+    .card .card-b {
+      padding: 16px;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+    }
+    .input-section {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,.14);
+      margin-bottom: 12px;
+    }
+    .input-section:last-child {
+      margin-bottom: 0;
+    }
+    .input-section-h {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      margin-bottom: 6px;
+    }
 
     label {
       display: block;
@@ -243,6 +309,10 @@
       cursor: pointer;
       width: 100%;
     }
+    .btn-inline {
+      width: auto;
+      padding: 8px 14px;
+    }
     .btn:disabled {
       opacity: .55;
       cursor: not-allowed;
@@ -261,8 +331,10 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
-      max-height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
+      flex: 1;
+      min-height: 0;
+      height: auto;
+      max-height: none;
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -270,8 +342,10 @@
       flex-shrink: 0;
     }
     .retrieval-wrap {
-      height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
-      max-height: min(var(--panel-body-vh), calc(100vh - var(--panel-offset)));
+      flex: 1;
+      min-height: 0;
+      height: auto;
+      max-height: none;
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -1023,6 +1097,11 @@
       justify-content: flex-start;
       min-width: 100px;
     }
+    .scada-card-time {
+      color: var(--muted);
+      font-size: 10px;
+      flex-basis: 100%;
+    }
     .scada-card-tag {
       font-size: 10px;
       padding: 2px 6px;
@@ -1062,7 +1141,7 @@
     <div class="header">
       <div class="title">
         <span class="logo-wrap">
-          <img class="logo is-spinning" src="/static/logo.png" alt="Wind turbine logo" />
+          <img class="logo" src="/static/logo.png" alt="Wind turbine logo" />
         </span>
       <div>
         <h1>Wind Turbine Inspection Assistant</h1>
@@ -1078,19 +1157,30 @@
 
     <div class="grid">
       <!-- INPUTS -->
-      <div class="card">
-        <div class="card-h"><h2>Inputs</h2></div>
+      <div class="card inputs-card">
+        <div class="card-h" id="inputsHeader">
+          <h2>Inputs</h2>
+          <button id="runBtn" class="btn btn-inline">Run</button>
+        </div>
         <div class="card-b">
-          <label>Mechanic notes (optional)</label>
-          <textarea id="mechanicNotes" placeholder="e.g., customer report, recent maintenance, observed behavior..."></textarea>
-
-          <label>Images (drag & drop). Images are used for automatic descriptions.</label>
-          <div id="drop" class="drop">
-            <b>Drop images here</b><div class="small">or click to select.</div>
-            <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
+          <div class="input-section">
+            <div class="input-section-h">Notes</div>
+            <label>Mechanic notes </label>
+            <textarea id="mechanicNotes" placeholder="e.g., customer report, recent maintenance, observed behavior..."></textarea>
           </div>
-          <div class="file-list" id="fileList"></div>
 
+          <div class="input-section">
+            <div class="input-section-h">Images</div>
+            <label>Images Images are used for automatic descriptions.</label>
+            <div id="drop" class="drop">
+              <b>Drop images here</b><div class="small">or click to select.</div>
+              <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
+            </div>
+            <div class="file-list" id="fileList"></div>
+          </div>
+
+          <div class="input-section">
+            <div class="input-section-h">SCADA</div>
           <!-- SCADA Toggle -->
           <div class="toggle-row">
             <label class="toggle-switch">
@@ -1140,22 +1230,8 @@
           <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
           </div><!-- end scadaSection -->
 
-          <div class="row">
-            <div>
-              <label>Retrieve top K</label>
-              <input id="topK" type="number" min="3" max="30" value="10" />
-              <div class="small">Returned by backend</div>
-            </div>
-            <div>
-              <label>Show rows</label>
-              <input id="showRows" type="number" min="1" max="10" value="10" />
-              <div class="small">Client-side filter</div>
-            </div>
           </div>
 
-          <div class="actions">
-            <button id="runBtn" class="btn">Run</button>
-          </div>
           <div class="small" style="margin-top:10px;">
             Tip: Retrieval is biased toward procedures, checklists, and safety content.
           </div>
@@ -1163,7 +1239,7 @@
       </div>
 
       <!-- OUTPUTS -->
-      <div class="card">
+      <div class="card conversation-card">
       <div class="card-h">
         <h2>Conversation</h2>
         <div class="btn-row">
@@ -1198,7 +1274,7 @@
       </div>
 
       <!-- RETRIEVAL -->
-      <div class="card">
+      <div class="card manuals-card">
         <div class="card-h">
           <h2>Top Retrieved Manuals</h2>
           <div class="table-controls">
@@ -1284,15 +1360,44 @@
     const chat = el('chat');
     const chatWrap = el('chatWrap');
     const heightSource = chatWrap || chat;
-    if (!chat || !heightSource) {
+    if (chat && heightSource) {
+      chat.style.setProperty('--chat-body-height', `${heightSource.clientHeight}px`);
+    }
+
+    const grid = document.querySelector('.grid');
+    const app = document.querySelector('.app');
+    if (!grid || !app) {
       return;
     }
-    chat.style.setProperty('--chat-body-height', `${heightSource.clientHeight}px`);
+    const gridTop = grid.getBoundingClientRect().top;
+    const appStyles = window.getComputedStyle(app);
+    const paddingBottom = parseFloat(appStyles.paddingBottom) || 0;
+    const available = Math.max(0, Math.floor(window.innerHeight - gridTop - paddingBottom - 1));
+    document.documentElement.style.setProperty('--panel-height', `${available}px`);
+
+    const inputsHeader = el('inputsHeader');
+    if (inputsHeader) {
+      const headerHeight = Math.ceil(inputsHeader.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--card-h-height', `${headerHeight}px`);
+    }
   }
 
   function setRunning(isRunning){
     document.body.classList.toggle("is-running", !!isRunning);
     document.body.setAttribute("aria-busy", isRunning ? "true" : "false");
+    const logo = document.querySelector(".logo");
+    if (!logo) {
+      return;
+    }
+    if (isRunning) {
+      logo.classList.remove("is-spinning");
+      void logo.offsetWidth;
+      logo.classList.add("is-spinning");
+      startFaviconSpin();
+    } else {
+      logo.classList.remove("is-spinning");
+      stopFaviconSpin();
+    }
   }
 
   function showWarn(msg){
@@ -1838,6 +1943,133 @@
     return raw;
   }
 
+  function formatScadaTimestamp(raw){
+    const text = String(raw || "").trim();
+    if (!text) {
+      return "";
+    }
+    const match = text.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})/);
+    if (match) {
+      return `${match[1]} ${match[2]}`;
+    }
+    return text;
+  }
+
+  function formatDateTimeLocal(date){
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  const faviconState = {
+    timer: null,
+    angle: 0,
+    img: null,
+    canvas: null,
+    ctx: null,
+  };
+  const FAVICON_SIZE = 64;
+  const FAVICON_SCALE = 2.6;
+
+  function ensureFaviconLink(){
+    let link = document.getElementById("appFavicon");
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "icon";
+      link.type = "image/png";
+      link.id = "appFavicon";
+      document.head.appendChild(link);
+    }
+    return link;
+  }
+
+  function setFaviconHref(href){
+    const link = ensureFaviconLink();
+    link.href = href;
+  }
+
+  function ensureFaviconCanvas(){
+    if (!faviconState.canvas) {
+      const canvas = document.createElement("canvas");
+      canvas.width = FAVICON_SIZE;
+      canvas.height = FAVICON_SIZE;
+      faviconState.canvas = canvas;
+      faviconState.ctx = canvas.getContext("2d");
+    }
+    return { canvas: faviconState.canvas, ctx: faviconState.ctx };
+  }
+
+  function ensureFaviconImage(){
+    if (!faviconState.img) {
+      const img = new Image();
+      img.src = "/static/logo.png";
+      faviconState.img = img;
+    }
+    return faviconState.img;
+  }
+
+  function drawFaviconFrame(angle){
+    const { canvas, ctx } = ensureFaviconCanvas();
+    const img = ensureFaviconImage();
+    if (!ctx || !canvas || !img.complete || img.naturalWidth === 0) {
+      return false;
+    }
+    const size = canvas.width * FAVICON_SCALE;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    if (angle) {
+      ctx.rotate(angle);
+    }
+    ctx.drawImage(img, -size / 2, -size / 2, size, size);
+    ctx.restore();
+    setFaviconHref(canvas.toDataURL("image/png"));
+    return true;
+  }
+
+  function renderFaviconStatic(){
+    if (drawFaviconFrame(0)) {
+      return;
+    }
+    const img = ensureFaviconImage();
+    img.addEventListener("load", () => drawFaviconFrame(0), { once: true });
+  }
+
+  function startFaviconSpin(){
+    if (faviconState.timer) {
+      return;
+    }
+    const img = ensureFaviconImage();
+    const startTimer = () => {
+      if (faviconState.timer) {
+        return;
+      }
+      const { canvas, ctx } = ensureFaviconCanvas();
+      faviconState.timer = window.setInterval(() => {
+        if (!ctx || !canvas) {
+          return;
+        }
+        faviconState.angle = (faviconState.angle + 0.38) % (Math.PI * 2);
+        drawFaviconFrame(faviconState.angle);
+      }, 50);
+    };
+
+    if (img.complete && img.naturalWidth > 0) {
+      startTimer();
+      return;
+    }
+    img.addEventListener("load", startTimer, { once: true });
+    img.addEventListener("error", () => setFaviconHref("/static/logo.png"), { once: true });
+  }
+
+  function stopFaviconSpin(){
+    if (faviconState.timer) {
+      clearInterval(faviconState.timer);
+      faviconState.timer = null;
+    }
+    faviconState.angle = 0;
+    renderFaviconStatic();
+  }
+
   async function loadScadaOptions(){
     // Load all SCADA cards from new endpoint
     const resp = await fetch('/api/scada-cards/all');
@@ -1941,6 +2173,18 @@
         tagSpan.textContent = tag;
         tagsDiv.appendChild(tagSpan);
       });
+      const startLabel = formatScadaTimestamp(
+        card.window_start || card.case?.window?.start_time || card.case?.source?.window_start
+      );
+      const endLabel = formatScadaTimestamp(
+        card.window_end || card.case?.window?.end_time || card.case?.source?.window_end
+      );
+      if (startLabel || endLabel) {
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'scada-card-time';
+        timeSpan.textContent = `${startLabel || '—'} – ${endLabel || '—'}`;
+        tagsDiv.appendChild(timeSpan);
+      }
       
       item.appendChild(radio);
       item.appendChild(idSpan);
@@ -1976,7 +2220,10 @@
 
   function renderResultsTable(items){
     state.lastResults = items || [];
-    const showN = Math.max(1, Math.min(10, parseInt(el('showRows').value || '10', 10)));
+    const showRowsInput = el('showRows');
+    const rangeRowsInput = el('rangeRows');
+    const showRaw = (showRowsInput && showRowsInput.value) || (rangeRowsInput && rangeRowsInput.value) || '10';
+    const showN = Math.max(1, Math.min(10, parseInt(showRaw, 10)));
 
     const list = el('resultsList');
     if (!list) {
@@ -2164,7 +2411,9 @@
     let mechanicNotes = el('mechanicNotes').value || '';
     const scadaEnabled = el('scadaToggle').checked;
     let scadaId = scadaEnabled ? el('scadaSelect').value : null;
-    const topK = Math.max(3, Math.min(30, parseInt(el('topK').value || '10', 10)));
+    const topKInput = el('topK');
+    const topKRaw = topKInput ? topKInput.value : '10';
+    const topK = Math.max(3, Math.min(30, parseInt(topKRaw, 10)));
 
     const imageDescriptions = state.files
       .filter(f => f.use !== false)
@@ -2493,20 +2742,44 @@
 
   function setupControls(){
     el('runBtn').onclick = run;
-    el('showRows').oninput = () => renderResultsTable(state.lastResults);
+    const showRowsInput = el('showRows');
+    if (showRowsInput) {
+      showRowsInput.oninput = () => renderResultsTable(state.lastResults);
+    }
 
     // SCADA toggle
-    el('scadaToggle').onchange = () => {
-      const enabled = el('scadaToggle').checked;
-      el('scadaSection').classList.toggle('collapsed', !enabled);
-    };
+    const scadaToggle = el('scadaToggle');
+    const grid = document.querySelector('.grid');
+    if (scadaToggle) {
+      scadaToggle.checked = false;
+      el('scadaSection').classList.toggle('collapsed', !scadaToggle.checked);
+      if (grid) {
+        grid.classList.toggle('scada-open', scadaToggle.checked);
+      }
+      scadaToggle.onchange = () => {
+        const enabled = scadaToggle.checked;
+        el('scadaSection').classList.toggle('collapsed', !enabled);
+        if (grid) {
+          grid.classList.toggle('scada-open', enabled);
+        }
+      };
+    }
 
     const range = el('rangeRows');
-    range.oninput = () => {
-      el('rangeLabel').textContent = range.value;
-      el('showRows').value = range.value;
-      renderResultsTable(state.lastResults);
-    };
+    if (range) {
+      range.oninput = () => {
+        el('rangeLabel').textContent = range.value;
+        if (showRowsInput) {
+          showRowsInput.value = range.value;
+        }
+        renderResultsTable(state.lastResults);
+      };
+    }
+
+    const customTimeInput = el('customTimeInput');
+    if (customTimeInput) {
+      customTimeInput.value = formatDateTimeLocal(new Date());
+    }
 
     document.querySelectorAll(".collapse-btn").forEach((btn) => {
       const targetId = btn.getAttribute("data-target");
@@ -2531,6 +2804,7 @@
     renderFileList();
     setupDropZone();
     setupControls();
+    renderFaviconStatic();
     updateChatMetrics();
     window.addEventListener('resize', updateChatMetrics);
     await checkApiKeyStatus();

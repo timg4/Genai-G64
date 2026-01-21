@@ -7,7 +7,7 @@ import math
 import os
 import re
 import sys
-import time
+from datetime import datetime, timedelta
 import uuid
 from enum import Enum
 from pathlib import Path
@@ -489,12 +489,24 @@ def describe_faulty_image(image_path: Path) -> Optional[str]:
 def _create_faulty_run_dir() -> Optional[Path]:
     try:
         FAULTY_RUNS_DIR.mkdir(parents=True, exist_ok=True)
-        ts = time.strftime("%Y%m%d_%H%M%S")
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         run_dir = FAULTY_RUNS_DIR / f"run_{ts}_{uuid.uuid4().hex[:6]}"
         run_dir.mkdir(parents=True, exist_ok=True)
         return run_dir
     except Exception:
         return None
+
+
+def _parse_scada_time(raw: str) -> Optional[datetime]:
+    text = str(raw or "").strip()
+    if not text:
+        return None
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"):
+        try:
+            return datetime.strptime(text, fmt)
+        except ValueError:
+            continue
+    return None
 
 
 def _write_upload_debug(run_dir: Path, image_path: Path) -> None:
@@ -587,6 +599,17 @@ def get_all_scada_cards() -> Dict[str, Any]:
                 event_label = source_info.get("event_label", "normal")
                 event_description = source_info.get("event_description", "")
                 tags = card_data.get("tags", [])
+                window_info = card_data.get("window", {}) if isinstance(card_data.get("window"), dict) else {}
+                window_start = str(window_info.get("start_time") or "")
+                window_end = str(window_info.get("end_time") or "")
+                if not window_end:
+                    window_end = str(source_info.get("window_end") or "")
+                if not window_start:
+                    window_hours = window_info.get("window_hours")
+                    end_dt = _parse_scada_time(window_end) if window_end else None
+                    if end_dt and isinstance(window_hours, (int, float)):
+                        start_dt = end_dt - timedelta(hours=float(window_hours))
+                        window_start = start_dt.strftime("%Y-%m-%d %H:%M:%S")
                 
                 # Add tags to global set
                 all_tags.update(tags)
@@ -605,6 +628,8 @@ def get_all_scada_cards() -> Dict[str, Any]:
                     "id": window_id,
                     "class_code": class_code,
                     "class_name": CLASS_DISPLAY_NAMES.get(class_code, class_code),
+                    "window_start": window_start,
+                    "window_end": window_end,
                     "tags": tags,
                     "event_label": event_label,
                     "event_label_display": event_label_display,
