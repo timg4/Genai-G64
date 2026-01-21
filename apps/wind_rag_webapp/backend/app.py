@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import base64
 import hashlib
@@ -90,11 +90,11 @@ EVAL_CASES_PATH = EVAL_DIR / "cases.json"
 
 # Class code to display name mapping
 CLASS_DISPLAY_NAMES = {
-    "VG;MT": "Vortex Generating Panel – Missing Teeth",
-    "LE;ER": "Leading Edge – Erosion",
-    "LR;DA": "Lightning Receptor – Damage",
-    "LE;CR": "Leading Edge – Crack",
-    "SF;PO": "Surface – Paint-Off",
+    "VG;MT": "Vortex Generating Panel â€“ Missing Teeth",
+    "LE;ER": "Leading Edge â€“ Erosion",
+    "LR;DA": "Lightning Receptor â€“ Damage",
+    "LE;CR": "Leading Edge â€“ Crack",
+    "SF;PO": "Surface â€“ Paint-Off",
     "Nix": "Normalzustand",
 }
 
@@ -451,7 +451,7 @@ def describe_faulty_image(image_path: Path) -> Optional[str]:
         examples,
         image_path,
         max_examples=max_examples,
-        base_dir=REPO_ROOT,
+        base_dir=(REPO_ROOT / "experiments") if (REPO_ROOT / "experiments").is_dir() else REPO_ROOT,
     )
     run_dir = _create_faulty_run_dir()
     if run_dir:
@@ -823,3 +823,4 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run("app:app", host="127.0.0.1", port=int(os.environ.get("PORT", "8000")), reload=True)
+

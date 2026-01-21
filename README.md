@@ -1,4 +1,4 @@
-# Wind Turbine Inspection Assistant
+﻿# Wind Turbine Inspection Assistant
 
 AI-powered prototype that supports wind turbine technicians during inspection and diagnosis. The system combines RAG retrieval over maintenance manuals, SCADA data analysis with anomaly detection, and optional vision-based defect detection into a one-click pipeline accessible via a web UI.
 
