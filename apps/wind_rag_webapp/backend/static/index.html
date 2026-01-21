@@ -132,29 +132,34 @@
       min-height: 0;
       transition: transform .35s ease, width .35s ease, box-shadow .35s ease;
     }
-    .inputs-card { grid-column: 1; z-index: 2; position: relative; }
+    .inputs-card { grid-column: 1; z-index: 2; position: relative; overflow: visible; }
     .conversation-card { grid-column: 2; z-index: 1; }
     .manuals-card { grid-column: 3; z-index: 1; }
-    .scada-overlay.card {
+    .scada-overlay.card,
+    .image-overlay.card {
       position: absolute;
       top: 0;
       left: 100%;
-      margin-left: 12px;
-      width: clamp(300px, 28vw, 380px);
-      height: 100%;
+      margin-left: 10px;
+      width: clamp(340px, 34vw, 460px);
+      height: calc(100% + 4px);
+      background: var(--panel);
+      background-image: none;
       opacity: 0;
       pointer-events: none;
-      transform: translateX(12px);
+      transform: translate(12px, -4px);
       transition: opacity .25s ease, transform .25s ease;
       z-index: 4;
     }
-    .scada-overlay.card.is-open {
+    .scada-overlay.card.is-open,
+    .image-overlay.card.is-open {
       opacity: 1;
       pointer-events: auto;
-      transform: translateX(0);
+      transform: translate(0, -4px);
     }
     @media (max-width: 1200px) {
-      .scada-overlay.card {
+      .scada-overlay.card,
+      .image-overlay.card {
         position: static;
         width: auto;
         height: auto;
@@ -163,7 +168,8 @@
         pointer-events: auto;
         transform: none;
       }
-      .scada-overlay.card:not(.is-open) {
+      .scada-overlay.card:not(.is-open),
+      .image-overlay.card:not(.is-open) {
         display: none;
       }
     }
@@ -234,6 +240,9 @@
       font-size: 12px;
       color: var(--muted);
       line-height: 1.4;
+    }
+    .disclaimer {
+      margin-bottom: 10px;
     }
 
     .drop {
@@ -308,6 +317,13 @@
       border-radius: 12px;
       cursor: pointer;
       width: 100%;
+    }
+    .btn.is-muted {
+      background: rgba(34,197,94,.45);
+      color: #0b2d1e;
+    }
+    .btn.is-muted:disabled {
+      opacity: .85;
     }
     .btn-inline {
       width: auto;
@@ -1016,6 +1032,9 @@
     .toggle-switch input:checked + .toggle-slider {
       background: var(--accent);
     }
+    .toggle-row.is-pending .toggle-switch input:checked + .toggle-slider {
+      background: rgba(148,163,184,.65);
+    }
     .toggle-switch input:checked + .toggle-slider:before {
       transform: translateX(20px);
     }
@@ -1028,6 +1047,99 @@
       max-height: 0;
       opacity: 0;
       pointer-events: none;
+    }
+    .scada-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .toggle-row-actions {
+      flex-wrap: wrap;
+    }
+    .reselect-row {
+      display: none;
+      margin-left: auto;
+    }
+    .reselect-row.is-visible {
+      display: inline-flex;
+    }
+    .btn-subtle {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-subtle:hover {
+      border-color: rgba(255,255,255,.35);
+      color: var(--text);
+    }
+    .mock-image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .mock-image-item {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,.18);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .mock-image-item:hover {
+      border-color: rgba(255,255,255,.35);
+    }
+    .mock-image-item.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(34,197,94,.2);
+    }
+    .mock-image-item img {
+      width: 100%;
+      height: 92px;
+      object-fit: cover;
+      display: block;
+    }
+    .mock-image-name {
+      font-size: 11px;
+      padding: 6px 8px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mock-image-check {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.4);
+    }
+    .mock-image-item.selected .mock-image-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .image-overlay .card-b {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .image-mock-section {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      max-height: none;
+    }
+    .image-mock-section .mock-image-grid {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 4px;
     }
 
     /* SCADA card list */
@@ -1177,63 +1289,110 @@
               <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
             </div>
             <div class="file-list" id="fileList"></div>
-          </div>
-
-          <div class="input-section">
-            <div class="input-section-h">SCADA</div>
-          <!-- SCADA Toggle -->
-          <div class="toggle-row">
-            <label class="toggle-switch">
-              <input type="checkbox" id="scadaToggle" />
-              <span class="toggle-slider"></span>
-            </label>
-            <span>Include SCADA data</span>
-          </div>
-
-          <div id="scadaSection" class="scada-section collapsed">
-          <!-- SCADA Time Range Section (simulated - no functionality) -->
-          <label>SCADA time range (simulated)</label>
-          <div class="time-range-section">
-            <button type="button" class="btn-secondary" id="btnLast6h" disabled title="Simulated: No live SCADA data available">
-              Last 6 Hours
-            </button>
-            <button type="button" class="btn-secondary" id="btnCustomTime" disabled title="Simulated: No live SCADA data available">
-              Custom Time
-            </button>
-            <input type="datetime-local" id="customTimeInput" disabled style="flex: 1; min-width: 180px;" />
-          </div>
-          <div class="small" style="margin-bottom: 12px; color: var(--muted);">
-            ⚠️ Above buttons simulate real-world usage. For testing, select from available SCADA cards below.
-          </div>
-
-          <!-- SCADA Card Selection with Filters -->
-          <label>Select SCADA card for testing</label>
-          <div class="filter-section">
-            <div class="filter-group">
-              <label>Filter by tags</label>
-              <div class="tag-checkboxes" id="tagCheckboxes">
-                <!-- Populated by JS -->
+            <div class="toggle-row toggle-row-actions" id="imageMockRow" style="margin-top:8px;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="imageMockToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Mock image data</span>
+              <div class="reselect-row" id="reselectImageWrap">
+                <button type="button" class="btn btn-subtle btn-inline" id="reselectImageData">Reselect data</button>
               </div>
             </div>
           </div>
 
-          <label>Available SCADA cards (<span id="cardCount">0</span> matching)</label>
-          <div class="scada-card-list" id="scadaCardList">
-            <div class="scada-list-header">
-              <span></span>
-              <span>ID</span>
-              <span>Tags</span>
+          <div class="input-section">
+            <div class="input-section-h">SCADA</div>
+            <!-- SCADA Toggle -->
+            <div class="toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="scadaToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Include SCADA data</span>
             </div>
-            <!-- Cards populated by JS -->
+            <div class="toggle-row toggle-row-actions" id="mockDataRow" style="margin-top:8px;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="mockDataToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Mock data</span>
+              <div class="reselect-row" id="reselectScadaWrap">
+                <button type="button" class="btn btn-subtle btn-inline" id="reselectScadaData">Reselect data</button>
+              </div>
+            </div>
+            <label>SCADA time range (simulated)</label>
+            <div class="time-range-section">
+              <button type="button" class="btn-secondary" id="btnLast6h" disabled title="Simulated: No live SCADA data available">
+                Last 6 Hours
+              </button>
+              <button type="button" class="btn-secondary" id="btnCustomTime" disabled title="Simulated: No live SCADA data available">
+                Custom Time
+              </button>
+              <input type="datetime-local" id="customTimeInput" disabled style="flex: 1; min-width: 180px;" />
+            </div>
+            <div class="small" style="margin-bottom: 12px; color: var(--muted);">
+              ⚠️ Above buttons simulate real-world usage. For testing, please mock the data.
           </div>
-          <input type="hidden" id="scadaSelect" />
-          <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
-          </div><!-- end scadaSection -->
-
           </div>
 
           <div class="small" style="margin-top:10px;">
-            Tip: Retrieval is biased toward procedures, checklists, and safety content.
+            Hint: Retrieval is biased toward procedures, checklists, and safety content.
+          </div>
+        </div>
+        <div class="card scada-overlay" id="scadaOverlay">
+          <div class="card-h">
+            <h2>Mock data</h2>
+          </div>
+          <div class="card-b">
+            <div id="scadaSection" class="scada-section collapsed">
+              <!-- SCADA Card Selection with Filters -->
+              <label>Select SCADA card for testing</label>
+              <div class="filter-section">
+                <div class="filter-group">
+                  <label>Filter by tags</label>
+                  <div class="tag-checkboxes" id="tagCheckboxes">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <label>Available SCADA cards (<span id="cardCount">0</span> matching)</label>
+              <div class="scada-card-list" id="scadaCardList">
+                <div class="scada-list-header">
+                  <span></span>
+                  <span>ID</span>
+                  <span>Tags</span>
+                </div>
+                <!-- Cards populated by JS -->
+              </div>
+              <input type="hidden" id="scadaSelect" />
+              <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
+              <div class="scada-actions">
+                <button type="button" class="btn-secondary" id="cancelMockData">Cancel</button>
+                <button type="button" class="btn btn-inline" id="confirmScadaSelection">Confirm selection</button>
+              </div>
+            </div><!-- end scadaSection -->
+          </div>
+        </div>
+        <div class="card image-overlay" id="imageOverlay">
+          <div class="card-h">
+            <h2>Mock images</h2>
+          </div>
+          <div class="card-b">
+            <div id="imageMockSection" class="scada-section collapsed image-mock-section">
+              <label>Image set</label>
+              <div class="btn-row">
+                <button type="button" class="btn-secondary active" id="imageSetLabeled">Labeled</button>
+                <button type="button" class="btn-secondary" id="imageSetUnlabeled">Unlabeled</button>
+              </div>
+              <div class="small" id="imageMockCount" style="margin-top:6px;">0 selected</div>
+              <div class="mock-image-grid" id="mockImageGrid"></div>
+              <div class="scada-actions">
+                <button type="button" class="btn-secondary" id="cancelImageMock">Cancel</button>
+                <button type="button" class="btn btn-inline" id="confirmImageSelection">Confirm selection</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1250,6 +1409,7 @@
         </div>
       </div>
       <div class="card-b chat-wrap" id="chatWrap">
+        <div class="small disclaimer">This recommendation is AI-generated and may be inaccurate. Please verify before use.</div>
         <div class="processing-hint" id="processingHint" aria-live="polite">
           <span class="spinner"></span>
           Processing request…
@@ -1305,6 +1465,15 @@
     filteredScadaCards: [],  // Cards after filtering
     allTags: [],  // All available tags
     allClasses: [],  // All available classes
+    mockDataConfirmed: false,
+    mockDataPending: false,
+    mockImageConfirmed: false,
+    mockImagePending: false,
+    mockImageDataset: "labeled",
+    mockImageOptions: [],
+    mockImageSelected: new Set(),
+    hasApiKey: true,
+    isRunning: false,
     lastResults: [],
     reviewMessage: null,
     incidentCounter: 0,
@@ -1398,6 +1567,22 @@
       logo.classList.remove("is-spinning");
       stopFaviconSpin();
     }
+    state.isRunning = !!isRunning;
+    updateRunButtonAvailability();
+  }
+
+  function updateRunButtonAvailability(){
+    const runBtn = el('runBtn');
+    if (!runBtn) {
+      return;
+    }
+    const blockedByApi = !state.hasApiKey;
+    const blockedByPending = state.mockDataPending || state.mockImagePending;
+    const blockedByRunning = state.isRunning;
+    const shouldDisable = blockedByApi || blockedByPending || blockedByRunning;
+    runBtn.disabled = shouldDisable;
+    runBtn.classList.toggle('is-muted', blockedByPending);
+    runBtn.title = blockedByApi ? state.apiKeyWarning : '';
   }
 
   function showWarn(msg){
@@ -1419,12 +1604,8 @@
       const data = await resp.json();
       const hasKey = !!data?.openai_api_key_set;
       state.apiKeyWarning = hasKey ? "" : String(data?.warning || "OPENAI_API_KEY is not set. See README.md in the repository root.");
-
-      const runBtn = el('runBtn');
-      if (runBtn) {
-        runBtn.disabled = !hasKey;
-        runBtn.title = hasKey ? '' : state.apiKeyWarning;
-      }
+      state.hasApiKey = hasKey;
+      updateRunButtonAvailability();
 
       showWarn('');
     } catch (e) {
@@ -1595,6 +1776,7 @@
     `;
     const wrap = addChatMessage("user", "Uploaded image", body);
     wrap.classList.add("has-image");
+    item.messageEl = wrap;
     const btn = wrap.querySelector(".inspect-btn");
     if (btn) {
       btn.onclick = () => inspectOrEditImage(item.id);
@@ -1639,6 +1821,10 @@
         </div>
       `;
       item.querySelector('button').onclick = () => {
+        const target = state.files[idx];
+        if (target && !target.inspected && target.messageEl && target.messageEl.isConnected) {
+          target.messageEl.remove();
+        }
         state.files.splice(idx, 1);
         state.reviewTargetId = null;
         renderFileList();
@@ -1955,6 +2141,22 @@
     return text;
   }
 
+  function formatScadaDateTimeLocal(raw){
+    const text = String(raw || "").trim();
+    if (!text) {
+      return "";
+    }
+    const match = text.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})/);
+    if (match) {
+      return `${match[1]}T${match[2]}`;
+    }
+    const parsed = new Date(text);
+    if (!Number.isNaN(parsed.getTime())) {
+      return formatDateTimeLocal(parsed);
+    }
+    return "";
+  }
+
   function formatDateTimeLocal(date){
     const pad = (value) => String(value).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -2213,9 +2415,124 @@
     const card = state.filteredScadaCards.find(x => x.id === id);
     if(!card){ el('scadaPreview').textContent = ''; return; }
     
-    // Show summary from card case if available
-    const summary = card.case?.summary || '';
-    el('scadaPreview').textContent = summary.substring(0, 200) + (summary.length > 200 ? '...' : '');
+    // Show full description from card case when available
+    const description = card.case?.description || card.case?.summary || '';
+    el('scadaPreview').textContent = description;
+  }
+
+  async function loadMockImages(dataset){
+    try {
+      const resp = await fetch(`/api/image-selection?dataset=${encodeURIComponent(dataset)}`);
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}));
+        throw new Error(data?.detail || "Failed to load mock images.");
+      }
+      const data = await resp.json();
+      state.mockImageOptions = Array.isArray(data.images) ? data.images : [];
+      state.mockImageSelected = new Set();
+      renderMockImageGrid();
+    } catch (e) {
+      showWarn(e.message);
+    }
+  }
+
+  function updateMockImageSelectionCount(){
+    const count = el('imageMockCount');
+    if (!count) {
+      return;
+    }
+    count.textContent = `${state.mockImageSelected.size} selected`;
+  }
+
+  function renderMockImageGrid(){
+    const grid = el('mockImageGrid');
+    if (!grid) {
+      return;
+    }
+    grid.innerHTML = '';
+    if (!state.mockImageOptions.length) {
+      const empty = document.createElement('div');
+      empty.className = 'small';
+      empty.textContent = 'No images found.';
+      grid.appendChild(empty);
+      updateMockImageSelectionCount();
+      return;
+    }
+    state.mockImageOptions.forEach((img) => {
+      const item = document.createElement('div');
+      item.className = `mock-image-item${state.mockImageSelected.has(img.id) ? ' selected' : ''}`;
+
+      const imgEl = document.createElement('img');
+      imgEl.src = img.data_url;
+      imgEl.alt = img.name || 'mock image';
+
+      const check = document.createElement('div');
+      check.className = 'mock-image-check';
+
+      const name = document.createElement('div');
+      name.className = 'mock-image-name';
+      name.textContent = img.name || 'mock image';
+
+      item.onclick = () => {
+        if (state.mockImageSelected.has(img.id)) {
+          state.mockImageSelected.delete(img.id);
+        } else {
+          state.mockImageSelected.add(img.id);
+        }
+        renderMockImageGrid();
+      };
+
+      item.appendChild(imgEl);
+      item.appendChild(check);
+      item.appendChild(name);
+      grid.appendChild(item);
+    });
+    updateMockImageSelectionCount();
+  }
+
+  function clearMockImageSelection(){
+    state.mockImageSelected = new Set();
+    renderMockImageGrid();
+  }
+
+  function removeMockImageFiles(){
+    if (!state.files.length) {
+      return;
+    }
+    const removed = state.files.filter((item) => item.mockSource === 'image_selection');
+    state.files = state.files.filter((item) => item.mockSource !== 'image_selection');
+    removed.forEach((item) => {
+      if (item.messageEl && item.messageEl.isConnected) {
+        item.messageEl.remove();
+      }
+    });
+    state.reviewTargetId = null;
+  }
+
+  function applyMockImageSelection(){
+    const selected = state.mockImageOptions.filter((img) => state.mockImageSelected.has(img.id));
+    if (!selected.length) {
+      showWarn("Select at least one mock image.");
+      return false;
+    }
+    removeMockImageFiles();
+    selected.forEach((img, idx) => {
+      const item = {
+        id: `mock_${Date.now()}_${idx}`,
+        name: img.name || 'mock image',
+        desc: '',
+        data_url: img.data_url,
+        use: true,
+        inspected: false,
+        approved: false,
+        mockSource: 'image_selection',
+      };
+      state.files.push(item);
+      addChatImage(item);
+    });
+    renderFileList();
+    updateInspectStatus();
+    return true;
   }
 
   function renderResultsTable(items){
@@ -2410,10 +2727,24 @@
 
     let mechanicNotes = el('mechanicNotes').value || '';
     const scadaEnabled = el('scadaToggle').checked;
+    const mockDataEnabled = el('mockDataToggle') ? el('mockDataToggle').checked : false;
     let scadaId = scadaEnabled ? el('scadaSelect').value : null;
     const topKInput = el('topK');
     const topKRaw = topKInput ? topKInput.value : '10';
     const topK = Math.max(3, Math.min(30, parseInt(topKRaw, 10)));
+
+    if (state.mockDataPending) {
+      showWarn("Confirm mock data selection before running.");
+      return;
+    }
+    if (state.mockImagePending) {
+      showWarn("Confirm mock image selection before running.");
+      return;
+    }
+    if (scadaEnabled && !mockDataEnabled) {
+      showWarn("Enable mock data to use SCADA data.");
+      return;
+    }
 
     const imageDescriptions = state.files
       .filter(f => f.use !== false)
@@ -2433,7 +2764,6 @@
 
     setStatus('running');
     setRunning(true);
-    el('runBtn').disabled = true;
     state.runToken += 1;
 
     const imageFiles = imageTargets
@@ -2492,7 +2822,6 @@
     } finally {
       setStatus(state.awaitingConfirm ? 'confirm' : 'idle');
       setRunning(false);
-      el('runBtn').disabled = false;
     }
   }
 
@@ -2513,7 +2842,6 @@
     setStatus("inspecting");
     setInspecting(true);
     setRunning(true);
-    el("runBtn").disabled = true;
     state.inspectingImageId = imageId;
     updateInspectStatus();
     const hint = el("processingHint");
@@ -2550,7 +2878,6 @@
       setRunning(false);
       setInspecting(false);
       state.inspectingImageId = null;
-      el("runBtn").disabled = false;
       if (hint) {
         hint.innerHTML = "<span class=\"spinner\"></span> Processing request…";
       }
@@ -2749,21 +3076,226 @@
 
     // SCADA toggle
     const scadaToggle = el('scadaToggle');
-    const grid = document.querySelector('.grid');
+    const mockDataToggle = el('mockDataToggle');
+    const mockDataRow = el('mockDataRow');
+    const scadaOverlay = el('scadaOverlay');
+    const imageMockToggle = el('imageMockToggle');
+    const imageMockRow = el('imageMockRow');
+    const imageOverlay = el('imageOverlay');
+    const imageSetLabeled = el('imageSetLabeled');
+    const imageSetUnlabeled = el('imageSetUnlabeled');
+    const confirmImageBtn = el('confirmImageSelection');
+    const cancelImageBtn = el('cancelImageMock');
+    const reselectImageBtn = el('reselectImageData');
+    const reselectImageWrap = el('reselectImageWrap');
+    const confirmScadaBtn = el('confirmScadaSelection');
+    const reselectScadaBtn = el('reselectScadaData');
+    const reselectScadaWrap = el('reselectScadaWrap');
+    const cancelMockDataBtn = el('cancelMockData');
+    const setMockOverlay = (open) => {
+      el('scadaSection').classList.toggle('collapsed', !open);
+      if (scadaOverlay) {
+        scadaOverlay.classList.toggle('is-open', open);
+      }
+      if (open && imageOverlay) {
+        imageOverlay.classList.remove('is-open');
+        el('imageMockSection').classList.add('collapsed');
+      }
+    };
+    const setImageOverlay = (open) => {
+      el('imageMockSection').classList.toggle('collapsed', !open);
+      if (imageOverlay) {
+        imageOverlay.classList.toggle('is-open', open);
+      }
+      if (open && scadaOverlay) {
+        scadaOverlay.classList.remove('is-open');
+        el('scadaSection').classList.add('collapsed');
+      }
+    };
+    const updateReselectVisibility = () => {
+      if (!reselectScadaWrap || !mockDataToggle) {
+        return;
+      }
+      const show = state.mockDataConfirmed && mockDataToggle.checked;
+      reselectScadaWrap.classList.toggle('is-visible', show);
+    };
+    const updateMockDataVisuals = () => {
+      if (mockDataRow) {
+        mockDataRow.classList.toggle('is-pending', state.mockDataPending);
+      }
+      updateReselectVisibility();
+      updateRunButtonAvailability();
+    };
+    const updateImageReselectVisibility = () => {
+      if (!reselectImageWrap || !imageMockToggle) {
+        return;
+      }
+      const show = state.mockImageConfirmed && imageMockToggle.checked;
+      reselectImageWrap.classList.toggle('is-visible', show);
+    };
+    const updateImageMockVisuals = () => {
+      if (imageMockRow) {
+        imageMockRow.classList.toggle('is-pending', state.mockImagePending);
+      }
+      updateImageReselectVisibility();
+      updateRunButtonAvailability();
+    };
+    const setImageDataset = (dataset) => {
+      state.mockImageDataset = dataset;
+      if (imageSetLabeled && imageSetUnlabeled) {
+        imageSetLabeled.classList.toggle('active', dataset === 'labeled');
+        imageSetUnlabeled.classList.toggle('active', dataset === 'unlabeled');
+      }
+      loadMockImages(dataset);
+    };
     if (scadaToggle) {
       scadaToggle.checked = false;
-      el('scadaSection').classList.toggle('collapsed', !scadaToggle.checked);
-      if (grid) {
-        grid.classList.toggle('scada-open', scadaToggle.checked);
-      }
-      scadaToggle.onchange = () => {
-        const enabled = scadaToggle.checked;
-        el('scadaSection').classList.toggle('collapsed', !enabled);
-        if (grid) {
-          grid.classList.toggle('scada-open', enabled);
+    }
+    if (mockDataToggle) {
+      mockDataToggle.checked = false;
+      setMockOverlay(false);
+      mockDataToggle.onchange = () => {
+        const wantsOn = mockDataToggle.checked;
+        if (wantsOn) {
+          state.mockDataPending = true;
+          state.mockDataConfirmed = false;
+          setMockOverlay(true);
+        } else {
+          setMockOverlay(false);
+          state.mockDataPending = false;
+          state.mockDataConfirmed = false;
         }
+        updateMockDataVisuals();
+        updateChatMetrics();
       };
     }
+    if (imageMockToggle) {
+      imageMockToggle.checked = false;
+      setImageOverlay(false);
+      imageMockToggle.onchange = () => {
+        const wantsOn = imageMockToggle.checked;
+        if (wantsOn) {
+          state.mockImagePending = true;
+          state.mockImageConfirmed = false;
+          if (state.mockImageOptions.length) {
+            renderMockImageGrid();
+          } else {
+            loadMockImages(state.mockImageDataset);
+          }
+          setImageOverlay(true);
+        } else {
+          setImageOverlay(false);
+          state.mockImagePending = false;
+          state.mockImageConfirmed = false;
+          clearMockImageSelection();
+          removeMockImageFiles();
+          renderFileList();
+          updateInspectStatus();
+        }
+        updateImageMockVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (reselectScadaBtn && mockDataToggle) {
+      reselectScadaBtn.onclick = () => {
+        state.mockDataPending = true;
+        mockDataToggle.checked = true;
+        setMockOverlay(true);
+        updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (reselectImageBtn && imageMockToggle) {
+      reselectImageBtn.onclick = () => {
+        state.mockImagePending = true;
+        imageMockToggle.checked = true;
+        if (state.mockImageOptions.length) {
+          renderMockImageGrid();
+        } else {
+          loadMockImages(state.mockImageDataset);
+        }
+        setImageOverlay(true);
+        updateImageMockVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (cancelMockDataBtn) {
+      cancelMockDataBtn.onclick = () => {
+        if (mockDataToggle) {
+          mockDataToggle.checked = false;
+        }
+        state.mockDataPending = false;
+        state.mockDataConfirmed = false;
+        setMockOverlay(false);
+        updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (cancelImageBtn) {
+      cancelImageBtn.onclick = () => {
+        if (imageMockToggle) {
+          imageMockToggle.checked = false;
+        }
+        state.mockImagePending = false;
+        state.mockImageConfirmed = false;
+        clearMockImageSelection();
+        removeMockImageFiles();
+        renderFileList();
+        updateInspectStatus();
+        setImageOverlay(false);
+        updateImageMockVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (confirmScadaBtn) {
+      confirmScadaBtn.onclick = () => {
+        const customInput = el('customTimeInput');
+        const selectedId = el('scadaSelect')?.value;
+        const selectedCard = selectedId ? state.filteredScadaCards.find((card) => card.id === selectedId) : null;
+        const rawTime = selectedCard?.window_end
+          || selectedCard?.case?.window?.end_time
+          || selectedCard?.case?.source?.window_end
+          || selectedCard?.window_start
+          || selectedCard?.case?.window?.start_time
+          || selectedCard?.case?.source?.window_start;
+        const formattedTime = formatScadaDateTimeLocal(rawTime);
+        const timeValue = formattedTime || (customInput && customInput.value ? customInput.value : formatDateTimeLocal(new Date()));
+        if (customInput) {
+          customInput.value = timeValue;
+        }
+        setMockOverlay(false);
+        if (mockDataToggle) {
+          mockDataToggle.checked = true;
+        }
+        state.mockDataPending = false;
+        state.mockDataConfirmed = true;
+        updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (confirmImageBtn) {
+      confirmImageBtn.onclick = () => {
+        if (!applyMockImageSelection()) {
+          return;
+        }
+        setImageOverlay(false);
+        if (imageMockToggle) {
+          imageMockToggle.checked = true;
+        }
+        state.mockImagePending = false;
+        state.mockImageConfirmed = true;
+        updateImageMockVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (imageSetLabeled) {
+      imageSetLabeled.onclick = () => setImageDataset('labeled');
+    }
+    if (imageSetUnlabeled) {
+      imageSetUnlabeled.onclick = () => setImageDataset('unlabeled');
+    }
+    updateMockDataVisuals();
+    updateImageMockVisuals();
 
     const range = el('rangeRows');
     if (range) {
