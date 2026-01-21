@@ -4,6 +4,7 @@ import base64
 import hashlib
 import json
 import math
+import mimetypes
 import os
 import re
 import sys
@@ -29,6 +30,9 @@ DATA_DIR = APP_DIR / "data"
 SCADA_SAMPLES_PATH = DATA_DIR / "scada_samples.json"
 UPLOADS_DIR = DATA_DIR / "uploads"
 FAULTY_RUNS_DIR = DATA_DIR / "faulty_runs"
+IMAGE_SELECTION_DIR = DATA_DIR / "image_selection_eval"
+LABELED_IMAGES_DIR = IMAGE_SELECTION_DIR / "boxed_eval_images"
+UNLABELED_IMAGES_DIR = IMAGE_SELECTION_DIR / "unlabeld_eval_images"
 
 # Repo structure / paths
 def _find_repo_root(start: Path) -> Path:
@@ -428,6 +432,38 @@ def _decode_data_url(data_url: str) -> bytes:
     return base64.b64decode(data_url)
 
 
+def _encode_image_data_url(image_path: Path) -> str:
+    mime, _ = mimetypes.guess_type(image_path.name)
+    if not mime:
+        mime = "image/jpeg"
+    encoded = base64.b64encode(image_path.read_bytes()).decode("ascii")
+    return f"data:{mime};base64,{encoded}"
+
+
+def _list_mock_images(dir_path: Path, dataset: str) -> List[Dict[str, str]]:
+    if not dir_path.exists():
+        return []
+    images: List[Dict[str, str]] = []
+    allowed_exts = {".jpg", ".jpeg", ".png", ".webp"}
+    for image_path in sorted(dir_path.iterdir()):
+        if not image_path.is_file():
+            continue
+        if image_path.suffix.lower() not in allowed_exts:
+            continue
+        try:
+            data_url = _encode_image_data_url(image_path)
+        except Exception:
+            continue
+        images.append(
+            {
+                "id": f"{dataset}:{image_path.name}",
+                "name": image_path.name,
+                "data_url": data_url,
+            }
+        )
+    return images
+
+
 def _save_upload(data_url: str, filename: str) -> Path:
     UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
     suffix = Path(filename).suffix or ".jpg"
@@ -647,6 +683,18 @@ def get_all_scada_cards() -> Dict[str, Any]:
             for code, name in CLASS_DISPLAY_NAMES.items()
         ],
     }
+
+
+@app.get("/api/image-selection")
+def get_image_selection(dataset: str = "labeled") -> Dict[str, Any]:
+    dataset_value = dataset.strip().lower()
+    if dataset_value not in {"labeled", "unlabeled"}:
+        raise HTTPException(status_code=400, detail="dataset must be labeled or unlabeled")
+    images_dir = LABELED_IMAGES_DIR if dataset_value == "labeled" else UNLABELED_IMAGES_DIR
+    if not images_dir.exists():
+        raise HTTPException(status_code=404, detail="Image selection dataset not found")
+    images = _list_mock_images(images_dir, dataset_value)
+    return {"dataset": dataset_value, "images": images}
 
 
 @app.get("/api/eval/cases")

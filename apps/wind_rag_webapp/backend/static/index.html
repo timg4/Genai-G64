@@ -135,7 +135,8 @@
     .inputs-card { grid-column: 1; z-index: 2; position: relative; overflow: visible; }
     .conversation-card { grid-column: 2; z-index: 1; }
     .manuals-card { grid-column: 3; z-index: 1; }
-    .scada-overlay.card {
+    .scada-overlay.card,
+    .image-overlay.card {
       position: absolute;
       top: 0;
       left: 100%;
@@ -150,13 +151,15 @@
       transition: opacity .25s ease, transform .25s ease;
       z-index: 4;
     }
-    .scada-overlay.card.is-open {
+    .scada-overlay.card.is-open,
+    .image-overlay.card.is-open {
       opacity: 1;
       pointer-events: auto;
       transform: translate(0, -4px);
     }
     @media (max-width: 1200px) {
-      .scada-overlay.card {
+      .scada-overlay.card,
+      .image-overlay.card {
         position: static;
         width: auto;
         height: auto;
@@ -165,7 +168,8 @@
         pointer-events: auto;
         transform: none;
       }
-      .scada-overlay.card:not(.is-open) {
+      .scada-overlay.card:not(.is-open),
+      .image-overlay.card:not(.is-open) {
         display: none;
       }
     }
@@ -1069,6 +1073,74 @@
       border-color: rgba(255,255,255,.35);
       color: var(--text);
     }
+    .mock-image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .mock-image-item {
+      position: relative;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(0,0,0,.18);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .mock-image-item:hover {
+      border-color: rgba(255,255,255,.35);
+    }
+    .mock-image-item.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(34,197,94,.2);
+    }
+    .mock-image-item img {
+      width: 100%;
+      height: 92px;
+      object-fit: cover;
+      display: block;
+    }
+    .mock-image-name {
+      font-size: 11px;
+      padding: 6px 8px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mock-image-check {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.4);
+    }
+    .mock-image-item.selected .mock-image-check {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .image-overlay .card-b {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .image-mock-section {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      max-height: none;
+    }
+    .image-mock-section .mock-image-grid {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 4px;
+    }
 
     /* SCADA card list */
     .scada-card-list {
@@ -1217,6 +1289,16 @@
               <input id="fileInput" type="file" accept="image/*" multiple style="display:none" />
             </div>
             <div class="file-list" id="fileList"></div>
+            <div class="toggle-row toggle-row-actions" id="imageMockRow" style="margin-top:8px;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="imageMockToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Mock image data</span>
+              <div class="reselect-row" id="reselectImageWrap">
+                <button type="button" class="btn btn-subtle btn-inline" id="reselectImageData">Reselect data</button>
+              </div>
+            </div>
           </div>
 
           <div class="input-section">
@@ -1293,6 +1375,26 @@
             </div><!-- end scadaSection -->
           </div>
         </div>
+        <div class="card image-overlay" id="imageOverlay">
+          <div class="card-h">
+            <h2>Mock images</h2>
+          </div>
+          <div class="card-b">
+            <div id="imageMockSection" class="scada-section collapsed image-mock-section">
+              <label>Image set</label>
+              <div class="btn-row">
+                <button type="button" class="btn-secondary active" id="imageSetLabeled">Labeled</button>
+                <button type="button" class="btn-secondary" id="imageSetUnlabeled">Unlabeled</button>
+              </div>
+              <div class="small" id="imageMockCount" style="margin-top:6px;">0 selected</div>
+              <div class="mock-image-grid" id="mockImageGrid"></div>
+              <div class="scada-actions">
+                <button type="button" class="btn-secondary" id="cancelImageMock">Cancel</button>
+                <button type="button" class="btn btn-inline" id="confirmImageSelection">Confirm selection</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- OUTPUTS -->
@@ -1365,6 +1467,11 @@
     allClasses: [],  // All available classes
     mockDataConfirmed: false,
     mockDataPending: false,
+    mockImageConfirmed: false,
+    mockImagePending: false,
+    mockImageDataset: "labeled",
+    mockImageOptions: [],
+    mockImageSelected: new Set(),
     hasApiKey: true,
     isRunning: false,
     lastResults: [],
@@ -1470,7 +1577,7 @@
       return;
     }
     const blockedByApi = !state.hasApiKey;
-    const blockedByPending = state.mockDataPending;
+    const blockedByPending = state.mockDataPending || state.mockImagePending;
     const blockedByRunning = state.isRunning;
     const shouldDisable = blockedByApi || blockedByPending || blockedByRunning;
     runBtn.disabled = shouldDisable;
@@ -1669,6 +1776,7 @@
     `;
     const wrap = addChatMessage("user", "Uploaded image", body);
     wrap.classList.add("has-image");
+    item.messageEl = wrap;
     const btn = wrap.querySelector(".inspect-btn");
     if (btn) {
       btn.onclick = () => inspectOrEditImage(item.id);
@@ -1713,6 +1821,10 @@
         </div>
       `;
       item.querySelector('button').onclick = () => {
+        const target = state.files[idx];
+        if (target && !target.inspected && target.messageEl && target.messageEl.isConnected) {
+          target.messageEl.remove();
+        }
         state.files.splice(idx, 1);
         state.reviewTargetId = null;
         renderFileList();
@@ -2308,6 +2420,121 @@
     el('scadaPreview').textContent = description;
   }
 
+  async function loadMockImages(dataset){
+    try {
+      const resp = await fetch(`/api/image-selection?dataset=${encodeURIComponent(dataset)}`);
+      if (!resp.ok) {
+        const data = await resp.json().catch(() => ({}));
+        throw new Error(data?.detail || "Failed to load mock images.");
+      }
+      const data = await resp.json();
+      state.mockImageOptions = Array.isArray(data.images) ? data.images : [];
+      state.mockImageSelected = new Set();
+      renderMockImageGrid();
+    } catch (e) {
+      showWarn(e.message);
+    }
+  }
+
+  function updateMockImageSelectionCount(){
+    const count = el('imageMockCount');
+    if (!count) {
+      return;
+    }
+    count.textContent = `${state.mockImageSelected.size} selected`;
+  }
+
+  function renderMockImageGrid(){
+    const grid = el('mockImageGrid');
+    if (!grid) {
+      return;
+    }
+    grid.innerHTML = '';
+    if (!state.mockImageOptions.length) {
+      const empty = document.createElement('div');
+      empty.className = 'small';
+      empty.textContent = 'No images found.';
+      grid.appendChild(empty);
+      updateMockImageSelectionCount();
+      return;
+    }
+    state.mockImageOptions.forEach((img) => {
+      const item = document.createElement('div');
+      item.className = `mock-image-item${state.mockImageSelected.has(img.id) ? ' selected' : ''}`;
+
+      const imgEl = document.createElement('img');
+      imgEl.src = img.data_url;
+      imgEl.alt = img.name || 'mock image';
+
+      const check = document.createElement('div');
+      check.className = 'mock-image-check';
+
+      const name = document.createElement('div');
+      name.className = 'mock-image-name';
+      name.textContent = img.name || 'mock image';
+
+      item.onclick = () => {
+        if (state.mockImageSelected.has(img.id)) {
+          state.mockImageSelected.delete(img.id);
+        } else {
+          state.mockImageSelected.add(img.id);
+        }
+        renderMockImageGrid();
+      };
+
+      item.appendChild(imgEl);
+      item.appendChild(check);
+      item.appendChild(name);
+      grid.appendChild(item);
+    });
+    updateMockImageSelectionCount();
+  }
+
+  function clearMockImageSelection(){
+    state.mockImageSelected = new Set();
+    renderMockImageGrid();
+  }
+
+  function removeMockImageFiles(){
+    if (!state.files.length) {
+      return;
+    }
+    const removed = state.files.filter((item) => item.mockSource === 'image_selection');
+    state.files = state.files.filter((item) => item.mockSource !== 'image_selection');
+    removed.forEach((item) => {
+      if (item.messageEl && item.messageEl.isConnected) {
+        item.messageEl.remove();
+      }
+    });
+    state.reviewTargetId = null;
+  }
+
+  function applyMockImageSelection(){
+    const selected = state.mockImageOptions.filter((img) => state.mockImageSelected.has(img.id));
+    if (!selected.length) {
+      showWarn("Select at least one mock image.");
+      return false;
+    }
+    removeMockImageFiles();
+    selected.forEach((img, idx) => {
+      const item = {
+        id: `mock_${Date.now()}_${idx}`,
+        name: img.name || 'mock image',
+        desc: '',
+        data_url: img.data_url,
+        use: true,
+        inspected: false,
+        approved: false,
+        mockSource: 'image_selection',
+      };
+      state.files.push(item);
+      addChatImage(item);
+    });
+    renderFileList();
+    updateInspectStatus();
+    return true;
+  }
+
   function renderResultsTable(items){
     state.lastResults = items || [];
     const showRowsInput = el('showRows');
@@ -2508,6 +2735,10 @@
 
     if (state.mockDataPending) {
       showWarn("Confirm mock data selection before running.");
+      return;
+    }
+    if (state.mockImagePending) {
+      showWarn("Confirm mock image selection before running.");
       return;
     }
     if (scadaEnabled && !mockDataEnabled) {
@@ -2848,6 +3079,15 @@
     const mockDataToggle = el('mockDataToggle');
     const mockDataRow = el('mockDataRow');
     const scadaOverlay = el('scadaOverlay');
+    const imageMockToggle = el('imageMockToggle');
+    const imageMockRow = el('imageMockRow');
+    const imageOverlay = el('imageOverlay');
+    const imageSetLabeled = el('imageSetLabeled');
+    const imageSetUnlabeled = el('imageSetUnlabeled');
+    const confirmImageBtn = el('confirmImageSelection');
+    const cancelImageBtn = el('cancelImageMock');
+    const reselectImageBtn = el('reselectImageData');
+    const reselectImageWrap = el('reselectImageWrap');
     const confirmScadaBtn = el('confirmScadaSelection');
     const reselectScadaBtn = el('reselectScadaData');
     const reselectScadaWrap = el('reselectScadaWrap');
@@ -2856,6 +3096,20 @@
       el('scadaSection').classList.toggle('collapsed', !open);
       if (scadaOverlay) {
         scadaOverlay.classList.toggle('is-open', open);
+      }
+      if (open && imageOverlay) {
+        imageOverlay.classList.remove('is-open');
+        el('imageMockSection').classList.add('collapsed');
+      }
+    };
+    const setImageOverlay = (open) => {
+      el('imageMockSection').classList.toggle('collapsed', !open);
+      if (imageOverlay) {
+        imageOverlay.classList.toggle('is-open', open);
+      }
+      if (open && scadaOverlay) {
+        scadaOverlay.classList.remove('is-open');
+        el('scadaSection').classList.add('collapsed');
       }
     };
     const updateReselectVisibility = () => {
@@ -2871,6 +3125,28 @@
       }
       updateReselectVisibility();
       updateRunButtonAvailability();
+    };
+    const updateImageReselectVisibility = () => {
+      if (!reselectImageWrap || !imageMockToggle) {
+        return;
+      }
+      const show = state.mockImageConfirmed && imageMockToggle.checked;
+      reselectImageWrap.classList.toggle('is-visible', show);
+    };
+    const updateImageMockVisuals = () => {
+      if (imageMockRow) {
+        imageMockRow.classList.toggle('is-pending', state.mockImagePending);
+      }
+      updateImageReselectVisibility();
+      updateRunButtonAvailability();
+    };
+    const setImageDataset = (dataset) => {
+      state.mockImageDataset = dataset;
+      if (imageSetLabeled && imageSetUnlabeled) {
+        imageSetLabeled.classList.toggle('active', dataset === 'labeled');
+        imageSetUnlabeled.classList.toggle('active', dataset === 'unlabeled');
+      }
+      loadMockImages(dataset);
     };
     if (scadaToggle) {
       scadaToggle.checked = false;
@@ -2893,12 +3169,53 @@
         updateChatMetrics();
       };
     }
+    if (imageMockToggle) {
+      imageMockToggle.checked = false;
+      setImageOverlay(false);
+      imageMockToggle.onchange = () => {
+        const wantsOn = imageMockToggle.checked;
+        if (wantsOn) {
+          state.mockImagePending = true;
+          state.mockImageConfirmed = false;
+          if (state.mockImageOptions.length) {
+            renderMockImageGrid();
+          } else {
+            loadMockImages(state.mockImageDataset);
+          }
+          setImageOverlay(true);
+        } else {
+          setImageOverlay(false);
+          state.mockImagePending = false;
+          state.mockImageConfirmed = false;
+          clearMockImageSelection();
+          removeMockImageFiles();
+          renderFileList();
+          updateInspectStatus();
+        }
+        updateImageMockVisuals();
+        updateChatMetrics();
+      };
+    }
     if (reselectScadaBtn && mockDataToggle) {
       reselectScadaBtn.onclick = () => {
         state.mockDataPending = true;
         mockDataToggle.checked = true;
         setMockOverlay(true);
         updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (reselectImageBtn && imageMockToggle) {
+      reselectImageBtn.onclick = () => {
+        state.mockImagePending = true;
+        imageMockToggle.checked = true;
+        if (state.mockImageOptions.length) {
+          renderMockImageGrid();
+        } else {
+          loadMockImages(state.mockImageDataset);
+        }
+        setImageOverlay(true);
+        updateImageMockVisuals();
         updateChatMetrics();
       };
     }
@@ -2911,6 +3228,22 @@
         state.mockDataConfirmed = false;
         setMockOverlay(false);
         updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (cancelImageBtn) {
+      cancelImageBtn.onclick = () => {
+        if (imageMockToggle) {
+          imageMockToggle.checked = false;
+        }
+        state.mockImagePending = false;
+        state.mockImageConfirmed = false;
+        clearMockImageSelection();
+        removeMockImageFiles();
+        renderFileList();
+        updateInspectStatus();
+        setImageOverlay(false);
+        updateImageMockVisuals();
         updateChatMetrics();
       };
     }
@@ -2940,7 +3273,29 @@
         updateChatMetrics();
       };
     }
+    if (confirmImageBtn) {
+      confirmImageBtn.onclick = () => {
+        if (!applyMockImageSelection()) {
+          return;
+        }
+        setImageOverlay(false);
+        if (imageMockToggle) {
+          imageMockToggle.checked = true;
+        }
+        state.mockImagePending = false;
+        state.mockImageConfirmed = true;
+        updateImageMockVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (imageSetLabeled) {
+      imageSetLabeled.onclick = () => setImageDataset('labeled');
+    }
+    if (imageSetUnlabeled) {
+      imageSetUnlabeled.onclick = () => setImageDataset('unlabeled');
+    }
     updateMockDataVisuals();
+    updateImageMockVisuals();
 
     const range = el('rangeRows');
     if (range) {
