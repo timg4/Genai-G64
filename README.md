@@ -39,7 +39,7 @@ If `OPENAI_API_KEY` is not set, the server still starts but LLM endpoints return
 This project uses the OpenAI API via the `openai` Python package (Responses API) for LLM-backed parts of the pipeline:
 - **Text reasoning** (diagnosis + recommendation)
 - **Query builder** (extract terms and compose retrieval query pack)
-- **Optional vision description** (generate a short text description from uploaded blade images)
+- **Vision description** (generate a short text description from uploaded blade images)
 
 **Model(s) used:**
 - `gpt-5.2` (default). You can override the default for text endpoints via `OPENAI_MODEL`.
