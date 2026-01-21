@@ -91,6 +91,7 @@ The dataset is balanced with 44 labeled anomaly events and 51 normal behavior da
 - PDF text extraction using pypdf with page tracking
 - Section-aware chunking at heading boundaries (450 tokens, 70-token overlap)
 - Chunk classification: procedure, checklist, troubleshooting, safety, inspection, definition
+- Dense semantic embeddings are generated using the all-MiniLM-L6-v2 sentence embedding model [https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2]
 - Hybrid retrieval index: FAISS (sentence-transformers embeddings) + BM25 keyword search
 - Configurable blend: `score = alpha * embedding_score + (1 - alpha) * bm25_score`
 
