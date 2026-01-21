@@ -132,26 +132,28 @@
       min-height: 0;
       transition: transform .35s ease, width .35s ease, box-shadow .35s ease;
     }
-    .inputs-card { grid-column: 1; z-index: 2; position: relative; }
+    .inputs-card { grid-column: 1; z-index: 2; position: relative; overflow: visible; }
     .conversation-card { grid-column: 2; z-index: 1; }
     .manuals-card { grid-column: 3; z-index: 1; }
     .scada-overlay.card {
       position: absolute;
       top: 0;
       left: 100%;
-      margin-left: 12px;
-      width: clamp(300px, 28vw, 380px);
-      height: 100%;
+      margin-left: 10px;
+      width: clamp(340px, 34vw, 460px);
+      height: calc(100% + 4px);
+      background: var(--panel);
+      background-image: none;
       opacity: 0;
       pointer-events: none;
-      transform: translateX(12px);
+      transform: translate(12px, -4px);
       transition: opacity .25s ease, transform .25s ease;
       z-index: 4;
     }
     .scada-overlay.card.is-open {
       opacity: 1;
       pointer-events: auto;
-      transform: translateX(0);
+      transform: translate(0, -4px);
     }
     @media (max-width: 1200px) {
       .scada-overlay.card {
@@ -235,6 +237,9 @@
       color: var(--muted);
       line-height: 1.4;
     }
+    .disclaimer {
+      margin-bottom: 10px;
+    }
 
     .drop {
       border: 1px dashed rgba(255,255,255,.22);
@@ -308,6 +313,13 @@
       border-radius: 12px;
       cursor: pointer;
       width: 100%;
+    }
+    .btn.is-muted {
+      background: rgba(34,197,94,.45);
+      color: #0b2d1e;
+    }
+    .btn.is-muted:disabled {
+      opacity: .85;
     }
     .btn-inline {
       width: auto;
@@ -1016,6 +1028,9 @@
     .toggle-switch input:checked + .toggle-slider {
       background: var(--accent);
     }
+    .toggle-row.is-pending .toggle-switch input:checked + .toggle-slider {
+      background: rgba(148,163,184,.65);
+    }
     .toggle-switch input:checked + .toggle-slider:before {
       transform: translateX(20px);
     }
@@ -1028,6 +1043,31 @@
       max-height: 0;
       opacity: 0;
       pointer-events: none;
+    }
+    .scada-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .toggle-row-actions {
+      flex-wrap: wrap;
+    }
+    .reselect-row {
+      display: none;
+      margin-left: auto;
+    }
+    .reselect-row.is-visible {
+      display: inline-flex;
+    }
+    .btn-subtle {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-subtle:hover {
+      border-color: rgba(255,255,255,.35);
+      color: var(--text);
     }
 
     /* SCADA card list */
@@ -1181,59 +1221,76 @@
 
           <div class="input-section">
             <div class="input-section-h">SCADA</div>
-          <!-- SCADA Toggle -->
-          <div class="toggle-row">
-            <label class="toggle-switch">
-              <input type="checkbox" id="scadaToggle" />
-              <span class="toggle-slider"></span>
-            </label>
-            <span>Include SCADA data</span>
-          </div>
-
-          <div id="scadaSection" class="scada-section collapsed">
-          <!-- SCADA Time Range Section (simulated - no functionality) -->
-          <label>SCADA time range (simulated)</label>
-          <div class="time-range-section">
-            <button type="button" class="btn-secondary" id="btnLast6h" disabled title="Simulated: No live SCADA data available">
-              Last 6 Hours
-            </button>
-            <button type="button" class="btn-secondary" id="btnCustomTime" disabled title="Simulated: No live SCADA data available">
-              Custom Time
-            </button>
-            <input type="datetime-local" id="customTimeInput" disabled style="flex: 1; min-width: 180px;" />
-          </div>
-          <div class="small" style="margin-bottom: 12px; color: var(--muted);">
-            ⚠️ Above buttons simulate real-world usage. For testing, select from available SCADA cards below.
-          </div>
-
-          <!-- SCADA Card Selection with Filters -->
-          <label>Select SCADA card for testing</label>
-          <div class="filter-section">
-            <div class="filter-group">
-              <label>Filter by tags</label>
-              <div class="tag-checkboxes" id="tagCheckboxes">
-                <!-- Populated by JS -->
+            <!-- SCADA Toggle -->
+            <div class="toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="scadaToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Include SCADA data</span>
+            </div>
+            <div class="toggle-row toggle-row-actions" id="mockDataRow" style="margin-top:8px;">
+              <label class="toggle-switch">
+                <input type="checkbox" id="mockDataToggle" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span>Mock data</span>
+              <div class="reselect-row" id="reselectScadaWrap">
+                <button type="button" class="btn btn-subtle btn-inline" id="reselectScadaData">Reselect data</button>
               </div>
             </div>
-          </div>
-
-          <label>Available SCADA cards (<span id="cardCount">0</span> matching)</label>
-          <div class="scada-card-list" id="scadaCardList">
-            <div class="scada-list-header">
-              <span></span>
-              <span>ID</span>
-              <span>Tags</span>
+            <label>SCADA time range (simulated)</label>
+            <div class="time-range-section">
+              <button type="button" class="btn-secondary" id="btnLast6h" disabled title="Simulated: No live SCADA data available">
+                Last 6 Hours
+              </button>
+              <button type="button" class="btn-secondary" id="btnCustomTime" disabled title="Simulated: No live SCADA data available">
+                Custom Time
+              </button>
+              <input type="datetime-local" id="customTimeInput" disabled style="flex: 1; min-width: 180px;" />
             </div>
-            <!-- Cards populated by JS -->
+            <div class="small" style="margin-bottom: 12px; color: var(--muted);">
+              ⚠️ Above buttons simulate real-world usage. For testing, please mock the data.
           </div>
-          <input type="hidden" id="scadaSelect" />
-          <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
-          </div><!-- end scadaSection -->
-
           </div>
 
           <div class="small" style="margin-top:10px;">
-            Tip: Retrieval is biased toward procedures, checklists, and safety content.
+            Hint: Retrieval is biased toward procedures, checklists, and safety content.
+          </div>
+        </div>
+        <div class="card scada-overlay" id="scadaOverlay">
+          <div class="card-h">
+            <h2>Mock data</h2>
+          </div>
+          <div class="card-b">
+            <div id="scadaSection" class="scada-section collapsed">
+              <!-- SCADA Card Selection with Filters -->
+              <label>Select SCADA card for testing</label>
+              <div class="filter-section">
+                <div class="filter-group">
+                  <label>Filter by tags</label>
+                  <div class="tag-checkboxes" id="tagCheckboxes">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <label>Available SCADA cards (<span id="cardCount">0</span> matching)</label>
+              <div class="scada-card-list" id="scadaCardList">
+                <div class="scada-list-header">
+                  <span></span>
+                  <span>ID</span>
+                  <span>Tags</span>
+                </div>
+                <!-- Cards populated by JS -->
+              </div>
+              <input type="hidden" id="scadaSelect" />
+              <div class="small" id="scadaPreview" style="margin-top:6px;"></div>
+              <div class="scada-actions">
+                <button type="button" class="btn-secondary" id="cancelMockData">Cancel</button>
+                <button type="button" class="btn btn-inline" id="confirmScadaSelection">Confirm selection</button>
+              </div>
+            </div><!-- end scadaSection -->
           </div>
         </div>
       </div>
@@ -1250,6 +1307,7 @@
         </div>
       </div>
       <div class="card-b chat-wrap" id="chatWrap">
+        <div class="small disclaimer">This recommendation is AI-generated and may be inaccurate. Please verify before use.</div>
         <div class="processing-hint" id="processingHint" aria-live="polite">
           <span class="spinner"></span>
           Processing request…
@@ -1305,6 +1363,10 @@
     filteredScadaCards: [],  // Cards after filtering
     allTags: [],  // All available tags
     allClasses: [],  // All available classes
+    mockDataConfirmed: false,
+    mockDataPending: false,
+    hasApiKey: true,
+    isRunning: false,
     lastResults: [],
     reviewMessage: null,
     incidentCounter: 0,
@@ -1398,6 +1460,22 @@
       logo.classList.remove("is-spinning");
       stopFaviconSpin();
     }
+    state.isRunning = !!isRunning;
+    updateRunButtonAvailability();
+  }
+
+  function updateRunButtonAvailability(){
+    const runBtn = el('runBtn');
+    if (!runBtn) {
+      return;
+    }
+    const blockedByApi = !state.hasApiKey;
+    const blockedByPending = state.mockDataPending;
+    const blockedByRunning = state.isRunning;
+    const shouldDisable = blockedByApi || blockedByPending || blockedByRunning;
+    runBtn.disabled = shouldDisable;
+    runBtn.classList.toggle('is-muted', blockedByPending);
+    runBtn.title = blockedByApi ? state.apiKeyWarning : '';
   }
 
   function showWarn(msg){
@@ -1419,12 +1497,8 @@
       const data = await resp.json();
       const hasKey = !!data?.openai_api_key_set;
       state.apiKeyWarning = hasKey ? "" : String(data?.warning || "OPENAI_API_KEY is not set. See README.md in the repository root.");
-
-      const runBtn = el('runBtn');
-      if (runBtn) {
-        runBtn.disabled = !hasKey;
-        runBtn.title = hasKey ? '' : state.apiKeyWarning;
-      }
+      state.hasApiKey = hasKey;
+      updateRunButtonAvailability();
 
       showWarn('');
     } catch (e) {
@@ -1955,6 +2029,22 @@
     return text;
   }
 
+  function formatScadaDateTimeLocal(raw){
+    const text = String(raw || "").trim();
+    if (!text) {
+      return "";
+    }
+    const match = text.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})/);
+    if (match) {
+      return `${match[1]}T${match[2]}`;
+    }
+    const parsed = new Date(text);
+    if (!Number.isNaN(parsed.getTime())) {
+      return formatDateTimeLocal(parsed);
+    }
+    return "";
+  }
+
   function formatDateTimeLocal(date){
     const pad = (value) => String(value).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -2213,9 +2303,9 @@
     const card = state.filteredScadaCards.find(x => x.id === id);
     if(!card){ el('scadaPreview').textContent = ''; return; }
     
-    // Show summary from card case if available
-    const summary = card.case?.summary || '';
-    el('scadaPreview').textContent = summary.substring(0, 200) + (summary.length > 200 ? '...' : '');
+    // Show full description from card case when available
+    const description = card.case?.description || card.case?.summary || '';
+    el('scadaPreview').textContent = description;
   }
 
   function renderResultsTable(items){
@@ -2410,10 +2500,20 @@
 
     let mechanicNotes = el('mechanicNotes').value || '';
     const scadaEnabled = el('scadaToggle').checked;
+    const mockDataEnabled = el('mockDataToggle') ? el('mockDataToggle').checked : false;
     let scadaId = scadaEnabled ? el('scadaSelect').value : null;
     const topKInput = el('topK');
     const topKRaw = topKInput ? topKInput.value : '10';
     const topK = Math.max(3, Math.min(30, parseInt(topKRaw, 10)));
+
+    if (state.mockDataPending) {
+      showWarn("Confirm mock data selection before running.");
+      return;
+    }
+    if (scadaEnabled && !mockDataEnabled) {
+      showWarn("Enable mock data to use SCADA data.");
+      return;
+    }
 
     const imageDescriptions = state.files
       .filter(f => f.use !== false)
@@ -2433,7 +2533,6 @@
 
     setStatus('running');
     setRunning(true);
-    el('runBtn').disabled = true;
     state.runToken += 1;
 
     const imageFiles = imageTargets
@@ -2492,7 +2591,6 @@
     } finally {
       setStatus(state.awaitingConfirm ? 'confirm' : 'idle');
       setRunning(false);
-      el('runBtn').disabled = false;
     }
   }
 
@@ -2513,7 +2611,6 @@
     setStatus("inspecting");
     setInspecting(true);
     setRunning(true);
-    el("runBtn").disabled = true;
     state.inspectingImageId = imageId;
     updateInspectStatus();
     const hint = el("processingHint");
@@ -2550,7 +2647,6 @@
       setRunning(false);
       setInspecting(false);
       state.inspectingImageId = null;
-      el("runBtn").disabled = false;
       if (hint) {
         hint.innerHTML = "<span class=\"spinner\"></span> Processing request…";
       }
@@ -2749,21 +2845,102 @@
 
     // SCADA toggle
     const scadaToggle = el('scadaToggle');
-    const grid = document.querySelector('.grid');
+    const mockDataToggle = el('mockDataToggle');
+    const mockDataRow = el('mockDataRow');
+    const scadaOverlay = el('scadaOverlay');
+    const confirmScadaBtn = el('confirmScadaSelection');
+    const reselectScadaBtn = el('reselectScadaData');
+    const reselectScadaWrap = el('reselectScadaWrap');
+    const cancelMockDataBtn = el('cancelMockData');
+    const setMockOverlay = (open) => {
+      el('scadaSection').classList.toggle('collapsed', !open);
+      if (scadaOverlay) {
+        scadaOverlay.classList.toggle('is-open', open);
+      }
+    };
+    const updateReselectVisibility = () => {
+      if (!reselectScadaWrap || !mockDataToggle) {
+        return;
+      }
+      const show = state.mockDataConfirmed && mockDataToggle.checked;
+      reselectScadaWrap.classList.toggle('is-visible', show);
+    };
+    const updateMockDataVisuals = () => {
+      if (mockDataRow) {
+        mockDataRow.classList.toggle('is-pending', state.mockDataPending);
+      }
+      updateReselectVisibility();
+      updateRunButtonAvailability();
+    };
     if (scadaToggle) {
       scadaToggle.checked = false;
-      el('scadaSection').classList.toggle('collapsed', !scadaToggle.checked);
-      if (grid) {
-        grid.classList.toggle('scada-open', scadaToggle.checked);
-      }
-      scadaToggle.onchange = () => {
-        const enabled = scadaToggle.checked;
-        el('scadaSection').classList.toggle('collapsed', !enabled);
-        if (grid) {
-          grid.classList.toggle('scada-open', enabled);
+    }
+    if (mockDataToggle) {
+      mockDataToggle.checked = false;
+      setMockOverlay(false);
+      mockDataToggle.onchange = () => {
+        const wantsOn = mockDataToggle.checked;
+        if (wantsOn) {
+          state.mockDataPending = true;
+          state.mockDataConfirmed = false;
+          setMockOverlay(true);
+        } else {
+          setMockOverlay(false);
+          state.mockDataPending = false;
+          state.mockDataConfirmed = false;
         }
+        updateMockDataVisuals();
+        updateChatMetrics();
       };
     }
+    if (reselectScadaBtn && mockDataToggle) {
+      reselectScadaBtn.onclick = () => {
+        state.mockDataPending = true;
+        mockDataToggle.checked = true;
+        setMockOverlay(true);
+        updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (cancelMockDataBtn) {
+      cancelMockDataBtn.onclick = () => {
+        if (mockDataToggle) {
+          mockDataToggle.checked = false;
+        }
+        state.mockDataPending = false;
+        state.mockDataConfirmed = false;
+        setMockOverlay(false);
+        updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    if (confirmScadaBtn) {
+      confirmScadaBtn.onclick = () => {
+        const customInput = el('customTimeInput');
+        const selectedId = el('scadaSelect')?.value;
+        const selectedCard = selectedId ? state.filteredScadaCards.find((card) => card.id === selectedId) : null;
+        const rawTime = selectedCard?.window_end
+          || selectedCard?.case?.window?.end_time
+          || selectedCard?.case?.source?.window_end
+          || selectedCard?.window_start
+          || selectedCard?.case?.window?.start_time
+          || selectedCard?.case?.source?.window_start;
+        const formattedTime = formatScadaDateTimeLocal(rawTime);
+        const timeValue = formattedTime || (customInput && customInput.value ? customInput.value : formatDateTimeLocal(new Date()));
+        if (customInput) {
+          customInput.value = timeValue;
+        }
+        setMockOverlay(false);
+        if (mockDataToggle) {
+          mockDataToggle.checked = true;
+        }
+        state.mockDataPending = false;
+        state.mockDataConfirmed = true;
+        updateMockDataVisuals();
+        updateChatMetrics();
+      };
+    }
+    updateMockDataVisuals();
 
     const range = el('rangeRows');
     if (range) {
