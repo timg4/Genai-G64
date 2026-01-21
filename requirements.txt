@@ -7,3 +7,7 @@ sentence-transformers
 tqdm
 fastapi
 uvicorn
+pydantic
+Pillow
+matplotlib
+torch
